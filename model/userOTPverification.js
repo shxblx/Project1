@@ -2,7 +2,7 @@ const mongoose=require("mongoose")
 const userSchema=mongoose.Schema;
 
 const userOTPverificationSchema=new userSchema({
-    userId:String,
+    email:String,
     otp:String,
     createdAt:Date,
     expiresAt:Date

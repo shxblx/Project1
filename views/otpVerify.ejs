@@ -8,7 +8,7 @@
 
   <title>Groove Style Login</title> 
 
-  <link rel="stylesheet" href="/public/css/stylelog.css"> 
+  <link rel="stylesheet" href="css/stylelog.css"> 
   <style>
     .otp-container-custom {
         text-align: center;
@@ -79,16 +79,17 @@
   <section> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> 
 
     <div class="signin">
-         <form action="post">
+         <form method="post">
         <div class="content"> 
             <div class="otp-container-custom">
                 <h2>OTP Verification</h2>
                 <h1 style="font-size: 15px;">An otp has been sent to your email</h1>
                 <div>
-                    <input class="otp-input-custom" type="text" inputmode="numeric" pattern="[0-9]*" id="first" maxlength="1" oninput="moveToNext(this)">
-                    <input class="otp-input-custom" type="text" inputmode="numeric" pattern="[0-9]*" id="second" maxlength="1" oninput="moveToNext(this)">
-                    <input class="otp-input-custom" type="text" inputmode="numeric" pattern="[0-9]*" id="third" maxlength="1" oninput="moveToNext(this)">
-                    <input class="otp-input-custom" type="text" inputmode="numeric" pattern="[0-9]*" id="fourth" maxlength="1" oninput="moveToNext(this)">
+                    <input type="hidden" name="email" value="<%=locals.email%>">
+                    <input class="otp-input-custom" type="text" inputmode="numeric" pattern="[0-9]*" name="first" maxlength="1" oninput="moveToNext(this)">
+                    <input class="otp-input-custom" type="text" inputmode="numeric" pattern="[0-9]*" name="second" maxlength="1" oninput="moveToNext(this)">
+                    <input class="otp-input-custom" type="text" inputmode="numeric" pattern="[0-9]*" name="third" maxlength="1" oninput="moveToNext(this)">
+                    <input class="otp-input-custom" type="text" inputmode="numeric" pattern="[0-9]*" name="fourth" maxlength="1" oninput="moveToNext(this)">
                 </div>
                 <button onclick="validateOTP()">Validate</button>
                  </div>

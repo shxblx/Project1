@@ -1,6 +1,6 @@
-const bcrypt=require('bcrypt')
-const User=require('../model/userModel')
-const nodemailer=require('nodemailer');
+const bcrypt = require('bcrypt')
+const User = require('../model/userModel')
+const nodemailer = require('nodemailer');
 const userOTPverification = require('../model/userOTPverification');
 require('dotenv').config();
 
@@ -8,17 +8,18 @@ require('dotenv').config();
 
 
 
-const loadHome=async(req,res)=>{
+
+const loadHome = async (req, res) => {
     try {
         res.render('index')
-        
+
     } catch (error) {
         console.log(error);
-        
+
     }
 }
 
-const loadShop=async(req,res)=>{
+const loadShop = async (req, res) => {
     try {
         res.render('shop')
     } catch (error) {
@@ -26,7 +27,7 @@ const loadShop=async(req,res)=>{
     }
 }
 
-const loadAbout=async(req,res)=>{
+const loadAbout = async (req, res) => {
     try {
         res.render('about')
     } catch (error) {
@@ -34,7 +35,7 @@ const loadAbout=async(req,res)=>{
     }
 }
 
-const loadContact=async(req,res)=>{
+const loadContact = async (req, res) => {
     try {
         res.render('contact')
     } catch (error) {
@@ -42,94 +43,106 @@ const loadContact=async(req,res)=>{
     }
 }
 
-const loadCart=async(req,res)=>{
+const loadCart = async (req, res) => {
     try {
         res.render('cart')
     } catch (error) {
         console.log();
     }
 }
-const loadSingleshop=async(req,res)=>{
+const loadSingleshop = async (req, res) => {
     try {
         res.render('shop-single')
     } catch (error) {
         console.log(error);
     }
 }
-const loadLogin=async(req,res)=>{
+const loadLogin = async (req, res) => {
     try {
         res.render('login')
     } catch (error) {
         console.log(error);
     }
 }
-const loadSignup=async(req,res)=>{
+const loadSignup = async (req, res) => {
     try {
-        res.render('signup')
+        const messages = req.flash('message') || [];
+        res.render('signup', { messages });
     } catch (error) {
         console.log(error);
     }
-}
-const loadOTP=async(req,res)=>{
+};
+
+
+const loadOTP = async (req, res) => {
     try {
-        res.render('otpVerify')
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-const verifySignup=async(req,res)=>{
-    try {
-        const{username,email,phone,password,confirmpassword}=req.body
-
-            //check password
-            if(password!==confirmpassword){
-                    res.redirect('/signup')
-            }
-
-            const hashedPassword=await bcrypt.hash(password,10)
-
-            const newuser=new User({
-                username,
-                phone,
-                email,
-                password:hashedPassword,
-                verified:false
-            })
-
-            newuser.save()
-            sendOTPverificationEmail(newuser,res)
-
-            res.redirect('/')
-
-                
-
+        const email = req.query.email
+        res.render('otpVerify', { email })
     } catch (error) {
         console.log(error);
     }
 }
 
-
-const sendOTPverificationEmail=async ({email},res)=>{
+const verifySignup = async (req, res) => {
     try {
-        const transporter=nodemailer.createTransport({
-            service:'gmail',
-            host:'smtp.gmail.com',
-            port:587,
-            secure:true,
-            auth:{
-                user:"shiblibasheer27@gmail.com",
-                pass:"rgmv lili pgqj gpzu"
+        const { username, email, phone, password, confirmpassword } = req.body;
+
+
+        if (password !== confirmpassword) {
+            req.flash('message', 'Password mismatch');
+            return res.redirect('/signup');
+        }
+
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+
+        const newuser = new User({
+            username,
+            phone,
+            email,
+            password: hashedPassword,
+            verified: false
+        });
+
+
+        await newuser.save();
+
+
+        await sendOTPverificationEmail(newuser, res);
+
+        req.flash('message', 'User created successfully. Please check your email for verification.');
+
+        res.redirect('/signup');
+    } catch (error) {
+        console.log(error);
+        req.flash('message', 'An error occurred. Please try again.');
+
+    }
+};
+
+
+
+const sendOTPverificationEmail = async ({ email }, res) => {
+    try {
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: true,
+            auth: {
+                user: "shiblibasheer27@gmail.com",
+                pass: "rgmv lili pgqj gpzu"
             }
         })
-        const otp=`${Math.floor(1000+Math.random()*9000)}`
+        const otp = `${Math.floor(1000 + Math.random() * 9000)}`
 
 
-        const mailOption={
-            from:"shiblibasheer27@gmail.com",
-            to:email,
-            subject:"Verify Your Email",
-            html:`<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
+        const mailOption = {
+            from: "shiblibasheer27@gmail.com",
+            to: email,
+            subject: "Verify Your Email",
+            html: `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
             <div style="margin:50px auto;width:70%;padding:20px 0">
               <div style="border-bottom:1px solid #eee">
                 <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">GROOVE STYLE</a>
@@ -148,16 +161,56 @@ const sendOTPverificationEmail=async ({email},res)=>{
           </div>`
         }
 
-       const hashedOTP=await bcrypt.hash(otp,10);
-       const newOTPverification=await new userOTPverification({
-        email:email,
-        otp:hashedOTP,
-        createdAt:Date.now(),
-        expiresAt:Date.now()+120000
-       })
+        const hashedOTP = await bcrypt.hash(otp, 10);
+        const newOTPverification = await new userOTPverification({
+            email: email,
+            otp: hashedOTP,
+            createdAt: Date.now(),
+            expiresAt: Date.now() + 120000
+        })
 
-       await newOTPverification.save();
-       await transporter.sendMail(mailOption);
+        await newOTPverification.save();
+        await transporter.sendMail(mailOption);
+
+        res.redirect(`/otpVerify?email=${email}`)
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const verifyOTP = async (req, res) => {
+    try {
+        const email = req.body.email
+        const otp = req.body.first + req.body.second + req.body.third + req.body.fourth
+        console.log(otp);
+        const user = await userOTPverification.findOne({ email: email })
+        console.log('user:', user);
+
+        if (!user) {
+            res.render('otpVerify', { message: "user not found" });
+        }
+
+        const { otp: hashedOTP } = user
+
+        const validOtp = await bcrypt.compare(otp, hashedOTP);
+        console.log(validOtp);
+
+        if (validOtp === true) {
+            userData = await User.findOne({ email: email })
+
+            await User.findByIdAndUpdate({ _id: userData._id }, { $set: { verified: true } })
+            await userOTPverification.deleteOne({ email: email })
+
+            req.session.user_id = userData._id
+            res.redirect('/home');
+
+        } else {
+            req.flash('message', "otp is inncorrect")
+            res.redirect('/otp')
+        }
+
+
 
     } catch (error) {
         console.log(error);
@@ -165,10 +218,7 @@ const sendOTPverificationEmail=async ({email},res)=>{
 }
 
 
-//hey
-
-
-module.exports={
+module.exports = {
     loadHome,
     loadShop,
     loadAbout,
@@ -178,5 +228,6 @@ module.exports={
     loadLogin,
     loadSignup,
     verifySignup,
-    loadOTP
+    loadOTP,
+    verifyOTP
 }

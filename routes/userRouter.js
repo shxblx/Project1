@@ -12,7 +12,7 @@ userRouter.get('/login',userController.loadLogin)
 userRouter.get('/signup',userController.loadSignup)
 userRouter.post('/signup',userController.verifySignup)
 userRouter.get('/otpVerify',userController.loadOTP)
-userRouter.post('/otpVerify',userController.loadOTP)
+userRouter.post('/otpVerify',userController.verifyOTP)
 
 
 module.exports=userRouter
