@@ -59,11 +59,37 @@ const loadSingleshop = async (req, res) => {
 }
 const loadLogin = async (req, res) => {
     try {
-        res.render('login')
+        const messages = req.flash('message') || [];
+        res.render('login', { messages });
     } catch (error) {
         console.log(error);
     }
 }
+
+ const verifyLogin=async (req,res)=>{
+    try {
+        const {email,password}=req.body
+        console.log(req.body);
+        const user=await User.findOne({email:email})
+        console.log(user);
+        if (!user) {
+            req.flash('message','user not found')
+            res.redirect('/login')
+
+
+        }
+        const passwordMatch=await bcrypt.compare(password,user.password)
+        if(!passwordMatch){
+            req.flash('message','Wrong password')
+            res.redirect('/login')
+        }
+        req.session.user_id=user._id
+        res.redirect('/home')
+    } catch (error) {
+        console.log(error);
+    }
+ }
+
 const loadSignup = async (req, res) => {
     try {
         const messages = req.flash('message') || [];
@@ -90,7 +116,7 @@ const verifySignup = async (req, res) => {
 
         if (password !== confirmpassword) {
             req.flash('message', 'Password mismatch');
-            return res.redirect('/signup');
+            res.redirect('/signup');
         }
 
 
@@ -203,7 +229,7 @@ const verifyOTP = async (req, res) => {
             await userOTPverification.deleteOne({ email: email })
 
             req.session.user_id = userData._id
-            res.redirect('/home');
+            res.redirect('/index');
 
         } else {
             req.flash('message', "otp is inncorrect")
@@ -229,5 +255,6 @@ module.exports = {
     loadSignup,
     verifySignup,
     loadOTP,
-    verifyOTP
+    verifyOTP,
+    verifyLogin
 }

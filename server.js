@@ -14,7 +14,6 @@ app.use(session({
     saveUninitialized: true,
 }));
 
-// Set up flash middleware
 app.use(flash());
 
 app.use(express.static(path.resolve(__dirname, 'public')));
