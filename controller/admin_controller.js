@@ -15,7 +15,24 @@ const loadUsers=async(req,res)=>{
         console.log(error);
     }
 }
+const blockUnblockUser = async (req, res) => {
+    try {
+        const userId = req.body.userId;
+        const user = await User.findById(userId);
 
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.verified = !user.verified;
+        await user.save();
+
+        res.redirect('/admin/users');
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
 
 
 
@@ -28,5 +45,6 @@ const loadUsers=async(req,res)=>{
 
 module.exports={
     loadAdmin,
-    loadUsers
+    loadUsers,
+    blockUnblockUser
 }

@@ -35,12 +35,12 @@
 <body>
     <div class="container-fluid position-relative d-flex p-0">
         <!-- Spinner Start -->
-        <div id="spinner"
+        <!-- <div id="spinner"
             class="show bg-dark position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
             <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
                 <span class="sr-only">Loading...</span>
             </div>
-        </div>
+        </div> -->
         <!-- Spinner End -->
 
 
@@ -418,31 +418,41 @@
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
+                        <!-- Modify your table to include a form for block/unblock -->
                         <tbody>
-                            <%if(user.length>0){%>
-                                <%for(let i=0;i<user.length;i++){%>
+                            <% if (user.length> 0) { %>
+                                <% for (let i=0; i < user.length; i++) { %>
                                     <tr>
                                         <td>
-                                            <%=user[i].username%>
+                                            <%= user[i].username %>
                                         </td>
-                                        <td><%=user[i].email%></td>
-                                        <td><%=user[i].phone%></td>
-                                        <td><%=user[i].verified%></td>
-                                        <td><form action="/admin/block-user" method="POST">
-                                            <input type="hidden" name="userId" value="<%= user[i]._id %>">
-                                            <% if (user[i].verified) { %>
-                                                <button type="button" class="btn btn-danger btn-sm block-unblock-btn" data-user-id="<%= user[i]._id %>">Block</button>
-                                            <% } else { %>
-                                                <button type="button" class="btn btn-success btn-sm block-unblock-btn" data-user-id="<%= user[i]._id %>">Unblock</button>
-                                            <% } %>
-                                        </form></td>
-
+                                        <td>
+                                            <%= user[i].email %>
+                                        </td>
+                                        <td>
+                                            <%= user[i].phone %>
+                                        </td>
+                                        <td>
+                                            <%= user[i].verified %>
+                                        </td>
+                                        <td>
+                                            <form action="/admin/block-user" method="POST">
+                                                <input type="hidden" name="userId" value="<%= user[i]._id %>">
+                                                <% if (user[i].verified) { %>
+                                                    <button type="submit" class="btn btn-danger btn-sm">Block</button>
+                                                    <% } else { %>
+                                                        <button type="submit"
+                                                            class="btn btn-success btn-sm">Unblock</button>
+                                                        <% } %>
+                                            </form>
+                                        </td>
                                     </tr>
-                                    <%}%>
-                                        <%}else{%>
+                                    <% } %>
+                                        <% } else { %>
                                             <td colspan="5">No User</td>
-                                            <%}%>
+                                            <% } %>
                         </tbody>
+
                     </table>
                 </div>
             </div>
@@ -488,7 +498,38 @@
     <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
 
     <!-- Template Javascript -->
-    <script src="js/main.js"></script>
+    <script src="js/main.js">
+        document.addEventListener('DOMContentLoaded', function () {
+    // Add an event listener to each block/unblock button
+    document.querySelectorAll('.block-unblock-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const userId = this.dataset.userId;
+
+            // Make a fetch request to the server
+            fetch('/admin/block-user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Update the user interface based on the server response
+                    if (data.success) {
+                        alert('User status updated successfully!');
+                        location.reload(); // You may want to update the UI without reloading the page
+                    } else {
+                        alert('Error updating user status.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+    });
+});
+    </script>
 </body>
 
 </html>
