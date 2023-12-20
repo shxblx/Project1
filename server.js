@@ -24,6 +24,8 @@ app.use(express.urlencoded({ extended: true }));
 
 const userRouter = require('./routes/userRouter');
 app.use('/', userRouter);
+const adminRouter=require('./routes/adminRouter');
+app.use('/admin',adminRouter)
 
 const PORT = process.env.PORT || 3030;
 
