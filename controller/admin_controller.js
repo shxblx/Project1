@@ -34,7 +34,21 @@ const blockUnblockUser = async (req, res) => {
     }
 };
 
+const loadCat=async(req,res)=>{
+    try {
+        res.render("Admin/categories")
+    } catch (error) {
+        console.log(error);
+    }
+}
 
+const addCat=async(req,res)=>{
+    try {
+        {}
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 
 
@@ -46,5 +60,7 @@ const blockUnblockUser = async (req, res) => {
 module.exports={
     loadAdmin,
     loadUsers,
-    blockUnblockUser
+    blockUnblockUser,
+    loadCat,
+    addCat
 }
