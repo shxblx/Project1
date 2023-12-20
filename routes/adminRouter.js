@@ -3,7 +3,8 @@ const adminRouter=express()
 const adminController=require('../controller/admin_controller')
 
 
-adminRouter.get('/admin',adminController.loadAdmin)
+
+adminRouter.get('/',adminController.loadAdmin)
 
 
 
