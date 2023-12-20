@@ -12,7 +12,6 @@ const categSchema=new mongoose.Schema({
     isListed:{
         type:Boolean,
         default:true,
-        required:true
     },
     createdAt:{
         type:Date,

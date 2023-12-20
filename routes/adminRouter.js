@@ -7,9 +7,8 @@ const adminController=require('../controller/admin_controller')
 adminRouter.get('/',adminController.loadAdmin)
 adminRouter.get('/users',adminController.loadUsers)
 adminRouter.post('/block-user', adminController.blockUnblockUser);
-adminRouter.get('/categories',adminController.loadCat)
-adminRouter.post('/categories',adminController.addCat)
-
+adminRouter.get('/categories',adminController.Categories)
+adminRouter.post('/categories',adminController.addCategory)
 
 
 

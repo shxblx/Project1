@@ -225,17 +225,33 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>asdas</td>
-                                    <td>asdasd</td>
-                                    <td>adsasdas</td>
-                                    <td>adasda</td>
-                                    <td>asdasda</td>
-                                </tr>
+                                <% if (categoryList.length > 0) { %>
+                                    <% for (let i = 0; i < categoryList.length; i++) { %>
+                                        <tr>
+                                            <td><%= categoryList[i].name %></td>
+                                            <td><%= categoryList[i].description %></td>
+                                            <td>
+                                                <% if (categoryList[i].isListed) { %>
+                                                    <span class="badge bg-success">Listed</span>
+                                                <% } else { %>
+                                                    <span class="badge bg-danger">Unlisted</span>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-warning btn-sm"
+                                                    onclick="editCategoryModal(<%= JSON.stringify(categoryList[i]) %>)">Edit</button>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-danger btn-sm"
+                                                    onclick="performAction('<%= categoryList[i]._id %>')">Action</button>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+                                <% } %>
                             </tbody>
                         </table>
-                        <button type="button" class="btn btn-primary mb-3 btn-sm" data-toggle="modal"
-                            data-target="#addCategoryModal" style="margin-left: 10px;">
+                        <button type="button" class="btn btn-primary btn-sm" style="margin-left: 10px; margin-bottom: 10px; margin-top: 50px;"
+                            data-bs-toggle="modal" data-bs-target="#addCategoryModal">
                             Add Category
                         </button>
                     </div>
@@ -266,11 +282,9 @@
     <!-- Content End -->
 
 
-    <!-- Back to Top -->
     <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
 
-    <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="lib/chart/chart.min.js"></script>
@@ -282,36 +296,93 @@
     <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
 
     <!-- Template Javascript -->
-    <script src="js/main.js">
-        document.addEventListener('DOMContentLoaded', function () {
-            // Add an event listener to each block/unblock button
-            document.querySelectorAll('.block-unblock-btn').forEach(button => {
-                button.addEventListener('click', function () {
-                    const userId = this.dataset.userId;
+    
+    <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add Category</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Add your form elements here -->
+        <form id="addCategoryForm" method="post">
+          <!-- Form content -->
+          <input type="text" id="categoryName" name="catName" placeholder="Category Name">
+          <input type="text" id="categoryDescription" name="catDes" placeholder="Category Description">
+          <!-- Additional form fields as needed -->
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog" aria-labelledby="editCategoryModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCategoryModalLabel">Edit Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Add your form elements here -->
+                <form id="editCategoryForm" method="post">
+                    <!-- Form content -->
+                    <input type="hidden" id="editCategoryId" name="editCatId">
+                    <input type="text" id="editCategoryName" name="editCatName" placeholder="Category Name">
+                    <input type="text" id="editCategoryDescription" name="editCatDes" placeholder="Category Description">
+                    <!-- Additional form fields as needed -->
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
 
-                    fetch('/admin/block-user', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ userId }),
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                alert('User status updated successfully!');
-                                location.reload();
-                            } else {
-                                alert('Error updating user status.');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                        });
-                });
+    <!-- Template Javascript -->
+    
+    <script>
+        document.getElementById('addCategoryBtn').addEventListener('click', function () {
+            // Show the "Add Category" modal
+            $('#addCategoryModal').modal('show');
+
+            // Add event listener for form submission
+            document.getElementById('addCategoryForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                // Retrieve form data
+                var categoryName = document.getElementById('categoryName').value;
+                var categoryDescription = document.getElementById('categoryDescription').value;
+
+                // Perform actions with the form data (you can send it to the server here)
+
+                // Close the modal
+                $('#addCategoryModal').modal('hide');
             });
         });
     </script>
-</body>
 
+    <!-- Add the following script for the "Edit Category" modal -->
+    <script>
+        function editCategoryModal(category) {
+            // Show the "Edit Category" modal
+            $('#editCategoryModal').modal('show');
+
+            // Populate the "Edit Category" modal with the category data
+            document.getElementById('editCategoryId').value = category._id;
+            document.getElementById('editCategoryName').value = category.name;
+            document.getElementById('editCategoryDescription').value = category.description;
+        }
+    </script>
+
+    
 </html>

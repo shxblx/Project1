@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt')
 const User = require('../model/userModel')
+const Category=require('../model/categModel')
 const nodemailer = require('nodemailer');
 const userOTPverification = require('../model/userOTPverification');
 require('dotenv').config();
@@ -21,7 +22,8 @@ const loadHome = async (req, res) => {
 
 const loadShop = async (req, res) => {
     try {
-        res.render('shop')
+        const category=await Category.find({})
+        res.render('shop',{category})
     } catch (error) {
         console.log();
     }

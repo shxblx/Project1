@@ -1,3 +1,4 @@
+const Category = require("../model/categModel");
 const User = require("../model/userModel");
 
 const loadAdmin=async(req,res)=>{
@@ -34,21 +35,38 @@ const blockUnblockUser = async (req, res) => {
     }
 };
 
-const loadCat=async(req,res)=>{
+const Categories=async(req,res)=>{
     try {
-        res.render("Admin/categories")
+        const categoryList= await Category.find({})
+        res.render("Admin/categories",{categoryList})
     } catch (error) {
         console.log(error);
     }
 }
 
-const addCat=async(req,res)=>{
+const addCategory = async (req, res) => {
     try {
-        {}
+        const { catName, catDes } = req.body;
+
+        if (!catName) {
+            return res.status(400).json({ message: 'Category name is required' });
+        }
+
+        const category = new Category({
+            name: catName,
+            description: catDes,
+            isListed: true,
+            createdAt: new Date()
+        });
+
+        await category.save();
+        res.redirect('/admin/categories');
     } catch (error) {
         console.log(error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-}
+};
+
 
 
 
@@ -61,6 +79,6 @@ module.exports={
     loadAdmin,
     loadUsers,
     blockUnblockUser,
-    loadCat,
-    addCat
+    Categories,
+    addCategory
 }
