@@ -128,6 +128,7 @@ const verifySignup = async (req, res) => {
             phone,
             email,
             password: hashedPassword,
+            isAdmin:0,
             verified: false
         });
 

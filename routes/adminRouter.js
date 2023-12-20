@@ -5,9 +5,7 @@ const adminController=require('../controller/admin_controller')
 
 
 adminRouter.get('/',adminController.loadAdmin)
-
-
-
+adminRouter.get('/users',adminController.loadUsers)
 
 
 

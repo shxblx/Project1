@@ -210,3 +210,36 @@
     
 })(jQuery);
 
+
+///////////
+document.addEventListener('DOMContentLoaded', function () {
+    // Add an event listener to each block/unblock button
+    document.querySelectorAll('.block-unblock-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const userId = this.dataset.userId;
+
+            // Make a fetch request to the server
+            fetch('/admin/block-user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Update the user interface based on the server response
+                    if (data.success) {
+                        alert('User status updated successfully!');
+                        location.reload(); // You may want to update the UI without reloading the page
+                    } else {
+                        alert('Error updating user status.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+    });
+});
+
