@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt')
 const User = require('../model/userModel')
-const Category=require('../model/categModel')
+const Category = require('../model/categModel')
 const nodemailer = require('nodemailer');
 const userOTPverification = require('../model/userOTPverification');
 require('dotenv').config();
@@ -12,7 +12,8 @@ require('dotenv').config();
 
 const loadHome = async (req, res) => {
     try {
-        res.render('index')
+        const user = await User.findOne({_id:req.session.user_id});
+        res.render('index',{user})
 
     } catch (error) {
         console.log(error);
@@ -22,8 +23,8 @@ const loadHome = async (req, res) => {
 
 const loadShop = async (req, res) => {
     try {
-        const category=await Category.find({})
-        res.render('shop',{category})
+        const category = await Category.find({})
+        res.render('shop', { category })
     } catch (error) {
         console.log();
     }
@@ -61,40 +62,52 @@ const loadSingleshop = async (req, res) => {
 }
 const loadLogin = async (req, res) => {
     try {
-        const messages = req.flash('message') || [];
+        const messages = req.flash('message');
         res.render('login', { messages });
     } catch (error) {
         console.log(error);
     }
 }
 
- const verifyLogin=async (req,res)=>{
+const verifyLogin = async (req, res) => {
     try {
-        const {email,password}=req.body
+        const { email, password } = req.body;
         console.log(req.body);
-        const user=await User.findOne({email:email})
-        console.log(user);
-        if (!user) {
-            req.flash('message','user not found')
-            res.redirect('/login')
+        const userData = await User.findOne({ email: email });
 
+        if (!userData) {
+            req.flash('message', 'User not found'); // Update the error message
+            res.redirect('/login');
+            return;
+        }
 
+        if (userData.verified === false) {
+            req.flash('message', 'You have been blocked');
+            res.redirect('/login');
+            return;
         }
-        const passwordMatch=await bcrypt.compare(password,user.password)
-        if(!passwordMatch){
-            req.flash('message','Wrong password')
-            res.redirect('/login')
+
+        const passwordMatch = await bcrypt.compare(password, userData.password);
+
+        if (!passwordMatch) {
+            req.flash('message', 'Wrong password');
+            res.redirect('/login');
+            return;
         }
-        req.session.user_id=user._id
-        res.redirect('/home')
+
+        req.session.user_id = userData._id;
+        res.redirect('/home');
     } catch (error) {
         console.log(error);
+        req.flash('message', 'An error occurred. Please try again.');
+        res.redirect('/login');
     }
- }
+};
+
 
 const loadSignup = async (req, res) => {
     try {
-        const messages = req.flash('message') || [];
+        const messages = req.flash('message');
         res.render('signup', { messages });
     } catch (error) {
         console.log(error);
@@ -130,7 +143,7 @@ const verifySignup = async (req, res) => {
             phone,
             email,
             password: hashedPassword,
-            isAdmin:0,
+            isAdmin: 0,
             verified: false
         });
 
@@ -210,41 +223,36 @@ const sendOTPverificationEmail = async ({ email }, res) => {
 
 const verifyOTP = async (req, res) => {
     try {
-        const email = req.body.email
-        const otp = req.body.first + req.body.second + req.body.third + req.body.fourth
-        console.log(otp);
-        const user = await userOTPverification.findOne({ email: email })
-        console.log('user:', user);
+        const email = req.body.email;
+        const otp = req.body.first + req.body.second + req.body.third + req.body.fourth;
+
+        const user = await userOTPverification.findOne({ email: email });
 
         if (!user) {
-            res.render('otpVerify', { message: "user not found" });
+            return res.render('otpVerify', { message: "User not found" });
         }
 
-        const { otp: hashedOTP } = user
-
+        const { otp: hashedOTP } = user;
         const validOtp = await bcrypt.compare(otp, hashedOTP);
-        console.log(validOtp);
 
         if (validOtp === true) {
-            userData = await User.findOne({ email: email })
+            const userData = await User.findOne({ email: email });
 
-            await User.findByIdAndUpdate({ _id: userData._id }, { $set: { verified: true } })
-            await userOTPverification.deleteOne({ email: email })
+            await User.findByIdAndUpdate({ _id: userData._id }, { $set: { verified: true } });
+            await userOTPverification.deleteOne({ email: email });
 
-            req.session.user_id = userData._id
-            res.redirect('/index');
-
+            req.session.user_id = userData._id;
+            return res.redirect('/home');
         } else {
-            req.flash('message', "otp is inncorrect")
-            res.redirect('/otp')
+            req.flash('message', "OTP is incorrect");
+            return res.redirect('/otp');
         }
-
-
-
     } catch (error) {
         console.log(error);
+        res.status(500).send("Internal Server Error");
     }
-}
+};
+
 
 
 module.exports = {
@@ -259,5 +267,5 @@ module.exports = {
     verifySignup,
     loadOTP,
     verifyOTP,
-    verifyLogin
+    verifyLogin,
 }

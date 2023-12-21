@@ -26,10 +26,10 @@
     <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="/admin/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Template Stylesheet -->
-    <link href="css/style.css" rel="stylesheet">
+    <link href="/admin/css/style.css" rel="stylesheet">
 </head>
 
 <body>
@@ -75,7 +75,6 @@
                     <a href="/admin/users" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Users</a>
                     <a href="/admin/categories" class="nav-item nav-link active"><i
                             class="fa fa-keyboard me-2"></i>Categories</a>
-                            <a href="/admin/categories" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Products</a>
                     <!-- <a href="table.html" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>
                     <a href="chart.html" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Charts</a>
                     <div class="nav-item dropdown">
@@ -175,7 +174,7 @@
                     </div>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <img class="rounded-circle me-lg-2" src="img/user.jpg" alt=""
+                            <img class="rounded-circle me-lg-2" src="../img/user.jpg" alt=""
                                 style="width: 40px; height: 40px;">
                             <span class="d-none d-lg-inline-flex">John Doe</span>
                         </a>
@@ -188,107 +187,56 @@
                 </div>
             </nav>
 
-            <div class="col-11">
-                <div class="bg-secondary rounded h-100 p-4" style="margin-top: 50px; margin-left: 100px;">
-                    <h6 class="mb-4">Category Management</h6>
+            <<div class="col-11">
+                <div class="bg-secondary rounded h-100 p-4" style="margin-top: 100px; margin-left: 100px;">
+                    <h6 class="mb-4">Add Category</h6>
 
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+                    <!-- <div class="d-flex justify-content-between align-items-center mb-3">
                         <div class="input-group" style="max-width: 20rem;">
-
                             <input type="text" class="form-control" placeholder="Search">
                             <button class="btn btn-primary" type="button">Search</button>
                         </div>
+                    </div> -->
 
-                        <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="itemsPerPageDropdown"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                List
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="itemsPerPageDropdown">
-                                <li><a class="dropdown-item" href="#">10</a></li>
-                                <li><a class="dropdown-item" href="#">25</a></li>
-                                <li><a class="dropdown-item" href="#">50</a></li>
-                                <li><a class="dropdown-item" href="#">100</a></li>
-                            </ul>
-                            <!-- <label for="itemsPerPage" class="ms-2 mt-2 text-light">items per page</label> -->
-                        </div>
-                    </div>
+                    <!-- Form for Adding Category -->
+                    <!-- editCat.ejs -->
+
+                    <!-- editCat.ejs -->
+
+                    <!-- editCat.ejs -->
+
+                    <form method="post">
+    <div class="mb-3">
+        <label for="categoryName" class="form-label">Category Name</label>
+        <input type="text" class="form-control" name="catName" id="categoryName"
+            placeholder="Enter category name" value="<%= category ? category.name : '' %>">
+    </div>
+    <div class="mb-3">
+        <label for="categoryDescription" class="form-label">Category Description</label>
+        <textarea class="form-control" name="catDes" id="categoryDescription" rows="3"
+            placeholder="Enter category description"><%= category ? category.description : '' %></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Update Category</button>
+</form>
+
+
+
+
+
+                    <!-- Button for Adding Category (if you prefer a button outside the form) -->
+                    <!--
+                    <button type="button" class="btn btn-primary btn-sm mt-3">
+                        Add Category
+                    </button>
+                    -->
 
                     <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Description</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col">Edit</th>
-                                    <th scope="col">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% if (categoryList.length> 0) { %>
-                                    <% for (let i=0; i < categoryList.length; i++) { %>
-                                        <tr>
-                                            <td>
-                                                <%= categoryList[i].name %>
-                                            </td>
-                                            <td>
-                                                <%= categoryList[i].description %>
-                                            </td>
-                                            <td>
-                                                <% if (categoryList[i].isListed) { %>
-                                                    <span class="badge bg-success">Listed</span>
-                                                    <% } else { %>
-                                                        <span class="badge bg-danger">Unlisted</span>
-                                                        <% } %>
-                                            </td>
-                                            <td>
-                                                <a href="categories/editcat/?categId=<%= categoryList[i]._id %>">
-                                                    <button type="button" class="btn btn-outline-warning btn-sm">
-                                                        Edit
-                                                    </button>
-                                                </a>
-                                            </td>
-
-                                            <td>
-                                                <form class="list-unlist-form">
-                                                    <input type="hidden" name="categoryId"
-                                                        value="<%= categoryList[i]._id %>">
-                                                    <% if (categoryList[i].isListed) { %>
-                                                        <button type="button"
-                                                            class="btn btn-danger btn-sm list-unlist-btn"
-                                                            data-category-id="<%= categoryList[i]._id %>">
-                                                            Unlist
-                                                        </button>
-                                                        <% } else { %>
-                                                            <button type="button"
-                                                                class="btn btn-success btn-sm list-unlist-btn"
-                                                                data-category-id="<%= categoryList[i]._id %>">
-                                                                List
-                                                            </button>
-                                                            <% } %>
-                                                </form>
-                                            </td>
-                                            <td>
-                                                <button type="button" class="btn btn-outline-danger btn-sm delete-btn" data-category-id="<%= categoryList[i]._id %>">
-                                                    X
-                                                </button>
-                                            </td>
-                                            
-                                            
-                                        </tr>
-                                        <% } %>
-                                            <% } %>
-                            </tbody>
-                        </table><a href="categories/addcat"><button type="button" class="btn btn-primary btn-sm"
-                                style="margin-left: 10px; margin-bottom: 10px; margin-top: 50px;">
-                                Add Category
-                            </button></a>
-
+                        <!-- Your table or other content goes here -->
                     </div>
                 </div>
-            </div>
         </div>
+
+    </div>
     </div>
     <!-- Table End -->
 
@@ -331,69 +279,6 @@
 
 
 </body>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Add an event listener to each list/unlist button
-        document.querySelectorAll('.list-unlist-btn').forEach(button => {
-            button.addEventListener('click', function () {
-                const categoryId = this.dataset.categoryId;
-
-                fetch('/admin/list-unlist', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ categoryId }),
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            location.reload();
-                        } else {
-                            alert('Error updating category status.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-            });
-        });
-    });
-
-    document.addEventListener('DOMContentLoaded', function () {
-    // ... other code
-
-    // Category delete
-    document.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            const categoryId = this.dataset.categoryId;
-
-            fetch('/admin/categories/deletecat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ categoryId }),
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        console.log(data);
-                        location.reload();
-                    } else {
-                        alert('Error deleting category.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        });
-    });
-});
-
-</script>
-
 
 
 
