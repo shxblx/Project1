@@ -187,7 +187,7 @@
                 </div>
             </nav>
 
-            <<div class="col-11">
+            <div class="col-11">
                 <div class="bg-secondary rounded h-100 p-4" style="margin-top: 100px; margin-left: 100px;">
                     <h6 class="mb-4">Add Category</h6>
             
@@ -199,7 +199,7 @@
                     </div> -->
             
                     <!-- Form for Adding Category -->
-                    <form method="post">
+                    <form method="post" action="/admin/categories/addcat">
                         <div class="mb-3">
                             <label for="categoryName" class="form-label">Category Name</label>
                             <input type="text" class="form-control" name="catName" id="categoryName" placeholder="Enter category name">
@@ -212,7 +212,7 @@
                         <button type="submit" class="btn btn-primary">Add Category</button>
                     </form>
                     <% if (messages.length > 0) { %>
-                        <div style="color: red;">
+                        <div style="color: red;">Z
                             <%= messages[0] %>
                         </div>
                     <% } %>

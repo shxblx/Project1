@@ -1,5 +1,9 @@
 const Category = require("../model/categModel");
 const User = require("../model/userModel");
+const product=require('../model/productmodel')
+const path=require('path')
+const sharp=require('sharp')
+
 
 const loadAdmin=async(req,res)=>{
     try {
@@ -45,7 +49,7 @@ const Categories=async(req,res)=>{
 }
 const loadaddCat=async(req,res)=>{
     try {
-        res.render('Admin/addcat')
+        res.render('Admin/addCat')
     } catch (error) {
         console.log(error);
     }
@@ -66,7 +70,7 @@ const addCategory = async (req, res) => {
         });
 
         await category.save();
-        res.redirect('/admin/categories');
+        res.redirect('/admin/categories')
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Internal server error' });
@@ -134,13 +138,65 @@ const deleteCategory = async (req, res) => {
     }
 };
 
+const loadProducts=async(req,res)=>{
+    try {
+        const products=await product.find({})
+        res.render('Admin/product',{products})
+    } catch (error) {
+        console.log(error);
+    }
+}
 
+const loadAddProduct=async(req,res)=>{
+    try {
+        const data=await Category.find({isListed:true})
+        res.render('Admin/addProduct',{category:data})
+    } catch (error) {
+        console.log(error);
+    }
+}
 
+const addProduct = async (req, res) => {
+    try {
+        const existProduct = await product.findOne({ name: req.body.productName })
+        if (existProduct) {
+            res.status(404).send({ message: 'category already exist' })
+        } else {
+            const { productName, description, quantity, price, category, brand, date } = req.body
+            const filenames = []
+            console.log(req.body);
 
+            const selectedCategory = await Category.findOne({ name: category })
 
+            const data = await Category.find({ is_listed: false })
+            console.log(data);
+            if (req.files.length !== 4) {
+                return res.render('addProduct', { message: '4 images needed', category: data })
+            }
+            // resize and save each uploaded images
+            for (let i = 0; i < req.files.length; i++) {
+                const imagesPath = path.join(__dirname, '../public/sharpimages', req.files[i].filename)
+                await sharp(req.files[i].path).resize(800, 1200, { fit: 'fill' }).toFile(imagesPath)
+                filenames.push(req.files[i].filename)
+            }
+            const newProduct = new product({
+                name: productName,
+                description,
+                quantity,
+                price,
+                image: filenames,
+                category: selectedCategory._id,
+                brand,
+                date,
+            })
+            await newProduct.save()
+            res.redirect('/admin/product')
+        }
+    } catch (error) {
+        console.log(error);
 
-
-
+    }
+}
 
 
 module.exports={
@@ -153,5 +209,8 @@ module.exports={
     loadaddCat,
     loadeEditCat,
     listUnlistCategory,
-    deleteCategory
+    deleteCategory,
+    loadProducts,
+    loadAddProduct,
+    addProduct
 }
