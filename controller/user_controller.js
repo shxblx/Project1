@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt')
 const User = require('../model/userModel')
 const Category = require('../model/categModel')
+const product=require('../model/productmodel')
 const nodemailer = require('nodemailer');
 const userOTPverification = require('../model/userOTPverification');
 require('dotenv').config();
@@ -23,8 +24,9 @@ const loadHome = async (req, res) => {
 
 const loadShop = async (req, res) => {
     try {
-        const category = await Category.find({})
-        res.render('shop', { category })
+        const products=await product.find({is_listed:true})
+        const category = await Category.find({isListed:true})
+        res.render('shop', { category,products})
     } catch (error) {
         console.log();
     }
@@ -55,7 +57,9 @@ const loadCart = async (req, res) => {
 }
 const loadSingleshop = async (req, res) => {
     try {
-        res.render('shop-single')
+        const products=req.query.id
+        const productsId=await product.find({_id:products})
+        res.render('shop-single',{productsId})
     } catch (error) {
         console.log(error);
     }
@@ -255,6 +259,7 @@ const verifyOTP = async (req, res) => {
 
 
 
+
 module.exports = {
     loadHome,
     loadShop,
@@ -268,4 +273,5 @@ module.exports = {
     loadOTP,
     verifyOTP,
     verifyLogin,
+    loadSingleshop
 }

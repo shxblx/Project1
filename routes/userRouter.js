@@ -16,4 +16,5 @@ userRouter.get('/signup',userController.loadSignup)
 userRouter.post('/signup',userController.verifySignup)
 userRouter.get('/otpVerify',auth.isLogout,userController.loadOTP)
 userRouter.post('/otpVerify',userController.verifyOTP)
+userRouter.get('/item',userController.loadSingleshop)
 module.exports=userRouter

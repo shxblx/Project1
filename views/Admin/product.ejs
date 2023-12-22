@@ -265,20 +265,20 @@
                                                     <% if (products[i].is_listed) { %>
                                                         <button type="button"
                                                             class="btn btn-danger btn-sm list-unlist-btn"
-                                                            data-category-id="<%= products[i]._id %>">
+                                                            data-product-id="<%= products[i]._id %>">
                                                             Unlist
                                                         </button>
                                                         <% } else { %>
                                                             <button type="button"
                                                                 class="btn btn-success btn-sm list-unlist-btn"
-                                                                data-category-id="<%= products[i]._id %>">
+                                                                data-product-id="<%= products[i]._id %>">
                                                                 List
                                                             </button>
                                                             <% } %>
                                                 </form>
                                             </td>
                                             <td>
-                                                <button type="button" class="btn btn-outline-danger btn-sm delete-btn" data-category-id="<%= products[i]._id %>">
+                                                <button type="button" class="btn btn-outline-danger btn-sm delete-btn" data-product-id="<%= products[i]._id %>">
                                                     X
                                                 </button>
                                             </td>
@@ -340,51 +340,52 @@
 
 </body>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Add an event listener to each list/unlist button
-        document.querySelectorAll('.list-unlist-btn').forEach(button => {
-            button.addEventListener('click', function () {
-                const categoryId = this.dataset.categoryId;
 
-                fetch('/admin/list-unlist', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ categoryId }),
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            location.reload();
-                        } else {
-                            alert('Error updating category status.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Add an event listener to each list/unlist button
+    document.querySelectorAll('.list-unlist-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const productId = this.dataset.productId;
+
+            fetch('/admin/list-products', { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ productId }), 
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error updating product status.'); 
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
             });
         });
     });
+});
 
+
+
+/////////////////////
     document.addEventListener('DOMContentLoaded', function () {
-        // ... other code
-
-        // Category delete
-        document.querySelectorAll('.delete-btn').forEach(button => {
+        document.querySelectorAll('.delete-btn').forEach(function (button) {
             button.addEventListener('click', function () {
-                const categoryId = this.dataset.categoryId;
-
-                fetch('/admin/categories/deletecat', {
+                var productId = this.getAttribute('data-product-id');
+                fetch('/admin/product/deleteproduct', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ categoryId }),
+                    body: JSON.stringify({ productId: productId }),
                 })
-                    .then(response => response.json())
+                .then(response => response.json())
                     .then(data => {
                         if (data.success) {
                             console.log(data);
@@ -399,9 +400,10 @@
             });
         });
     });
+    /////////////////////////////////////////////
 
+    
 </script>
-
 
 
 

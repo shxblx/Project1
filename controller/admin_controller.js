@@ -141,6 +141,9 @@ const deleteCategory = async (req, res) => {
 const loadProducts=async(req,res)=>{
     try {
         const products=await product.find({})
+        console.log(products);
+        const data=await Category.find({_id:products.category})
+        console.log(data+'bann');
         res.render('Admin/product',{products})
     } catch (error) {
         console.log(error);
@@ -198,6 +201,39 @@ const addProduct = async (req, res) => {
     }
 }
 
+const deleteProduct=async(req,res)=>{
+    try {
+        const productId = req.body.productId;
+        console.log(productId);
+        if (!productId) {
+            return res.status(404).json({ success: false, message: 'Category not found' });
+        }
+        await product.deleteOne({_id:productId})
+        res.json({success:true})
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+}
+
+const listUnlistProduct = async (req, res) => {
+    try {
+        const productId = req.body.productId;
+        const products = await product.findById(productId);
+        console.log(products);
+        if (!products) {
+            return res.status(404).json({ success: false, message: 'Category not found' });
+        }
+        products.is_listed = !products.is_listed;
+        
+        await products.save();
+        res.json({ success: true, message: 'Category status updated successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+};
+
 
 module.exports={
     loadAdmin,
@@ -212,5 +248,7 @@ module.exports={
     deleteCategory,
     loadProducts,
     loadAddProduct,
-    addProduct
+    addProduct,
+    deleteProduct,
+    listUnlistProduct
 }

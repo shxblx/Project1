@@ -2,17 +2,23 @@ const express =require('express')
 const adminRouter=express()
 const adminController=require('../controller/admin_controller')
 const multer=require('multer')
+const path=require('path')
 
 
+// multer middleware
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public/uploads');
+    destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, "..", "public", "myImages"))
     },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname);
+    filename: (req, file, cb) => {
+        console.log(file);
+        const name = Date.now() + '-' + file.originalname
+        cb(null, name)
     }
-});
-const upload = multer({ storage: storage });
+})
+
+const upload = multer({ storage: storage }).array('image', 4)
+//
 
 // adminRouterRouter.post('/upload', upload.single('image'), userController.uploadImage); 
 
@@ -29,6 +35,9 @@ adminRouter.post('/list-unlist', adminController.listUnlistCategory);
 adminRouter.post('/categories/deletecat', adminController.deleteCategory);
 adminRouter.get('/product',adminController.loadProducts)
 adminRouter.get('/product/addProduct',adminController.loadAddProduct)
+adminRouter.post('/product/addProduct',upload,adminController.addProduct)
+adminRouter.post('/product/deleteproduct',adminController.deleteProduct)
+adminRouter.post('/list-products',adminController.listUnlistProduct)
 
 
 
