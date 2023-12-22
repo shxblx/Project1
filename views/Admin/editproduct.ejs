@@ -10,7 +10,9 @@
 
     <!-- Favicon -->
     <link href="img/favicon.ico" rel="icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,10 +28,10 @@
     <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="/admin/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Template Stylesheet -->
-    <link href="../css/style.css" rel="stylesheet">
+    <link href="/admin/css/style.css" rel="stylesheet">
 </head>
 
 <body>
@@ -52,7 +54,7 @@
                 </a>
                 <div class="d-flex align-items-center ms-4 mb-4">
                     <div class="position-relative">
-                        <img class="rounded-circle" src="../img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                        <img class="rounded-circle" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
                         <div
                             class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1">
                         </div>
@@ -65,8 +67,10 @@
                 <div class="navbar-nav w-100">
                     <a href="/admin" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
                     <a href="/admin/users" class="nav-item nav-link "><i class="fa-solid fa-user-alt me-2"></i>Users</a>
-                    <a href="/admin/categories" class="nav-item nav-link"><i class="fa-solid fa-layer-group me-2"></i>Categories</a>
-                    <a href="/admin/product" class="nav-item nav-link active"><i class="fa-solid fa-list me-2"></i></i>Products</a>
+                    <a href="/admin/categories" class="nav-item nav-link "><i
+                            class="fa-solid fa-layer-group me-2"></i>Categories</a>
+                    <a href="/admin/product" class="nav-item nav-link active"><i
+                            class="fa-solid fa-list me-2"></i></i>Products</a>
                     <!-- <a href="table.html" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>
                     <a href="chart.html" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Charts</a>
                     <div class="nav-item dropdown">
@@ -166,7 +170,7 @@
                     </div>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <img class="rounded-circle me-lg-2" src="img/user.jpg" alt=""
+                            <img class="rounded-circle me-lg-2" src="../img/user.jpg" alt=""
                                 style="width: 40px; height: 40px;">
                             <span class="d-none d-lg-inline-flex">John Doe</span>
                         </a>
@@ -181,62 +185,92 @@
 
             <div class="col-11">
                 <div class="bg-secondary rounded h-100 p-4" style="margin-top: 100px; margin-left: 100px;">
-                    <h6 class="mb-4">Add Category</h6>
-            
-                    <form class="forms-sample" method="post" enctype="multipart/form-data">
-                        <div class="form-group">
-                            <label for="exampleInputName1">Product Name</label>
-                            <input type="text" class="form-control" name="productName" id="exampleInputName1"
-                                placeholder="Product Name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="exampleInputEmail3">Description</label>
-                            <input type="text" class="form-control" name="description" id="exampleInputEmail3"
-                                placeholder="Description" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="exampleInputPassword4">Quantity</label>
-                            <input type="number" class="form-control" name="quantity" id="exampleInputPassword4"
-                                placeholder="Quantity" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="exampleSelectGender">Price</label>
-                            <input type="number" class="form-control" name="price" id="exampleInputPassword4"
-                                placeholder="Price" required>
-                        </div>
-                        <div class="form-group">
-                            <label>File upload</label>
-                            <div class="input-group col-xs-12">
-                                <input type="file" name="image" class=" file-upload-info"
-                                    placeholder="Upload Image" multiple required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="exampleInputCity1">Category</label>
-                            <select class="form-control" name="category" id="exampleInputCity1" required>
-                                <% category.forEach(category=>{ %>
-                                    <option>
-                                        <%= category.name %>
-                                    </option>
-                                    <% }) %>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="exampleTextarea1">Brand</label>
-                            <input type="text" class="form-control" name="brand" id="exampleInputCity1"
-                                placeholder="Brand" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary mr-2">Submit</button>
-                        <button class="btn btn-dark">Cancel</button>
-                    </form>
+                    <h6 class="mb-4">Edit Product</h6>
 
-            
-                    <div class="table-responsive">
-                        <!-- Your table or other content goes here -->
-                    </div>
+                    <!-- <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="input-group" style="max-width: 20rem;">
+                            <input type="text" class="form-control" placeholder="Search">
+                            <button class="btn btn-primary" type="button">Search</button>
+                        </div>
+                    </div> -->
+
+                    <!-- Form for Adding Category -->
+                    <!-- editCat.ejs -->
+
+                    <!-- editCat.ejs -->
+
+                    <!-- editCat.ejs -->
+                    <% for (let j=0; j < products.length; j++) { %>
+                        <form class="forms-sample" method="post" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="exampleInputName1">Product Name</label>
+                                <input type="text" class="form-control" name="productName" id="exampleInputName1"
+                                    placeholder="Product Name" value="<%= products[j].name %>" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail3">Description</label>
+                                <input type="text" class="form-control" name="description" id="exampleInputEmail3"
+                                    placeholder="Description" value="<%= products[j].description %>" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword4">Quantity</label>
+                                <input type="number" class="form-control" name="quantity" id="exampleInputPassword4"
+                                    placeholder="Quantity" value="<%= products[j].quantity %>" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleSelectGender">Price</label>
+                                <input type="number" class="form-control" name="price" id="exampleInputPassword4"
+                                    placeholder="Price" value="<%= products[j].price %>" required>
+                            </div>
+                            <div class="form-group">
+                                <label>File upload</label>
+                                <div class="input-group col-xs-12">
+                                    <input type="file" name="image" class="file-upload-info" placeholder="Upload Image"
+                                        multiple required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputCity1">Category</label>
+                                <select class="form-control" name="category" id="exampleInputCity1" required>
+                                    <% if (catId && catId.length > 0) { %>
+                                        <% for (let i = 0; i < catId.length; i++) { %>
+                                            <option value="<%= catId[i].name %> ===products[j].category ? 'selected' : '' %>">
+                                                <%= catId[i].name %>
+                                            </option>
+                                        <% } %>
+                                    <% } %>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="exampleTextarea1">Brand</label>
+                                <input type="text" class="form-control" name="brand" id="exampleInputCity1"
+                                    placeholder="Brand" value="<%= products[j].brand %>" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                            <button class="btn btn-dark">Cancel</button>
+                        </form>
+                    <% } %>
+                    
+
+
+
+
+
+
+                            <!-- Button for Adding Category (if you prefer a button outside the form) -->
+                            <!--
+                    <button type="button" class="btn btn-primary btn-sm mt-3">
+                        Add Category
+                    </button>
+                    -->
+
+                            <div class="table-responsive">
+                                <!-- Your table or other content goes here -->
+                            </div>
                 </div>
             </div>
-            
+
         </div>
     </div>
     <!-- Table End -->
@@ -277,8 +311,8 @@
 
     <!-- Template Javascript -->
 
-    
-    
+
+
 </body>
 
 

@@ -92,6 +92,11 @@
                     <input class="otp-input-custom" type="text" inputmode="numeric" pattern="[0-9]*" name="fourth" maxlength="1" oninput="moveToNext(this)">
                 </div>
                 <button onclick="validateOTP()">Validate</button>
+                <% if (messages.length > 0) { %>
+                    <div style="color: red;">
+                        <%= messages[0] %>
+                    </div>
+                <% } %>
                  </div>
             </div>
         </form>

@@ -90,6 +90,7 @@ const verifyLogin = async (req, res) => {
             res.redirect('/login');
             return;
         }
+        
 
         const passwordMatch = await bcrypt.compare(password, userData.password);
 
@@ -122,7 +123,8 @@ const loadSignup = async (req, res) => {
 const loadOTP = async (req, res) => {
     try {
         const email = req.query.email
-        res.render('otpVerify', { email })
+        const messages=req.flash('message')
+        res.render('otpVerify', { email,messages })
     } catch (error) {
         console.log(error);
     }
@@ -138,7 +140,11 @@ const verifySignup = async (req, res) => {
             res.redirect('/signup');
         }
 
-
+        if (email) {
+            req.flash('message', 'Existing User');
+            res.redirect('/signup');
+            return;
+        }
         const hashedPassword = await bcrypt.hash(password, 10);
 
 
@@ -249,7 +255,7 @@ const verifyOTP = async (req, res) => {
             return res.redirect('/home');
         } else {
             req.flash('message', "OTP is incorrect");
-            return res.redirect('/otp');
+            return res.redirect(`/otpVerify?email=${email}`);
         }
     } catch (error) {
         console.log(error);

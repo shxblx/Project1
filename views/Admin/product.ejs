@@ -177,7 +177,7 @@
                         <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
                             <a href="#" class="dropdown-item">My Profile</a>
                             <a href="#" class="dropdown-item">Settings</a>
-                            <a href="#" class="dropdown-item">Log Out</a>
+                            <a href="/admin/adminLogout" class="dropdown-item">Log Out</a>
                         </div>
                     </div>
                 </div>
@@ -247,11 +247,11 @@
                                                         <span class="badge bg-danger">Unlisted</span>
                                                         <% } %>
                                             </td>
-                                            <td>
+                                            <td style="text-align: center;">
                                                 <%=products[i].quantity%>
                                             </td>
                                             <td>
-                                                <a href="categories/editcat/?categId=<%= products[i]._id %>">
+                                                <a href="product/editproduct/?productId=<%= products[i]._id %>">
                                                     <button type="button" class="btn btn-outline-warning btn-sm">
                                                         Edit
                                                     </button>

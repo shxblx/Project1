@@ -1,15 +1,16 @@
 const Category = require("../model/categModel");
 const User = require("../model/userModel");
-const product=require('../model/productmodel')
-const path=require('path')
-const sharp=require('sharp')
-const bcrypt=require('bcrypt')
+const product = require('../model/productmodel')
+const path = require('path')
+const sharp = require('sharp')
+const bcrypt = require('bcrypt')
 
 
-const loadAdminSignin=async(req,res)=>{
+const loadAdminSignin = async (req, res) => {
     try {
-        res.render('Admin/signin')
-        
+        const messages=req.flash('message')
+        res.render('Admin/signin',{messages})
+
     } catch (error) {
         console.log(error);
     }
@@ -17,41 +18,38 @@ const loadAdminSignin=async(req,res)=>{
 
 const verifyAdminLogin = async (req, res) => {
     try {
-      const { email, password } = req.body;
-      if (!email) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-      const admin = await User.findOne({ email: email });
-      if (!admin || admin.isAdmin !== 1) {
-        return res.status(404).json({ message: 'Oops! You are not an Admin' });
-      }
-      const passwordMatch = await bcrypt.compare(password, admin.password);
+        const { email, password } = req.body;
+        const admin = await User.findOne({ email: email });
+        if (!admin || admin.isAdmin !== 1) {
+            req.flash('message','You are not an admin')
+            return res.redirect('/admin/adminSignin')
+        }
+        const passwordMatch = await bcrypt.compare(password, admin.password);
 
         if (!passwordMatch) {
             req.flash('message', 'Wrong password');
-            return res.status(404).json({ message: 'Password Mismatch' });
-            return;
+            return res.redirect('/admin/adminSignin')
         }
-      req.session.user_id = admin._id;
-      return res.redirect('/admin');
+        req.session.admin_id = admin._id;
+        res.redirect('/admin/');
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Internal Server Error' });
+        console.error(error);
+        return res.status(500).json({ message: 'Internal Server Error' });
     }
-  };
-  
+};
 
-const loadAdmin=async(req,res)=>{
+
+const loadAdmin = async (req, res) => {
     try {
         res.render('Admin/index')
     } catch (error) {
         console.log(error);
     }
 }
-const loadUsers=async(req,res)=>{
+const loadUsers = async (req, res) => {
     try {
-        const userData=await User.find({isAdmin:0})
-        res.render('Admin/users',{user:userData})
+        const userData = await User.find({ isAdmin: 0 })
+        res.render('Admin/users', { user: userData })
     } catch (error) {
         console.log(error);
     }
@@ -75,17 +73,18 @@ const blockUnblockUser = async (req, res) => {
     }
 };
 
-const Categories=async(req,res)=>{
+const Categories = async (req, res) => {
     try {
-        const categoryList= await Category.find({})
-        res.render("Admin/categories",{categoryList})
+        const categoryList = await Category.find({})
+        res.render("Admin/categories", { categoryList })
     } catch (error) {
         console.log(error);
     }
 }
-const loadaddCat=async(req,res)=>{
+const loadaddCat = async (req, res) => {
     try {
-        res.render('Admin/addCat')
+        const messages = req.flash('message')
+        res.render('Admin/addCat', { messages })
     } catch (error) {
         console.log(error);
     }
@@ -93,10 +92,16 @@ const loadaddCat=async(req,res)=>{
 const addCategory = async (req, res) => {
     try {
         const { catName, catDes } = req.body;
-
-        if(!catName){
-            alert('empty category name')
+        const existingCategory = await Category.findOne({ name: catName });
+        if(existingCategory){
+            req.flash('message', 'Category Aleady exists');
+            return res.redirect('/admin/categories/addcat');
         }
+        if (!catName) {
+            req.flash('message', 'Add category name');
+            return res.redirect('/admin/categories/addcat');
+        }
+        
 
         const category = new Category({
             name: catName,
@@ -106,9 +111,11 @@ const addCategory = async (req, res) => {
         });
 
         await category.save();
-        res.redirect('/admin/categories')
+        req.flash('success', 'Category added successfully');
+        return res.redirect('/admin/categories');
     } catch (error) {
         console.log(error);
+        req.flash('error', 'Internal server error');
         res.status(500).json({ message: 'Internal server error' });
     }
 };
@@ -125,13 +132,13 @@ const loadeEditCat = async (req, res) => {
     }
 };
 
-const editCategory=async(req,res)=>{
+const editCategory = async (req, res) => {
     try {
-        const catId=req.query.categId
-        const{catName,catDes}=req.body;
+        const catId = req.query.categId
+        const { catName, catDes } = req.body;
         console.log(catName);
         await Category.findByIdAndUpdate(
-            { _id:catId },
+            { _id: catId },
             { $set: { name: catName, description: catDes } },
             { new: true }
         );
@@ -166,30 +173,30 @@ const deleteCategory = async (req, res) => {
         if (!category) {
             return res.status(404).json({ success: false, message: 'Category not found' });
         }
-        await Category.deleteOne({_id:categoryId})
-        res.json({success:true})
+        await Category.deleteOne({ _id: categoryId })
+        res.json({ success: true })
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
 };
 
-const loadProducts=async(req,res)=>{
+const loadProducts = async (req, res) => {
     try {
-        const products=await product.find({})
+        const products = await product.find({})
         console.log(products);
-        const data=await Category.find({_id:products.category})
-        console.log(data+'bann');
-        res.render('Admin/product',{products})
+        const data = await Category.find({ _id: products.category })
+        console.log(data + 'bann');
+        res.render('Admin/product', { products })
     } catch (error) {
         console.log(error);
     }
 }
 
-const loadAddProduct=async(req,res)=>{
+const loadAddProduct = async (req, res) => {
     try {
-        const data=await Category.find({isListed:true})
-        res.render('Admin/addProduct',{category:data})
+        const data = await Category.find({ isListed: true })
+        res.render('Admin/addProduct', { category: data })
     } catch (error) {
         console.log(error);
     }
@@ -234,18 +241,47 @@ const addProduct = async (req, res) => {
     } catch (error) {
         console.log(error);
 
-    }
+    }
 }
 
-const deleteProduct=async(req,res)=>{
+const loadEditProduct = async (req, res) => {
+    try {
+        const productId = req.query.productId;
+        console.log(productId);
+        const catId=await Category.find({})
+        const products = await product.find({_id:productId});
+        console.log(products);
+        res.render('Admin/editproduct', { products,catId });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const editProduct=async(req,res)=>{
+    try {
+        const productId = req.query.productId
+        const { catName, catDes } = req.body;
+        console.log(catName);
+        await Category.findByIdAndUpdate(
+            { _id: catId },
+            { $set: { name: catName, description: catDes } },
+            { new: true }
+        );
+        res.redirect('/admin/categories')
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const deleteProduct = async (req, res) => {
     try {
         const productId = req.body.productId;
         console.log(productId);
         if (!productId) {
             return res.status(404).json({ success: false, message: 'Category not found' });
         }
-        await product.deleteOne({_id:productId})
-        res.json({success:true})
+        await product.deleteOne({ _id: productId })
+        res.json({ success: true })
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Internal Server Error' });
@@ -261,7 +297,7 @@ const listUnlistProduct = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Category not found' });
         }
         products.is_listed = !products.is_listed;
-        
+
         await products.save();
         res.json({ success: true, message: 'Category status updated successfully' });
     } catch (error) {
@@ -270,7 +306,7 @@ const listUnlistProduct = async (req, res) => {
     }
 };
 
-const LogoutAdmin=async(req,res)=>{
+const LogoutAdmin = async (req, res) => {
     try {
         req.session.destroy()
         res.redirect('AdminSignin')
@@ -279,7 +315,7 @@ const LogoutAdmin=async(req,res)=>{
     }
 }
 
-module.exports={
+module.exports = {
     loadAdmin,
     loadAdminSignin,
     loadUsers,
@@ -293,9 +329,11 @@ module.exports={
     deleteCategory,
     loadProducts,
     loadAddProduct,
+    loadEditProduct,
     addProduct,
     deleteProduct,
     listUnlistProduct,
     verifyAdminLogin,
-    LogoutAdmin
+    LogoutAdmin,
+    editProduct
 }
