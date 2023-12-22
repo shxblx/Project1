@@ -273,7 +273,7 @@ const listUnlistProduct = async (req, res) => {
 const LogoutAdmin=async(req,res)=>{
     try {
         req.session.destroy()
-        res.redirect('/AdminSignin')
+        res.redirect('AdminSignin')
     } catch (error) {
         console.log(error);
     }

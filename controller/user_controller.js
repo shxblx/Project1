@@ -257,6 +257,15 @@ const verifyOTP = async (req, res) => {
     }
 };
 
+const userLogout=async(req,res)=>{
+    try {
+        req.session.destroy()
+        res.redirect('/')
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 
 
@@ -273,5 +282,6 @@ module.exports = {
     loadOTP,
     verifyOTP,
     verifyLogin,
-    loadSingleshop
+    loadSingleshop,
+    userLogout
 }
