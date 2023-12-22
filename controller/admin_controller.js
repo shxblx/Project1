@@ -3,7 +3,43 @@ const User = require("../model/userModel");
 const product=require('../model/productmodel')
 const path=require('path')
 const sharp=require('sharp')
+const bcrypt=require('bcrypt')
 
+
+const loadAdminSignin=async(req,res)=>{
+    try {
+        res.render('Admin/signin')
+        
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const verifyAdminLogin = async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      if (!email) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      const admin = await User.findOne({ email: email });
+      if (!admin || admin.isAdmin !== 1) {
+        return res.status(404).json({ message: 'Oops! You are not an Admin' });
+      }
+      const passwordMatch = await bcrypt.compare(password, admin.password);
+
+        if (!passwordMatch) {
+            req.flash('message', 'Wrong password');
+            return res.status(404).json({ message: 'Password Mismatch' });
+            return;
+        }
+      req.session.user_id = admin._id;
+      return res.redirect('/admin');
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Internal Server Error' });
+    }
+  };
+  
 
 const loadAdmin=async(req,res)=>{
     try {
@@ -234,9 +270,18 @@ const listUnlistProduct = async (req, res) => {
     }
 };
 
+const LogoutAdmin=async(req,res)=>{
+    try {
+        req.session.destroy()
+        res.redirect('/AdminSignin')
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 module.exports={
     loadAdmin,
+    loadAdminSignin,
     loadUsers,
     blockUnblockUser,
     Categories,
@@ -250,5 +295,7 @@ module.exports={
     loadAddProduct,
     addProduct,
     deleteProduct,
-    listUnlistProduct
+    listUnlistProduct,
+    verifyAdminLogin,
+    LogoutAdmin
 }

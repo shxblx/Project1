@@ -3,6 +3,7 @@ const adminRouter=express()
 const adminController=require('../controller/admin_controller')
 const multer=require('multer')
 const path=require('path')
+const auth=require('../middleware/auth')
 
 
 // multer middleware
@@ -22,7 +23,9 @@ const upload = multer({ storage: storage }).array('image', 4)
 
 // adminRouterRouter.post('/upload', upload.single('image'), userController.uploadImage); 
 
-adminRouter.get('/',adminController.loadAdmin)
+adminRouter.get('/',auth.isAdminLogout,adminController.loadAdmin)
+adminRouter.get('/adminSignin',adminController.loadAdminSignin)
+adminRouter.post('/adminSignin',adminController.verifyAdminLogin)
 adminRouter.get('/users',adminController.loadUsers)
 adminRouter.post('/block-user', adminController.blockUnblockUser);
 adminRouter.get('/categories',adminController.Categories)
