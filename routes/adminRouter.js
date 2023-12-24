@@ -29,7 +29,6 @@ adminRouter.get('/categories',auth.isLogin,adminController.Categories)
 adminRouter.get('/categories/addcat',auth.isLogin,adminController.loadaddCat)
 adminRouter.post('/categories/addcat',adminController.addCategory)
 adminRouter.get('/categories/editcat',auth.isLogin,adminController.loadeEditCat)
-adminRouter.get('/categories/editcat',auth.isLogin,adminController.loadeEditCat);
 adminRouter.post('/categories/editcat',adminController.editCategory)
 adminRouter.post('/list-unlist', adminController.listUnlistCategory);
 adminRouter.post('/categories/deletecat', adminController.deleteCategory);

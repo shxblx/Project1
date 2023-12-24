@@ -93,39 +93,43 @@ const addCategory = async (req, res) => {
     try {
         const { catName, catDes } = req.body;
         const existingCategory = await Category.findOne({ name: catName });
-        if(existingCategory){
-            req.flash('message', 'Category Aleady exists');
+        console.log(existingCategory);
+        if (existingCategory) {
+            req.flash('message', 'Category already exists');
             return res.redirect('/admin/categories/addcat');
         }
+
         if (!catName) {
-            req.flash('message', 'Add category name');
+            req.flash('message', 'Please add category name');
             return res.redirect('/admin/categories/addcat');
         }
-        
 
         const category = new Category({
             name: catName,
             description: catDes,
             isListed: true,
-            createdAt: new Date()
+            createdAt: new Date(),
         });
 
         await category.save();
+
         req.flash('success', 'Category added successfully');
         return res.redirect('/admin/categories');
     } catch (error) {
         console.log(error);
-        req.flash('error', 'Internal server error');
+        req.flash('error', 'Failed to add category. Please try again.');
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 const loadeEditCat = async (req, res) => {
     try {
+        const messages=req.flash('message')
         const categoryId = req.query.categId;
         console.log(categoryId)
         const category = await Category.findById(categoryId);
         console.log(category);
-        res.render('Admin/editCat', { category });
+        res.render('Admin/editCat', { category,messages });
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
@@ -134,20 +138,29 @@ const loadeEditCat = async (req, res) => {
 
 const editCategory = async (req, res) => {
     try {
-        const catId = req.query.categId
+        const catId = req.query.categId;
         const { catName, catDes } = req.body;
-        console.log(catName);
-        await Category.findByIdAndUpdate(
+
+        const copyCat = await Category.findById(catId);
+        console.log(copyCat);
+
+        if (copyCat.name.toLowerCase() === catName.toLowerCase()) {
+            req.flash('message', 'Category already exists');
+            return res.redirect('admin/categories/editcat');
+        }
+
+        await Category.updateOne(
             { _id: catId },
             { $set: { name: catName, description: catDes } },
             { new: true }
         );
-        res.redirect('/admin/categories')
+
+        res.redirect('/admin/categories');
     } catch (error) {
         console.log(error);
     }
+};
 
-}
 
 const listUnlistCategory = async (req, res) => {
     try {

@@ -203,6 +203,11 @@
         <input type="text" class="form-control" name="catName" id="categoryName"
             placeholder="Enter category name" value="<%= category ? category.name : '' %>">
     </div>
+    <% if (messages.length > 0) { %>
+        <div style="color: red;">
+            <%= messages[0] %>
+        </div>
+    <% } %>
     <div class="mb-3">
         <label for="categoryDescription" class="form-label">Category Description</label>
         <textarea class="form-control" name="catDes" id="categoryDescription" rows="3"
