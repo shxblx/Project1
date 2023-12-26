@@ -13,12 +13,6 @@
     <link rel="stylesheet" href="css/jquery-ui.css">
     <link rel="stylesheet" href="css/owl.carousel.min.css">
     <link rel="stylesheet" href="css/owl.theme.default.min.css">
-<!-- Add Owl Carousel CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
-
-
-<!-- Add magnify.js CSS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/magnify/2.3.3/js/jquery.magnify.min.js"></script>
 
 
     <link rel="stylesheet" href="css/aos.css">
@@ -99,13 +93,15 @@
             <div class="item-entry">
               <a href="#" class="d-block">
                 <div class="row">
-                  <div class="item-entry owl-carousel">
+                  <div class="col-md-6">
                     <div class="zoom-in">
                       <img src="/myImages/<%=productsId[i].image[0]%>" alt="Image" class="img-fluid mb-2">
                     </div>
                     <div class="zoom-in">
                       <img src="/myImages/<%=productsId[i].image[1]%>" alt="Image" class="img-fluid">
                     </div>
+                  </div>
+                  <div class="col-md-6">
                     <div class="zoom-in">
                       <img src="/myImages/<%=productsId[i].image[2]%>" alt="Image" class="img-fluid mb-2">
                     </div>
@@ -113,7 +109,6 @@
                       <img src="/myImages/<%=productsId[i].image[3]%>" alt="Image" class="img-fluid">
                     </div>
                   </div>
-                  
                 </div>
               </a>
             </div>
@@ -326,56 +321,15 @@
     </footer>
   </div>
 
-  <!-- Add Owl Carousel and dependencies JS -->
-<!-- Add Owl Carousel and dependencies JS -->
-<!-- Add jQuery -->
-<!-- Add jQuery -->
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-<script src="jquery.magnify.min.js"></script>
+  <script src="js/jquery-3.3.1.min.js"></script>
+  <script src="js/jquery-ui.js"></script>
+  <script src="js/popper.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/owl.carousel.min.js"></script>
+  <script src="js/jquery.magnific-popup.min.js"></script>
+  <script src="js/aos.js"></script>
 
-
-<!-- Add Bootstrap JS (if not already included) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
-<!-- Add jQuery UI JS (if not already included) -->
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
-<!-- Add magnify.js JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/magnify/2.3.3/js/jquery.magnify.min.js"></script>
-
-<!-- Add Owl Carousel JS and dependencies -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
-
-<!-- Your existing scripts -->
-<script src="js/aos.js"></script>
-<script src="js/main.js"></script>
-
-<!-- Add the following script for the slider and zoom effect -->
-<script>
-  $(document).ready(function () {
-    // Initialize Owl Carousel
-    $(".item-entry").owlCarousel({
-      items: 1,
-      loop: true,
-      autoplay: true,
-      autoplayHoverPause: true,
-      nav: true,
-      dots: false
-    });
-
-    // Initialize magnify.js for zoom effect
-    $('.zoom-in img').magnify({
-      speed: 500,
-      src: function () {
-        return $(this).attr('src');
-      }
-    });
-  });
-</script>
-
-
-
-
+  <script src="js/main.js"></script>
+    
   </body>
 </html>
