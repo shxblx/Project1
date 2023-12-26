@@ -8,8 +8,8 @@ const bcrypt = require('bcrypt')
 
 const loadAdminSignin = async (req, res) => {
     try {
-        const messages=req.flash('message')
-        res.render('Admin/signin',{messages})
+        const messages = req.flash('message')
+        res.render('Admin/signin', { messages })
 
     } catch (error) {
         console.log(error);
@@ -21,7 +21,7 @@ const verifyAdminLogin = async (req, res) => {
         const { email, password } = req.body;
         const admin = await User.findOne({ email: email });
         if (!admin || admin.isAdmin !== 1) {
-            req.flash('message','You are not an admin')
+            req.flash('message', 'You are not an admin')
             return res.redirect('/admin/adminSignin')
         }
         const passwordMatch = await bcrypt.compare(password, admin.password);
@@ -92,7 +92,7 @@ const loadaddCat = async (req, res) => {
 const addCategory = async (req, res) => {
     try {
         const { catName, catDes } = req.body;
-        const existingCategory = await Category.findOne({ name: catName });
+        const existingCategory = await Category.findOne({ name: catName.toUpperCase() });
         console.log(existingCategory);
         if (existingCategory) {
             req.flash('message', 'Category already exists');
@@ -105,7 +105,7 @@ const addCategory = async (req, res) => {
         }
 
         const category = new Category({
-            name: catName,
+            name: catName.toUpperCase(),
             description: catDes,
             isListed: true,
             createdAt: new Date(),
@@ -124,12 +124,12 @@ const addCategory = async (req, res) => {
 
 const loadeEditCat = async (req, res) => {
     try {
-        const messages=req.flash('message')
+        const messages = req.flash('message')
         const categoryId = req.query.categId;
         console.log(categoryId)
         const category = await Category.findById(categoryId);
         console.log(category);
-        res.render('Admin/editCat', { category,messages });
+        res.render('Admin/editCat', { category, messages });
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
@@ -144,10 +144,7 @@ const editCategory = async (req, res) => {
         const copyCat = await Category.findById(catId);
         console.log(copyCat);
 
-        if (copyCat.name.toLowerCase() === catName.toLowerCase()) {
-            req.flash('message', 'Category already exists');
-            return res.redirect('admin/categories/editcat');
-        }
+
 
         await Category.updateOne(
             { _id: catId },
@@ -197,9 +194,7 @@ const deleteCategory = async (req, res) => {
 const loadProducts = async (req, res) => {
     try {
         const products = await product.find({})
-        console.log(products);
         const data = await Category.find({ _id: products.category })
-        console.log(data + 'bann');
         res.render('Admin/product', { products })
     } catch (error) {
         console.log(error);
@@ -260,27 +255,29 @@ const addProduct = async (req, res) => {
 const loadEditProduct = async (req, res) => {
     try {
         const productId = req.query.productId;
-        console.log(productId);
-        const catId=await Category.find({})
-        const products = await product.find({_id:productId});
+        const catId = await Category.find({})
+        const products = await product.find({ _id: productId });
         console.log(products);
-        res.render('Admin/editproduct', { products,catId });
+        res.render('Admin/editproduct', { products, catId });
     } catch (error) {
         console.log(error);
     }
 }
 
-const editProduct=async(req,res)=>{
+
+const editProduct = async (req, res) => {
     try {
         const productId = req.query.productId
-        const { catName, catDes } = req.body;
-        console.log(catName);
-        await Category.findByIdAndUpdate(
-            { _id: catId },
-            { $set: { name: catName, description: catDes } },
+        console.log(req.body);
+        const { productName, description, quantity, price, category, brand } = req.body;
+        console.log(productId);
+        console.log(req.body);
+        await product.findByIdAndUpdate(
+            { _id: productId },
+            { $set: { name: productName, description: description, quantity: quantity, price: price, brand: brand } },
             { new: true }
         );
-        res.redirect('/admin/categories')
+        res.redirect('/admin/product')
     } catch (error) {
         console.log(error);
     }

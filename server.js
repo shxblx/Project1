@@ -9,7 +9,7 @@ const app = express();
 
 
 
-app.use(flash());
+
 
 app.use(express.static(path.resolve(__dirname, 'public')));
 app.set('view engine', 'ejs');
@@ -23,7 +23,7 @@ app.use(session({
     saveUninitialized: true,
 }));
 
-
+app.use(flash());
 
 
 const userRouter = require('./routes/userRouter');

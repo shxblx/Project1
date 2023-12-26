@@ -1,124 +1,350 @@
-<!doctype html>
+<!DOCTYPE html>
+<html lang="en">
 
-<html lang="en"> 
+<head>
+  <title>ShopMax &mdash; Colorlib e-Commerce Template</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
- <head> 
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700">
+  <link rel="stylesheet" href="fonts/icomoon/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/magnific-popup.css">
+  <link rel="stylesheet" href="css/jquery-ui.css">
+  <link rel="stylesheet" href="css/owl.carousel.min.css">
+  <link rel="stylesheet" href="css/owl.theme.default.min.css">
 
-  <meta charset="UTF-8"> 
 
-  <title>Groove Style Login</title> 
+  <link rel="stylesheet" href="css/aos.css">
 
-  <link rel="stylesheet" href="css/stylelog.css"> 
+  <link rel="stylesheet" href="css/style.css">
+
+
   <style>
+    /* Add any additional styles for OTP form if needed */
+    body {
+      font-family: 'Mukta', sans-serif;
+      background-color: #f8f9fa;
+    }
+
+    .site-wrap {
+      background-color: #fff;
+    }
+
+    .signin {
+      text-align: center;
+      margin-top: 50px;
+    }
+
     .otp-container-custom {
-        text-align: center;
-        font-family: Arial, sans-serif;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      /* Adjusted width */
+      margin: 0 auto;
+      /* Center the form */
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    h1 {
+      color: #555;
+      font-size: 15px;
+      margin-bottom: 20px;
     }
 
     .otp-input-custom {
-        width: 40px;
-        height: 40px;
-        font-size: 20px;
-        text-align: center;
-        margin: 5px;
-        border: 2px solid #ddd;
-        border-radius: 5px;
-        outline: none;
+      width: 40px;
+      height: 40px;
+      margin: 0 5px;
+      font-size: 18px;
+      text-align: center;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.3s ease;
     }
 
     .otp-input-custom:focus {
-        box-shadow: 0 0 5px #000000;
-        border-color: #000000;
+      border-color: #007bff;
     }
 
-    .otp-input-custom:hover {
-        border-color: #000000;
+    #countdown {
+      color: #555;
+      font-size: 14px;
+      margin-bottom: 10px;
     }
 
-    .otp-container-custom input[type="number"]::-webkit-inner-spin-button,
-    .otp-container-custom input[type="number"]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
+    button {
+      background-color: #ee4266;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 15px;
+      transition: background-color 0.3s ease;
     }
 
-    .otp-container-custom button {
-        border-radius: 5px;
-        background-color: #000000;
-        color: #ffffff;
-        border: none;
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        margin-top: 20px;
-        transition: background-color 0.3s;
+    button:hover {
+      background-color: #a9a9a9;
     }
 
-    .otp-container-custom button:hover {
-        background-color: #747474;
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
     }
+  </style>
+</head>
 
-    .otp-animation-custom {
-        animation: slideIn 0.5s ease-out;
-    }
+<body>
 
-    @keyframes slideIn {
-        0% {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        100% {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-</style>
- </head> 
+  <div class="site-wrap">
 
- <body> <!-- partial:index.partial.html --> 
 
-  <section> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> 
+    <div class="site-navbar bg-white py-2">
 
-    <div class="signin">
-         <form method="post">
-        <div class="content"> 
-            <div class="otp-container-custom">
-                <h2>OTP Verification</h2>
-                <h1 style="font-size: 15px;">An otp has been sent to your email</h1>
-                <div>
-                    <input type="hidden" name="email" value="<%=locals.email%>">
-                    <input class="otp-input-custom" type="text" inputmode="numeric" pattern="[0-9]*" name="first" maxlength="1" oninput="moveToNext(this)">
-                    <input class="otp-input-custom" type="text" inputmode="numeric" pattern="[0-9]*" name="second" maxlength="1" oninput="moveToNext(this)">
-                    <input class="otp-input-custom" type="text" inputmode="numeric" pattern="[0-9]*" name="third" maxlength="1" oninput="moveToNext(this)">
-                    <input class="otp-input-custom" type="text" inputmode="numeric" pattern="[0-9]*" name="fourth" maxlength="1" oninput="moveToNext(this)">
-                </div>
-                <button onclick="validateOTP()">Validate</button>
-                <% if (messages.length > 0) { %>
-                    <div style="color: red;">
-                        <%= messages[0] %>
-                    </div>
-                <% } %>
-                 </div>
+      <div class="search-wrap">
+        <div class="container">
+          <a href="#" class="search-close js-search-close"><span class="icon-close2"></span></a>
+          <form action="#" method="post">
+            <input type="text" class="form-control" placeholder="Search keyword and hit enter...">
+          </form>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="logo">
+            <div class="site-logo">
+              <a href="/" class="js-logo-clone">Groove Style</a>
             </div>
-        </form>
+          </div>
+          <div class="main-nav d-none d-lg-block">
+            <nav class="site-navigation text-right text-md-center" role="navigation">
+              <ul class="site-menu js-clone-nav d-none d-lg-block">
+                <li class="active">
+                  <a href="/">Home</a>
+                </li>
+
+                <li><a href="/shop">Shop</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/contact">Contact</a></li>
+              </ul>
+            </nav>
+          </div>
+          <div class="icons">
+            <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a>
+            <a href="#" class="icons-btn d-inline-block"><span class="icon-heart-o"></span></a>
+            <a href="/cart" class="icons-btn d-inline-block bag">
+              <span class="icon-shopping-bag"></span>
+              <span class="number">2</span>
+            </a>
+
+            <li class="icons-btn d-inline-block">
+              <a href=""><span><i id="pro-icon" class="fa-solid fa-user"></i></span></a>
+              <ul class="dropdown">
+                <% if (locals.user) { %>
+                  <li><a class="dropdown-item bg-light" href="/profile">
+                      <%=locals.user.username%>
+                    </a></li>
+                  <li><a href="/userLogout" class="dropdown-item bg-light" href="/logout">Logout</a></li>
+                  <li><a href="/admin" class="dropdown-item bg-light">Admin</a></li>
+
+                  <% } else { %>
+                    <li><a class="dropdown-item bg-light" href="/login">Login</a></li>
+                    <li><a class="dropdown-item bg-light" href="/signup">SignUp</a></li>
+                    <li><a href="/admin" class="dropdown-item bg-light">Admin</a></li>
+                    <% } %>
+              </ul>
+            </li>
+
+
+            <div id="pro-icon-dropdown"></div>
+          </div>
+        </div>
+      </div>
     </div>
-    
-    <script>
-        function moveToNext(currentInput) {
-            const inputValue = currentInput.value;
-    
-            // Allow only single digits
-            currentInput.value = inputValue.replace(/\D/g, '');
-    
-            if (currentInput.value && currentInput.nextElementSibling) {
-                currentInput.nextElementSibling.focus();
-            } else if (!currentInput.value && currentInput.previousElementSibling) {
-                currentInput.previousElementSibling.focus();
+  </div>
+
+
+  <div class="signin">
+    <form method="post">
+      <div class="content">
+        <div class="otp-container-custom">
+          <h2>OTP Verification</h2>
+          <h1 style="font-size: 15px;">An OTP has been sent to your email</h1>
+          <div>
+            <input type="hidden" name="email" value="<%=locals.email%>">
+            <input class="otp-input-custom" type="text" inputmode="numeric" pattern="[0-9]*" name="first" maxlength="1"
+              oninput="moveToNextOrPrevious(this)">
+            <input class="otp-input-custom" type="text" inputmode="numeric" pattern="[0-9]*" name="second" maxlength="1"
+              oninput="moveToNextOrPrevious(this)">
+            <input class="otp-input-custom" type="text" inputmode="numeric" pattern="[0-9]*" name="third" maxlength="1"
+              oninput="moveToNextOrPrevious(this)">
+            <input class="otp-input-custom" type="text" inputmode="numeric" pattern="[0-9]*" name="fourth" maxlength="1"
+              oninput="moveToNextOrPrevious(this)">
+          </div>
+          <div id="countdown">Expires in: 120 seconds</div>
+          <button type="submit" disabled>Resend OTP</button>
+          <button onclick="validateOTP()">Validate</button>
+
+          <% if (messages.length> 0) { %>
+            <div style="color: red;">
+              <%= messages[0] %>
+            </div>
+            <% } %>
+        </div>
+      </div>
+    </form>
+  </div>
+
+
+
+  <footer class="site-footer custom-border-top">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
+          <h3 class="footer-heading mb-4">Promo</h3>
+          <a href="#" class="block-6">
+            <img src="images/about_1.jpg" alt="Image placeholder" class="img-fluid rounded mb-4">
+            <h3 class="font-weight-light  mb-0">Finding Your Perfect Shirts This Summer</h3>
+            <p>Promo from July 15 &mdash; 25, 2019</p>
+          </a>
+        </div>
+        <div class="col-lg-5 ml-auto mb-5 mb-lg-0">
+          <div class="row">
+            <div class="col-md-12">
+              <h3 class="footer-heading mb-4">Quick Links</h3>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <ul class="list-unstyled">
+                <li><a href="#">Sell online</a></li>
+                <li><a href="#">Features</a></li>
+                <li><a href="#">Shopping cart</a></li>
+                <li><a href="#">Store builder</a></li>
+              </ul>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <ul class="list-unstyled">
+                <li><a href="#">Mobile commerce</a></li>
+                <li><a href="#">Dropshipping</a></li>
+                <li><a href="#">Website development</a></li>
+              </ul>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <ul class="list-unstyled">
+                <li><a href="#">Point of sale</a></li>
+                <li><a href="#">Hardware</a></li>
+                <li><a href="#">Software</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <div class="block-5 mb-5">
+            <h3 class="footer-heading mb-4">Contact Info</h3>
+            <ul class="list-unstyled">
+              <li class="address">203 Fake St. Mountain View, San Francisco, California, USA</li>
+              <li class="phone"><a href="tel://23923929210">+2 392 3929 210</a></li>
+              <li class="email">emailaddress@domain.com</li>
+            </ul>
+          </div>
+
+          <div class="block-7">
+            <form action="#" method="post">
+              <label for="email_subscribe" class="footer-heading">Subscribe</label>
+              <div class="form-group">
+                <input type="text" class="form-control py-4" id="email_subscribe" placeholder="Email">
+                <input type="submit" class="btn btn-sm btn-primary" value="Send">
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-5 mt-5 text-center">
+        <div class="col-md-12">
+          <p>
+            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+            Copyright &copy;
+            <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made
+            with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank"
+              class="text-primary">Colorlib</a>
+            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </footer>
+  </div>
+
+  <script src="js/jquery-3.3.1.min.js"></script>
+  <script src="js/jquery-ui.js"></script>
+  <script src="js/popper.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/owl.carousel.min.js"></script>
+  <script src="js/jquery.magnific-popup.min.js"></script>
+  <script src="js/aos.js"></script>
+
+  <script src="js/main.js"></script>
+
+  <script>
+    function moveToNextOrPrevious(input) {
+        const maxLength = parseInt(input.getAttribute("maxlength"));
+        const currentLength = input.value.length;
+
+        if (currentLength === maxLength) {
+            // Move to the next input field
+            const nextInput = input.nextElementSibling;
+            if (nextInput) {
+                nextInput.focus();
+            }
+        } else if (currentLength === 0) {
+            // Move to the previous input field when backspace is pressed
+            const previousInput = input.previousElementSibling;
+            if (previousInput) {
+                previousInput.focus();
             }
         }
-    </script>
-    
-    
+    }
 
- </body>
+
+
+    let countdownTime = 120;
+
+    function updateTimer() {
+      document.getElementById('countdown').innerText = "Expires in: " + countdownTime + ' seconds';
+    }
+
+    function startCountdown() {
+      updateTimer();
+
+      const countdownInterval = setInterval(() => {
+        countdownTime--;
+
+        updateTimer();
+
+        if (countdownTime === 0) {
+          clearInterval(countdownInterval);
+
+        }
+      }, 1000);
+    }
+
+    window.onload = startCountdown;
+  </script>
+
+
+</body>
 
 </html>

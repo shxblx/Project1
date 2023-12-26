@@ -972,3 +972,17 @@ li:hover ul.dropdown{
 
 .height-auto {
   height: auto !important; }
+
+
+  .zoom-in {
+    overflow: hidden;
+  }
+  
+  .zoom-in img {
+    transition: transform 0.5s ease;
+  }
+  
+  .zoom-in:hover img {
+    transform: scale(1.2);
+  }
+  

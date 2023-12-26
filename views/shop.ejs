@@ -139,7 +139,7 @@
               <% if (products.length> 0) { %>
                 <% for (let i=0; i < products.length; i++) { %>
               <div class="col-lg-6 col-md-6 item-entry mb-4">
-                <a href="/item?id=<%=products[i]._id%>" class="product-item md-height bg-gray d-block">
+                <a href="/item?id=<%=products[i]._id%>" class="product-item md-height d-block" style="margin-right: 100px;">
                   <img src="/myImages/<%= products[i].image[0] %>" alt="Image" class="img-fluid">
                 </a>
                 <a href="/item" style="font-size: 20px;color: black;"><%=products[i].name%></a>

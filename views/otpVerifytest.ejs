@@ -1,0 +1,193 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Groove Style Login</title>
+
+    <link rel="stylesheet" href="css/stylelog.css">
+    <style>
+        .otp-container-custom {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .otp-input-custom {
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            text-align: center;
+            margin: 5px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .otp-input-custom:focus {
+            box-shadow: 0 0 5px #000000;
+            border-color: #000000;
+        }
+
+        .otp-input-custom:hover {
+            border-color: #000000;
+        }
+
+        .otp-container-custom input[type="number"]::-webkit-inner-spin-button,
+        .otp-container-custom input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .otp-container-custom button {
+            border-radius: 5px;
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .otp-container-custom button:hover {
+            background-color: #747474;
+        }
+
+        .otp-animation-custom {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body> <!-- partial:index.partial.html -->
+
+    <section> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span>
+        <span></span> <span></span> <span></span> <span></span> <span></span>
+
+        <div class="signin">
+            <form method="post">
+                <div class="content">
+                    <div class="otp-container-custom">
+                        <h2>OTP Verification</h2>
+                        <h1 style="font-size: 15px;">An otp has been sent to your email</h1>
+                        <div>
+                            <input type="hidden" name="email" value="<%=locals.email%>">
+                            <input class="otp-input-custom" type="text" inputmode="numeric" pattern="[0-9]*"
+                                name="first" maxlength="1" oninput="moveToNext(this)">
+                            <input class="otp-input-custom" type="text" inputmode="numeric" pattern="[0-9]*"
+                                name="second" maxlength="1" oninput="moveToNext(this)">
+                            <input class="otp-input-custom" type="text" inputmode="numeric" pattern="[0-9]*"
+                                name="third" maxlength="1" oninput="moveToNext(this)">
+                            <input class="otp-input-custom" type="text" inputmode="numeric" pattern="[0-9]*"
+                                name="fourth" maxlength="1" oninput="moveToNext(this)">
+                        </div>
+
+                        <div id="countdown"> 120 seconds>
+
+                        </div>
+                        <button type="submit" >Resend OTP</button>
+                        <button onclick="validateOTP()">Validate</button>
+                        <% if (messages.length> 0) { %>
+                            <div style="color: red;">
+                                <%= messages[0] %>
+                            </div>
+                            <% } %>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <script>
+            function moveToNext(currentInput) {
+                const inputValue = currentInput.value;
+
+                // Allow only single digits
+                currentInput.value = inputValue.replace(/\D/g, '');
+
+                if (currentInput.value && currentInput.nextElementSibling) {
+                    currentInput.nextElementSibling.focus();
+                } else if (!currentInput.value && currentInput.previousElementSibling) {
+                    currentInput.previousElementSibling.focus();
+                }
+            }
+
+
+
+            let countdownTime = 120;
+
+            function updateTimer() {
+                document.getElementById('countdown').innerText = "Expires in: " + countdownTime + ' seconds';
+            }
+
+            function startCountdown() {
+                updateTimer();
+
+                const countdownInterval = setInterval(() => {
+                    countdownTime--;
+
+                    updateTimer();
+
+                    if (countdownTime === 0) {
+                        clearInterval(countdownInterval);
+
+                    }
+                }, 1000);
+            }
+
+            window.onload = startCountdown;
+        </script>
+
+        </script>
+
+
+
+</body>
+
+</html>

@@ -39,6 +39,7 @@ adminRouter.post('/product/deleteproduct',adminController.deleteProduct)
 adminRouter.post('/list-products',adminController.listUnlistProduct)
 adminRouter.get('/adminLogout',auth.isLogin,adminController.LogoutAdmin)
 adminRouter.get('/product/editproduct',adminController.loadEditProduct)
+adminRouter.post('/product/editproduct',upload,adminController.editProduct)
 
 
 
