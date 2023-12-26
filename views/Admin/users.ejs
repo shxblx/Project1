@@ -211,22 +211,22 @@
                                                 <%= user[i].phone %>
                                             </td>
                                             <td>
-                                                <% if (user[i].verified) { %>
-                                                    <span class="badge bg-success">Active</span>
+                                                <% if (user[i].isBlocked) { %>
+                                                    <span class="badge bg-danger">Blocked</span>
                                                     <% } else { %>
-                                                        <span class="badge bg-danger">Blocked</span>
+                                                        <span class="badge bg-success">Active</span>
                                                         <% } %>
                                             </td>
 
                                             <td>
                                                 <form action="/admin/block-user" method="POST">
                                                     <input type="hidden" name="userId" value="<%= user[i]._id %>">
-                                                    <% if (user[i].verified) { %>
+                                                    <% if (user[i].isBlocked) { %>
                                                         <button type="submit"
-                                                            class="btn btn-danger btn-sm">Block</button>
+                                                            class="btn btn-success btn-sm">Unblock</button>
                                                         <% } else { %>
                                                             <button type="submit"
-                                                                class="btn btn-success btn-sm">Unblock</button>
+                                                                class="btn btn-danger btn-sm">Block</button>
                                                             <% } %>
                                                 </form>
                                             </td>

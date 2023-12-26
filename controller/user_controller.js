@@ -85,8 +85,13 @@ const verifyLogin = async (req, res) => {
             
         }
 
-        if (userData.verified === false) {
+        if (userData.isBlocked === true) {
             req.flash('message', 'You have been blocked');
+         return   res.redirect('/login');
+            
+        }
+        if (userData.verified === false) {
+            req.flash('message', 'You are not verified');
          return   res.redirect('/login');
             
         }
@@ -225,7 +230,7 @@ const sendOTPverificationEmail = async ({ email }, res) => {
 
         await newOTPverification.save();
         await transporter.sendMail(mailOption);
-
+        console.log(`OTP for ${email} will be deleted in 2 minutes`);
         setTimeout(async () => {
             await userOTPverification.deleteOne({ email: email });
             console.log(`OTP for ${email} has been deleted after 2 minutes.`);
@@ -339,6 +344,12 @@ const forgotPassSendMail = async (req, res) => {
 
         await newOTPverification.save();
         await transporter.sendMail(mailOption);
+        console.log(`OTP for ${email} will be deleted in 2 minutes`);
+        setTimeout(async () => {
+            
+            await userOTPverification.deleteOne({ email: email });
+            console.log(`OTP for ${email} has been deleted after 2 minutes.`);
+        }, 120000 );
 
         res.redirect(`/otpVerify?email=${email}`)
 

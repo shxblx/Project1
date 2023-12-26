@@ -194,8 +194,8 @@
               oninput="moveToNextOrPrevious(this)">
           </div>
           <div id="countdown">Expires in: 120 seconds</div>
-          <button type="submit" disabled>Resend OTP</button>
-          <button onclick="validateOTP()">Validate</button>
+          <button id="resendBtn" type="submit" disabled>Resend OTP</button>
+          <button id="validateBtn" onclick="validateOTP()" enabled>Validate</button>
 
           <% if (messages.length> 0) { %>
             <div style="color: red;">
@@ -300,22 +300,22 @@
 
   <script>
     function moveToNextOrPrevious(input) {
-        const maxLength = parseInt(input.getAttribute("maxlength"));
-        const currentLength = input.value.length;
+      const maxLength = parseInt(input.getAttribute("maxlength"));
+      const currentLength = input.value.length;
 
-        if (currentLength === maxLength) {
-            // Move to the next input field
-            const nextInput = input.nextElementSibling;
-            if (nextInput) {
-                nextInput.focus();
-            }
-        } else if (currentLength === 0) {
-            // Move to the previous input field when backspace is pressed
-            const previousInput = input.previousElementSibling;
-            if (previousInput) {
-                previousInput.focus();
-            }
+      if (currentLength === maxLength) {
+        // Move to the next input field
+        const nextInput = input.nextElementSibling;
+        if (nextInput) {
+          nextInput.focus();
         }
+      } else if (currentLength === 0) {
+        // Move to the previous input field when backspace is pressed
+        const previousInput = input.previousElementSibling;
+        if (previousInput) {
+          previousInput.focus();
+        }
+      }
     }
 
 
@@ -336,7 +336,8 @@
 
         if (countdownTime === 0) {
           clearInterval(countdownInterval);
-
+          document.getElementById('resendBtn').disabled = false;
+          document.getElementById('validateBtn').disabled=true;
         }
       }, 1000);
     }

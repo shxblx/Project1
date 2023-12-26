@@ -25,7 +25,6 @@ const verifyAdminLogin = async (req, res) => {
             return res.redirect('/admin/adminSignin')
         }
         const passwordMatch = await bcrypt.compare(password, admin.password);
-
         if (!passwordMatch) {
             req.flash('message', 'Wrong password');
             return res.redirect('/admin/adminSignin')
@@ -48,7 +47,7 @@ const loadAdmin = async (req, res) => {
 }
 const loadUsers = async (req, res) => {
     try {
-        const userData = await User.find({ isAdmin: 0 })
+        const userData = await User.find({ isAdmin:0  })
         res.render('Admin/users', { user: userData })
     } catch (error) {
         console.log(error);
@@ -63,7 +62,7 @@ const blockUnblockUser = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        user.verified = !user.verified;
+        user.isBlocked = !user.isBlocked;
         await user.save();
 
         res.redirect('/admin/users');
@@ -193,8 +192,10 @@ const deleteCategory = async (req, res) => {
 
 const loadProducts = async (req, res) => {
     try {
+        const category=await Category.find({})
         const products = await product.find({})
-        const data = await Category.find({ _id: products.category })
+        
+
         res.render('Admin/product', { products })
     } catch (error) {
         console.log(error);
