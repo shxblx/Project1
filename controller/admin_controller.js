@@ -192,15 +192,24 @@ const deleteCategory = async (req, res) => {
 
 const loadProducts = async (req, res) => {
     try {
-        const category=await Category.find({})
-        const products = await product.find({})
-        
-
-        res.render('Admin/product', { products })
+        // Fetch only listed categories
+        const categories = await Category.find({ isListed: true });
+        if (categories.length === 0) {
+            return res.render('Admin/product', { products: [] });
+        }
+        const listedCategoryIds = categories.map(category => category._id);
+        const products = await product.find({
+            category: { $in: listedCategoryIds },
+            is_listed: true
+        });
+        res.render('Admin/product', { products });
     } catch (error) {
         console.log(error);
+        res.status(500).send('Internal Server Error');
     }
-}
+};
+
+
 
 const loadAddProduct = async (req, res) => {
     try {

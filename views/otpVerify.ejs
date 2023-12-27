@@ -193,9 +193,10 @@
             <input class="otp-input-custom" type="text" inputmode="numeric" pattern="[0-9]*" name="fourth" maxlength="1"
               oninput="moveToNextOrPrevious(this)">
           </div>
-          <div id="countdown">Expires in: 120 seconds</div>
-          <button id="resendBtn" type="submit" disabled>Resend OTP</button>
-          <button id="validateBtn" onclick="validateOTP()" enabled>Validate</button>
+          <div id="countdown">Expires in: 60 seconds</div>
+          <button id="resendBtn" type="submit" disabled >Resend OTP</button>
+          <button id="validateBtn" >Validate</button>
+
 
           <% if (messages.length> 0) { %>
             <div style="color: red;">
@@ -205,6 +206,7 @@
         </div>
       </div>
     </form>
+    
   </div>
 
 
@@ -299,18 +301,74 @@
   <script src="js/main.js"></script>
 
   <script>
+
+document.getElementById('validateBtn').addEventListener('click', async (event) => {
+    try {
+      
+        const urlParams = new URLSearchParams(window.location.search);
+        const email = urlParams.get('email');
+        if (!email) {
+            console.error('Email not found in the query parameters');
+            return;
+        }
+
+        const response = await fetch('/otpVerify', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email }),
+        });
+
+        if (response.ok) {
+            window.location.href = '/home';
+        } else {
+            console.error('Failed to initiate OTP verification');
+        }
+    } catch (error) {
+        console.error('Error during OTP verification:', error);
+    }
+});
+
+document.getElementById('resendBtn').addEventListener('click', async () => {
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const email = urlParams.get('email');
+        if (!email) {
+            console.error('Email not found in the query parameters');
+            return;
+        }
+
+        const response = await fetch('/forgotPassword', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email }),
+        });
+
+        if (response.ok) {
+            window.location.reload()
+        } else {
+            console.error('Failed to initiate OTP resend');
+        }
+    } catch (error) {
+        console.error('Error during OTP resend:', error);
+    }
+});
+
+
+
     function moveToNextOrPrevious(input) {
       const maxLength = parseInt(input.getAttribute("maxlength"));
       const currentLength = input.value.length;
 
       if (currentLength === maxLength) {
-        // Move to the next input field
         const nextInput = input.nextElementSibling;
         if (nextInput) {
           nextInput.focus();
         }
       } else if (currentLength === 0) {
-        // Move to the previous input field when backspace is pressed
         const previousInput = input.previousElementSibling;
         if (previousInput) {
           previousInput.focus();
@@ -320,7 +378,7 @@
 
 
 
-    let countdownTime = 120;
+    let countdownTime = 60;
 
     function updateTimer() {
       document.getElementById('countdown').innerText = "Expires in: " + countdownTime + ' seconds';
@@ -333,7 +391,6 @@
         countdownTime--;
 
         updateTimer();
-
         if (countdownTime === 0) {
           clearInterval(countdownInterval);
           document.getElementById('resendBtn').disabled = false;

@@ -24,8 +24,15 @@ const loadHome = async (req, res) => {
 
 const loadShop = async (req, res) => {
     try {
-        const products = await product.find({ is_listed: true })
-        const category = await Category.find({ isListed: true })
+        const category = await Category.find({ isListed: true });
+        if (category.length === 0) {
+            return res.render('Admin/product', { products: [] });
+        }
+        const listedCategoryIds = category.map(category => category._id);
+        const products = await product.find({
+            category: { $in: listedCategoryIds },
+            is_listed: true
+        });
         res.render('shop', { category, products })
     } catch (error) {
         console.log();
@@ -225,16 +232,16 @@ const sendOTPverificationEmail = async ({ email }, res) => {
             email: email,
             otp: hashedOTP,
             createdAt: Date.now(),
-            expiresAt: Date.now() + 120000
+            expiresAt: Date.now() + 60000
         })
 
         await newOTPverification.save();
         await transporter.sendMail(mailOption);
-        console.log(`OTP for ${email} will be deleted in 2 minutes`);
+        console.log(`OTP send for ${email} will be deleted in 1 minutes`);
         setTimeout(async () => {
             await userOTPverification.deleteOne({ email: email });
-            console.log(`OTP for ${email} has been deleted after 2 minutes.`);
-        }, 120000);
+            console.log(`OTP for ${email} has been deleted after 1 minutes.`);
+        }, 60000);
 
 
         res.redirect(`/otpVerify?email=${email}`)
@@ -246,7 +253,7 @@ const sendOTPverificationEmail = async ({ email }, res) => {
 
 const verifyOTP = async (req, res) => {
     try {
-        const email = req.body.email;
+        const email = req.body.email || req.query.email
         const enteredOtp = req.body.first + req.body.second + req.body.third + req.body.fourth;
 
         const user = await userOTPverification.findOne({ email: email });
@@ -254,10 +261,8 @@ const verifyOTP = async (req, res) => {
         if (!user) {
             return res.render('otpVerify', { message: "User not found" });
         }
-
+        console.log(enteredOtp);
         const { otp: hashedOTP } = user;
-
-        // Compare entered OTP with hashed OTP using bcrypt.compare
         const validOtp = await bcrypt.compare(enteredOtp, hashedOTP);
 
         if (validOtp) {
@@ -339,87 +344,25 @@ const forgotPassSendMail = async (req, res) => {
             email: email,
             otp: hashedOTP,
             createdAt: Date.now(),
-            expiresAt: Date.now() + 120000
+            expiresAt: Date.now() + 60000
         })
 
         await newOTPverification.save();
         await transporter.sendMail(mailOption);
-        console.log(`OTP for ${email} will be deleted in 2 minutes`);
+        console.log(`OTP for ${email} will be deleted in 1 minutes`);
         setTimeout(async () => {
             
             await userOTPverification.deleteOne({ email: email });
-            console.log(`OTP for ${email} has been deleted after 2 minutes.`);
-        }, 120000 );
+            console.log(`OTP send for ${email} has been deleted after 1 minutes.`);
+        }, 60000 );
 
-        res.redirect(`/otpVerify?email=${email}`)
-
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-const reSendOTPverificationEmail = async ({ email }, res) => {
-    try {
-        email = req.body.email
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: true,
-            auth: {
-                user: "shiblibasheer27@gmail.com",
-                pass: "rgmv lili pgqj gpzu"
-            }
-        })
-        const otp = `${Math.floor(1000 + Math.random() * 9000)}`
-
-
-        const mailOption = {
-            from: "shiblibasheer27@gmail.com",
-            to: email,
-            subject: "Verify Your Email",
-            html: `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
-            <div style="margin:50px auto;width:70%;padding:20px 0">
-              <div style="border-bottom:1px solid #eee">
-                <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">GROOVE STYLE</a>
-              </div>
-              <p style="font-size:1.1em">Hi,</p>
-              <p>Thank you for choosing Groove Style. Use the following OTP to complete your Sign Up procedures. OTP is valid for 2 minutes</p>
-              <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${otp}</h2>
-              <p style="font-size:0.9em;">Regards,<br />Groove Style</p>
-              <hr style="border:none;border-top:1px solid #eee" />
-              <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
-                <p>Groove Style Inc</p>
-                <p>Thalassery, Kannur 670692</p>
-                <p>India</p>
-              </div>
-            </div>
-          </div>`
-        }
-
-        const hashedOTP = await bcrypt.hash(otp, 10);
-        const newOTPverification = await new userOTPverification({
-            email: email,
-            otp: hashedOTP,
-            createdAt: Date.now(),
-            expiresAt: Date.now() + 120000
-        })
-
-        await newOTPverification.save();
-        await transporter.sendMail(mailOption);
-
-        setTimeout(async () => {
-            await userOTPverification.deleteOne({ email: email });
-            console.log(`OTP for ${email} has been deleted after 2 minutes.`);
-        }, 120000);
-
-
-        res.redirect(`/otpVerify?email=${email}`)
+        return res.redirect(`/otpVerify?email=${email}`)
 
     } catch (error) {
         console.log(error);
     }
 }
+
 
 
 module.exports = {
@@ -438,6 +381,5 @@ module.exports = {
     loadSingleshop,
     userLogout,
     forgotPass,
-    forgotPassSendMail,
-    reSendOTPverificationEmail
+    forgotPassSendMail
 }
