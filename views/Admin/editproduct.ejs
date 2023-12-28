@@ -223,33 +223,37 @@
                                     placeholder="Price" value="<%= products[j].price %>" required>
                             </div>
                             <div class="form-group">
-                                
-                                    <% for (let i = 0; i < products[j].image.length; i++) { %>
-                                        <div>
-                                            <img src="/myImages/<%= products[j].image[i] %>"
-                                                 class="img-sm img-thumbnail" alt="<%= products[j].name %>"
-                                                 width="50px" height="50px" />
-                                            <button type="button" class="btn btn-danger btn-sm" onclick="">Delete</button>
-                                        </div>
+
+
+                                <!-- Inside your form loop -->
+                                <% for (let i=0; i < products[j].image.length; i++) { %>
+                                    <div>
+                                        <img src="/myImages/<%= products[j].image[i] %>" class="img-sm img-thumbnail"
+                                            alt="<%= products[j].name %>" width="50px" height="50px" />
+                                        <button type="button" class="btn btn-danger btn-sm deleteImg"
+                                            data-product-id="<%= products[j]._id %>"
+                                            data-image="<%= products[j].image[i] %>">Delete</button>
+                                    </div>
                                     <% } %>
-                                
-                                
-                                
-                                <label>File upload</label>
-                                <div class="input-group col-xs-12">
-                                    <input type="file" name="image" class="file-upload-info" placeholder="Upload Image"
-                                        multiple>
-                                </div>
+
+
+
+
+                                        <label>File upload</label>
+                                        <div class="input-group col-xs-12">
+                                            <input type="file" name="image" class="file-upload-info"
+                                                placeholder="Upload Image" multiple>
+                                        </div>
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputCity1">Category</label>
                                 <select class="form-control" name="category" id="exampleInputCity1" required>
-                                <% catId.forEach(catId=>{ %>
-                                    <option>
-                                        <%= catId.name %>
-                                    </option>
-                                    <% }) %>
-                            </select>
+                                    <% catId.forEach(catId=>{ %>
+                                        <option>
+                                            <%= catId.name %>
+                                        </option>
+                                        <% }) %>
+                                </select>
                             </div>
 
                             <div class="form-group">
@@ -320,6 +324,37 @@
     <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
 
     <!-- Template Javascript -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.deleteImg').forEach(function (button) {
+        button.addEventListener('click', async function () {
+            try {
+                const productId = button.getAttribute('data-product-id');
+                const imageName = button.getAttribute('data-image');
+                const response = await fetch('/admin/product/deleteImg', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ productId, imageName }),
+                });
+
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    console.error('Failed to delete image');
+                }
+            } catch (error) {
+                console.error('Error during image deletion:', error);
+            } 
+        });
+    });
+});
+
+    </script>
+    
+
 
 
 

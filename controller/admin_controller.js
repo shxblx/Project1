@@ -61,6 +61,10 @@ const blockUnblockUser = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
+        
+        data=req.session.user_id
+
+        
 
         user.isBlocked = !user.isBlocked;
         await user.save();
@@ -192,16 +196,7 @@ const deleteCategory = async (req, res) => {
 
 const loadProducts = async (req, res) => {
     try {
-        // Fetch only listed categories
-        const categories = await Category.find({ isListed: true });
-        if (categories.length === 0) {
-            return res.render('Admin/product', { products: [] });
-        }
-        const listedCategoryIds = categories.map(category => category._id);
-        const products = await product.find({
-            category: { $in: listedCategoryIds },
-            is_listed: true
-        });
+        const products = await product.find({});
         res.render('Admin/product', { products });
     } catch (error) {
         console.log(error);
@@ -308,6 +303,34 @@ const deleteProduct = async (req, res) => {
     }
 }
 
+const deleteImg = async (req, res) => {
+    try {
+        const { productId, imageName } = req.body;
+
+        if (!productId || !imageName) {
+            return res.status(400).json({ success: false, message: 'Invalid request parameters' });
+        }
+
+        const Product = await product.findById(productId);
+
+        if (!Product) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+
+        // Use the pull method to remove the specified image from the images array
+        Product.image.pull(imageName);
+
+        // Save the updated product
+        await Product.save();
+
+        res.json({ success: true, message: 'Image deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+};
+
+
 const listUnlistProduct = async (req, res) => {
     try {
         const productId = req.body.productId;
@@ -355,5 +378,6 @@ module.exports = {
     listUnlistProduct,
     verifyAdminLogin,
     LogoutAdmin,
-    editProduct
+    editProduct,
+    deleteImg
 }
