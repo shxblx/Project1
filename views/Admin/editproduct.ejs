@@ -201,7 +201,7 @@
 
                     <!-- editCat.ejs -->
                     <% for (let j=0; j < products.length; j++) { %>
-                        <form class="forms-sample" method="post">
+                        <form class="forms-sample" method="post" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label for="exampleInputName1">Product Name</label>
                                 <input type="text" class="form-control" name="productName" id="exampleInputName1"
@@ -223,8 +223,6 @@
                                     placeholder="Price" value="<%= products[j].price %>" required>
                             </div>
                             <div class="form-group">
-
-
                                 <!-- Inside your form loop -->
                                 <% for (let i=0; i < products[j].image.length; i++) { %>
                                     <div>
@@ -236,14 +234,13 @@
                                     </div>
                                     <% } %>
 
-
-
-
+                                    <div class="form-group">
                                         <label>File upload</label>
                                         <div class="input-group col-xs-12">
-                                            <input type="file" name="image" class="file-upload-info"
-                                                placeholder="Upload Image" multiple>
+                                            <input type="file" name="image" class=" file-upload-info" placeholder="Upload Image"
+                                                multiple>
                                         </div>
+                                    </div>
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputCity1">Category</label>
@@ -327,33 +324,33 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.deleteImg').forEach(function (button) {
-        button.addEventListener('click', async function () {
-            try {
-                const productId = button.getAttribute('data-product-id');
-                const imageName = button.getAttribute('data-image');
-                const response = await fetch('/admin/product/deleteImg', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ productId, imageName }),
-                });
+            document.querySelectorAll('.deleteImg').forEach(function (button) {
+                button.addEventListener('click', async function () {
+                    try {
+                        const productId = button.getAttribute('data-product-id');
+                        const imageName = button.getAttribute('data-image');
+                        const response = await fetch('/admin/product/deleteImg', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ productId, imageName }),
+                        });
 
-                if (response.ok) {
-                    window.location.reload();
-                } else {
-                    console.error('Failed to delete image');
-                }
-            } catch (error) {
-                console.error('Error during image deletion:', error);
-            } 
+                        if (response.ok) {
+                            window.location.reload();
+                        } else {
+                            console.error('Failed to delete image');
+                        }
+                    } catch (error) {
+                        console.error('Error during image deletion:', error);
+                    }
+                });
+            });
         });
-    });
-});
 
     </script>
-    
+
 
 
 

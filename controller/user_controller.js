@@ -11,7 +11,8 @@ require('dotenv').config();
 
 
 
-const loadHome = async (req, res) => {
+const 
+loadHome = async (req, res) => {
     try {
         const user = await User.findOne({ _id: req.session.user_id });
         res.render('index', { user })

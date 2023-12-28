@@ -47,7 +47,7 @@ const loadAdmin = async (req, res) => {
 }
 const loadUsers = async (req, res) => {
     try {
-        const userData = await User.find({ isAdmin:0  })
+        const userData = await User.find({ isAdmin: 0 })
         res.render('Admin/users', { user: userData })
     } catch (error) {
         console.log(error);
@@ -61,10 +61,10 @@ const blockUnblockUser = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-        
-        data=req.session.user_id
 
-        
+        data = req.session.user_id
+
+
 
         user.isBlocked = !user.isBlocked;
         await user.save();
@@ -217,40 +217,34 @@ const loadAddProduct = async (req, res) => {
 
 const addProduct = async (req, res) => {
     try {
-        const existProduct = await product.findOne({ name: req.body.productName })
-        if (existProduct) {
-            res.status(404).send({ message: 'category already exist' })
-        } else {
-            const { productName, description, quantity, price, category, brand, date } = req.body
-            const filenames = []
-            console.log(req.body);
+        const { productName, description, quantity, price, category, brand, date } = req.body
+        const filenames = []
 
-            const selectedCategory = await Category.findOne({ name: category })
+        const selectedCategory = await Category.findOne({ name: category })
 
-            const data = await Category.find({ is_listed: false })
-            console.log(data);
-            if (req.files.length !== 4) {
-                return res.render('addProduct', { message: '4 images needed', category: data })
-            }
-            // resize and save each uploaded images
-            for (let i = 0; i < req.files.length; i++) {
-                const imagesPath = path.join(__dirname, '../public/sharpimages', req.files[i].filename)
-                await sharp(req.files[i].path).resize(800, 1200, { fit: 'fill' }).toFile(imagesPath)
-                filenames.push(req.files[i].filename)
-            }
-            const newProduct = new product({
-                name: productName,
-                description,
-                quantity,
-                price,
-                image: filenames,
-                category: selectedCategory._id,
-                brand,
-                date,
-            })
-            await newProduct.save()
-            res.redirect('/admin/product')
+        const data = await Category.find({ is_listed: false })
+        console.log(data);
+        if (req.files.length !== 4) {
+            return res.render('addProduct', { message: '4 images needed', category: data })
         }
+        // resize and save each uploaded images
+        for (let i = 0; i < req.files.length; i++) {
+            const imagesPath = path.join(__dirname, '../public/sharpimages', req.files[i].filename)
+            await sharp(req.files[i].path).resize(800, 1200, { fit: 'fill' }).toFile(imagesPath)
+            filenames.push(req.files[i].filename)
+        }
+        const newProduct = new product({
+            name: productName,
+            description,
+            quantity,
+            price,
+            image: filenames,
+            category: selectedCategory._id,
+            brand,
+            date,
+        })
+        await newProduct.save()
+        res.redirect('/admin/product')
     } catch (error) {
         console.log(error);
 
@@ -272,21 +266,43 @@ const loadEditProduct = async (req, res) => {
 
 const editProduct = async (req, res) => {
     try {
-        const productId = req.query.productId
-        console.log(req.body);
+        const productId = req.query.productId;
         const { productName, description, quantity, price, category, brand } = req.body;
-        console.log(productId);
-        console.log(req.body);
+
+        const existingProduct = await product.findOne({ name: productName });
+        const categoryId = await Category.findOne({ name: category });
+
+        // Update common fields
         await product.findByIdAndUpdate(
             { _id: productId },
-            { $set: { name: productName, description: description, quantity: quantity, price: price, brand: brand } },
+            {
+                $set: {
+                    name: productName,
+                    description: description,
+                    quantity: quantity,
+                    price: price,
+                    brand: brand,
+                    category: categoryId._id,
+                },
+            },
             { new: true }
         );
-        res.redirect('/admin/product')
+
+        // Push new images to the existing image array
+        if (req.files.length > 0) {
+            existingProduct.image.push(...req.files.map(file => file.filename));
+
+            // Save the updated product with the new image array
+            await existingProduct.save();
+        }
+
+        res.redirect('/admin/product');
     } catch (error) {
         console.log(error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
-}
+};
+
 
 const deleteProduct = async (req, res) => {
     try {
