@@ -115,8 +115,7 @@ const addCategory = async (req, res) => {
         });
 
         await category.save();
-
-        req.flash('success', 'Category added successfully');
+        
         return res.redirect('/admin/categories');
     } catch (error) {
         console.log(error);

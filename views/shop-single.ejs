@@ -126,17 +126,16 @@
             <p><strong class="text-primary h4">₹<%=productsId[i].price%></strong></p>
             <div class="mb-5">
               <div class="input-group mb-3" style="max-width: 120px;">
-              <div class="input-group-prepend">
-                <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
-              </div>
-              <input type="text" class="form-control text-center" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
-              <div class="input-group-append">
-                <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
-              </div>
+                <div class="input-group-prepend">
+                    <button class="btn btn-outline-primary js-btn-minus" type="button" onclick="decreaseQuantity()">−</button>
+                </div>
+                <input id="quantityInput" type="text" class="form-control text-center" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-primary js-btn-plus" type="button" onclick="increaseQuantity()">+</button>
+                </div>
             </div>
-
+            <p><a href="/addToCart" class="buy-now btn btn-sm height-auto px-4 py-3 btn-primary" onclick="addToCart()">Add To Cart</a></p> 
             </div>
-            <p><a href="cart.html" class="buy-now btn btn-sm height-auto px-4 py-3 btn-primary">Add To Cart</a></p>
 
           </div>
         </div>
@@ -331,7 +330,57 @@
 
   <script src="js/main.js"></script>
   
+  <script>
+function decreaseQuantity() {
+    const quantityInput = document.getElementById('quantityInput');
+    let currentQuantity = parseInt(quantityInput.value, 10);
+    if (currentQuantity > 1) {
+        currentQuantity--;
+        quantityInput.value = currentQuantity;
+    }
+}
 
+function increaseQuantity() {
+    const quantityInput = document.getElementById('quantityInput');
+    let currentQuantity = parseInt(quantityInput.value, 10);
+    currentQuantity++;
+    quantityInput.value = currentQuantity;
+}
+
+
+    document.getElementById('addToCartBtn').addEventListener('click', addToCart);
+    
+    function addToCart() {
+        const user_id = 'user123';
+        const product_id = 'product123';
+        const quantity = document.getElementById('quantityInput').value;
+    
+        const data = {
+            user_id,
+            product_id,
+            quantity
+        };
+        fetch('/addToCart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                alert('Product added to cart successfully!');
+            } else {
+                alert('Failed to add product to cart. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again later.');
+        });
+    }
+    </script>
 
   </body>
 </html>
