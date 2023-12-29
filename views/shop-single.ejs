@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="css/jquery-ui.css">
     <link rel="stylesheet" href="css/owl.carousel.min.css">
     <link rel="stylesheet" href="css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
 
 
     <link rel="stylesheet" href="css/aos.css">
@@ -66,8 +67,18 @@
             <li class="icons-btn d-inline-block">
               <a href=""><span><i id="pro-icon" class="fa-solid fa-user"></i></span></a>
               <ul class="dropdown">
-                <li><a class="dropdown-item bg-light" href="/login">Login</a></li>
-                <li><a class="dropdown-item bg-light" href="/signup">SignUp</a></li>
+                <% if (locals.user) { %>
+                  <li><a class="dropdown-item bg-light" href="/profile">
+                      <%=locals.user.username%>
+                    </a></li>
+                  <li><a href="/userLogout" class="dropdown-item bg-light" href="/logout">Logout</a></li>
+                  
+
+                  <% } else { %>
+                    <li><a class="dropdown-item bg-light" href="/login">Login</a></li>
+                    <li><a class="dropdown-item bg-light" href="/signup">SignUp</a></li>
+                    <li><a href="/admin" class="dropdown-item bg-light">Admin</a></li>
+                    <% } %>
               </ul>
             </li>
           </div>
@@ -134,7 +145,13 @@
                     <button class="btn btn-outline-primary js-btn-plus" type="button" onclick="increaseQuantity()">+</button>
                 </div>
             </div>
-            <p><a href="/addToCart" class="buy-now btn btn-sm height-auto px-4 py-3 btn-primary" onclick="addToCart()">Add To Cart</a></p> 
+            <p>
+              <button class="buy-now btn btn-sm height-auto px-4 py-3 btn-primary" data-productId="<%= productsId[i]._id %>" onclick="addToCart(this)">
+                Add To Cart
+            </button>
+            
+            </p>
+             
             </div>
 
           </div>
@@ -327,6 +344,7 @@
   <script src="js/owl.carousel.min.js"></script>
   <script src="js/jquery.magnific-popup.min.js"></script>
   <script src="js/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
   <script src="js/main.js"></script>
   
@@ -348,38 +366,48 @@ function increaseQuantity() {
 }
 
 
-    document.getElementById('addToCartBtn').addEventListener('click', addToCart);
     
-    function addToCart() {
-        const user_id = 'user123';
-        const product_id = 'product123';
-        const quantity = document.getElementById('quantityInput').value;
-    
-        const data = {
-            user_id,
-            product_id,
-            quantity
-        };
-        fetch('/addToCart', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        })
-        .then(response => response.json())
-        .then(result => {
-            if (result.success) {
-                alert('Product added to cart successfully!');
-            } else {
-                alert('Failed to add product to cart. Please try again.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred. Please try again later.');
+function addToCart(button) {
+  const product_id = button.getAttribute('data-productId');
+    const quantity = document.getElementById('quantityInput').value;
+
+    const data = {
+        product_id,
+        quantity
+    };
+
+    fetch('/addToCart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+          Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Product added to cart successfully!',
+            });
+        } else {
+          Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Failed to add product to cart. Please try again.',
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'An error occurred. Please try again later.',
         });
-    }
+    });
+}
     </script>
 
   </body>

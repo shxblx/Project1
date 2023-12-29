@@ -271,7 +271,6 @@ const editProduct = async (req, res) => {
         const existingProduct = await product.findOne({ name: productName });
         const categoryId = await Category.findOne({ name: category });
 
-        // Update common fields
         await product.findByIdAndUpdate(
             { _id: productId },
             {
@@ -286,12 +285,9 @@ const editProduct = async (req, res) => {
             },
             { new: true }
         );
-
-        // Push new images to the existing image array
         if (req.files.length > 0) {
             existingProduct.image.push(...req.files.map(file => file.filename));
 
-            // Save the updated product with the new image array
             await existingProduct.save();
         }
 

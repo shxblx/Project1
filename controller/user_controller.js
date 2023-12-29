@@ -25,6 +25,7 @@ loadHome = async (req, res) => {
 
 const loadShop = async (req, res) => {
     try {
+        const user = await User.findOne({ _id: req.session.user_id });
         const category = await Category.find({ isListed: true });
         if (category.length === 0) {
             return res.render('Admin/product', { products: [] });
@@ -34,7 +35,7 @@ const loadShop = async (req, res) => {
             category: { $in: listedCategoryIds },
             is_listed: true
         });
-        res.render('shop', { category, products })
+        res.render('shop', { category, products,user })
     } catch (error) {
         console.log();
     }
@@ -56,18 +57,13 @@ const loadContact = async (req, res) => {
     }
 }
 
-const loadCart = async (req, res) => {
-    try {
-        res.render('cart')
-    } catch (error) {
-        console.log();
-    }
-}
+
 const loadSingleshop = async (req, res) => {
     try {
+        const user = await User.findOne({ _id: req.session.user_id });
         const products = req.query.id
         const productsId = await product.find({ _id: products })
-        res.render('shop-single', { productsId })
+        res.render('shop-single', { productsId, user })
     } catch (error) {
         console.log(error);
     }
@@ -371,7 +367,6 @@ module.exports = {
     loadShop,
     loadAbout,
     loadContact,
-    loadCart,
     loadSingleshop,
     loadLogin,
     loadSignup,

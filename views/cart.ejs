@@ -100,53 +100,30 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td class="product-thumbnail">
-                      <img src="images/cloth_1.jpg" alt="Image" class="img-fluid">
-                    </td>
-                    <td class="product-name">
-                      <h2 class="h5 text-black">Top Up T-Shirt</h2>
-                    </td>
-                    <td>$49.00</td>
-                    <td>
-                      <div class="input-group mb-3" style="max-width: 120px;">
-                        <div class="input-group-prepend">
-                          <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
+                  <% cartData.items.forEach(item => { %>
+                    <tr>
+                      <td class="product-thumbnail">
+                        <img src="/myImages/<%=item.product_id.image[0]%>" alt="Product Image" class="img-fluid">
+                      </td>
+                      <td class="product-name">
+                        <h2 class="h5 text-black"><%= item.product_id.name %></h2>
+                      </td>
+                      <td>₹<%= item.price %></td>
+                      <td>
+                        <div class="input-group mb-3" style="max-width: 120px;">
+                          <div class="input-group-prepend">
+                            <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
+                          </div>
+                          <input type="text" class="form-control text-center" value="<%= item.quantity %>" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                          <div class="input-group-append">
+                            <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
+                          </div>
                         </div>
-                        <input type="text" class="form-control text-center" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
-                        <div class="input-group-append">
-                          <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
-                        </div>
-                      </div>
-
-                    </td>
-                    <td>$49.00</td>
-                    <td><a href="#" class="btn btn-primary height-auto btn-sm">X</a></td>
-                  </tr>
-
-                  <tr>
-                    <td class="product-thumbnail">
-                      <img src="images/cloth_2.jpg" alt="Image" class="img-fluid">
-                    </td>
-                    <td class="product-name">
-                      <h2 class="h5 text-black">Polo Shirt</h2>
-                    </td>
-                    <td>$49.00</td>
-                    <td>
-                      <div class="input-group mb-3" style="max-width: 120px;">
-                        <div class="input-group-prepend">
-                          <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
-                        </div>
-                        <input type="text" class="form-control text-center" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
-                        <div class="input-group-append">
-                          <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
-                        </div>
-                      </div>
-
-                    </td>
-                    <td>$49.00</td>
-                    <td><a href="#" class="btn btn-primary height-auto btn-sm">X</a></td>
-                  </tr>
+                      </td>
+                      <td>₹<%= item.total_price %></td>
+                      <td><a href="#" class="btn btn-primary height-auto btn-sm">X</a></td>
+                    </tr>
+                  <% }); %>
                 </tbody>
               </table>
             </div>
@@ -178,36 +155,41 @@
           </div>
           <div class="col-md-6 pl-5">
             <div class="row justify-content-end">
-              <div class="col-md-7">
-                <div class="row">
-                  <div class="col-md-12 text-right border-bottom mb-5">
-                    <h3 class="text-black h4 text-uppercase">Cart Totals</h3>
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <div class="col-md-6">
-                    <span class="text-black">Subtotal</span>
-                  </div>
-                  <div class="col-md-6 text-right">
-                    <strong class="text-black">$230.00</strong>
-                  </div>
-                </div>
-                <div class="row mb-5">
-                  <div class="col-md-6">
-                    <span class="text-black">Total</span>
-                  </div>
-                  <div class="col-md-6 text-right">
-                    <strong class="text-black">$230.00</strong>
-                  </div>
-                </div>
+              <!-- Add this code to the relevant section in your 'cart.ejs' file -->
+<div class="col-md-7">
+  <div class="row">
+      <div class="col-md-12 text-right border-bottom mb-5">
+          <h3 class="text-black h4 text-uppercase">Cart Totals</h3>
+      </div>
+  </div>
+  <div class="row mb-3">
+      <div class="col-md-6">
+          <span class="text-black">Subtotal</span>
+      </div>
+      <div class="col-md-6 text-right">
+          <strong class="text-black">
+            ₹<%= cartData.items.reduce((total, item) => total + item.total_price, 0).toFixed(2) %>
+          </strong>
+      </div>
+  </div>
+  <div class="row mb-5">
+      <div class="col-md-6">
+          <span class="text-black">Total</span>
+      </div>
+      <div class="col-md-6 text-right">
+          <strong class="text-black">
+            ₹<%= cartData.items.reduce((total, item) => total + item.total_price, 0).toFixed(2) %>
+          </strong>
+      </div>
+  </div>
 
-                <div class="row">
-                  <div class="col-md-12">
-                    <button class="btn btn-primary btn-lg btn-block" onclick="window.location='checkout.html'">Proceed To Checkout</button>
-                  </div>
-                </div>
-              </div>
-            </div>
+  <div class="row">
+      <div class="col-md-12">
+          <a href="/checkout"><button class="btn btn-primary btn-lg btn-block">Proceed To Checkout</button></a>
+      </div>
+  </div>
+</div>
+
           </div>
         </div>
       </div>
