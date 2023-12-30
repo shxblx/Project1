@@ -25,6 +25,8 @@ userRouter.post('/addToCart',cartController.loadAddCart)
 userRouter.get('/checkout',cartController.loadCheckout)
 userRouter.post('/addAddress',cartController.addAddress)
 userRouter.post('/placeOrder',cartController.placeOrder)
+userRouter.get('/orderPlaced/:id',cartController.orderPlaced)
+userRouter.get('/profile',userController.loadProfile)
 
 
 module.exports=userRouter

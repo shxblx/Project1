@@ -8,7 +8,9 @@
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700">
   <link rel="stylesheet" href="fonts/icomoon/style.css">
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <link rel="stylesheet" href="css/magnific-popup.css">
   <link rel="stylesheet" href="css/jquery-ui.css">
@@ -42,54 +44,60 @@
         <div class="d-flex align-items-center justify-content-between">
           <div class="logo">
             <div class="site-logo">
-              <a href="index.html" class="js-logo-clone">ShopMax</a>
+              <a href="/" class="js-logo-clone">Groove Style</a>
             </div>
           </div>
           <div class="main-nav d-none d-lg-block">
             <nav class="site-navigation text-right text-md-center" role="navigation">
               <ul class="site-menu js-clone-nav d-none d-lg-block">
-                <li class="has-children ">
-                  <a href="index.html">Home</a>
-                  <ul class="dropdown">
-                    <li><a href="#">Menu One</a></li>
-                    <li><a href="#">Menu Two</a></li>
-                    <li><a href="#">Menu Three</a></li>
-                    <li class="has-children">
-                      <a href="#">Sub Menu</a>
-                      <ul class="dropdown">
-                        <li><a href="#">Menu One</a></li>
-                        <li><a href="#">Menu Two</a></li>
-                        <li><a href="#">Menu Three</a></li>
-                      </ul>
-                    </li>
-                  </ul>
+                <li class="active">
+                  <a href="/">Home</a>
                 </li>
 
-                <li class="active"><a href="shop.html">Shop</a></li>
-                <li><a href="#">Catalogue</a></li>
-                <li><a href="#">New Arrivals</a></li>
-                <li><a href="contact.html">Contact</a></li>
+                <li><a href="/shop">Shop</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/contact">Contact</a></li>
               </ul>
             </nav>
           </div>
           <div class="icons">
             <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a>
             <a href="#" class="icons-btn d-inline-block"><span class="icon-heart-o"></span></a>
-            <a href="cart.html" class="icons-btn d-inline-block bag">
+            <a href="/cart" class="icons-btn d-inline-block bag">
               <span class="icon-shopping-bag"></span>
               <span class="number">2</span>
             </a>
-            <a href="#" class="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span
-                class="icon-menu"></span></a>
+
+            <li class="icons-btn d-inline-block">
+              <a href=""><span><i id="pro-icon" class="fa-solid fa-user"></i></span></a>
+              <ul class="dropdown">
+                <% if (locals.user) { %>
+                  <li><a class="dropdown-item bg-light" href="/profile">
+                      <%=locals.user.username%>
+                    </a></li>
+                  <li><a href="/userLogout" class="dropdown-item bg-light" href="/logout">Logout</a></li>
+                  <li><a href="/admin" class="dropdown-item bg-light">Admin</a></li>
+
+                  <% } else { %>
+                    <li><a class="dropdown-item bg-light" href="/login">Login</a></li>
+                    <li><a class="dropdown-item bg-light" href="/signup">SignUp</a></li>
+                    <li><a href="/admin" class="dropdown-item bg-light">Admin</a></li>
+                    <% } %>
+              </ul>
+            </li>
+
+
+            <div id="pro-icon-dropdown"></div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
     <div class="bg-light py-3">
       <div class="container">
         <div class="row">
-          <div class="col-md-12 mb-0"><a href="index.html">Home</a> <span class="mx-2 mb-0">/</span> <a
+          <div class="col-md-12 mb-0"><a href="/">Home</a> <span class="mx-2 mb-0">/</span> <a
               href="cart.html">Cart</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Checkout</strong>
           </div>
         </div>
@@ -127,7 +135,7 @@
                       <td class="column-1">
                         <div class="options fw-bold">
                           <label for="option<%= index + 1 %>" class="op mb-2">
-                            <input type="radio" id="option<%= index + 1 %>" name="options" value="<%= address.name %>"
+                            <input type="radio" id="option<%= index + 1 %>" name="options" value="<%= address %>"
                               class="me-1" required>
                             <div class="address-details mt-2">
                               <span>
@@ -500,7 +508,6 @@
           paymentMethod: selectedPayment.value,
         };
 
-        // Perform AJAX request using fetch
         fetch('/placeOrder', {
           method: 'POST',
           headers: {
@@ -525,8 +532,8 @@
               }).then(() => {
                 const param = data.params;
                 setTimeout(() => {
-                  window.location.href = '/placeOrder/' + param; // Redirect to order page
-                }, 2000); // Same duration as the timer
+                  window.location.href = '/orderPlaced/' + param; 
+                }, 2000); 
               })
             } else {
               // Error handling if order placement fails

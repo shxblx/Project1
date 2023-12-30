@@ -11,8 +11,7 @@ require('dotenv').config();
 
 
 
-const 
-loadHome = async (req, res) => {
+const loadHome = async (req, res) => {
     try {
         const user = await User.findOne({ _id: req.session.user_id });
         res.render('index', { user })
@@ -360,7 +359,13 @@ const forgotPassSendMail = async (req, res) => {
     }
 }
 
-
+const loadProfile=async(req,res)=>{
+    try {
+        res.render('profile')
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 module.exports = {
     loadHome,
@@ -377,5 +382,6 @@ module.exports = {
     loadSingleshop,
     userLogout,
     forgotPass,
-    forgotPassSendMail
+    forgotPassSendMail,
+    loadProfile
 }
