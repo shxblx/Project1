@@ -147,23 +147,21 @@ const placeOrder = async (req, res) => {
     try {
         const date = new Date();
         const user_id = req.session.user_id;
-        const { address, paymentMethod } = req.body;
-        const{name,housename,city,state,phone,pincode}=address
-        console.log('Address received:', name);
+        const { address, paymentMethod } = req.body.orderData;
         if (!user_id) {
-            return res.status(400).json({ success: false, message: 'User ID is undefined.' });
+           
         }
 
         const cartData = await cart.findOne({ user_id: user_id });
         if (!cartData) {
-            return res.status(404).json({ success: false, message: 'Cart data not found.' });
+            
         }
         const totalPrice = cartData.items.reduce((total, item) => total + item.total_price, 0);
 
 
         const userData = await User.findById(user_id);
         if (!userData) {
-            return res.status(404).json({ success: false, message: 'User data not found.' });
+            
         }
 
         const cartProducts = cartData.items;
@@ -177,16 +175,16 @@ const placeOrder = async (req, res) => {
             })
             .replace(/\//g, '-');
 
-        const orderData = new Order({
-            user_id: user_id,
-            delivery_address:address,
-            user_name: userData.username,
-            total_amount: totalPrice,
-            date: Date.now(),
-            status: status,
-            expected_delivery: deliveryDate,
-            payment: paymentMethod,
-            items: cartProducts,
+            const orderData = new Order({
+                user_id: user_id,
+                delivery_address: address, 
+                user_name: userData.username,
+                total_amount: totalPrice,
+                date: Date.now(),
+                status: status,
+                expected_delivery: deliveryDate,
+                payment: paymentMethod,  
+                items: cartProducts,
         });
 
         let orders = await orderData.save();

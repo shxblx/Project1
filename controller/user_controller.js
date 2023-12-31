@@ -2,9 +2,11 @@ const bcrypt = require('bcrypt')
 const User = require('../model/userModel')
 const Category = require('../model/categModel')
 const product = require('../model/productmodel')
+const Order = require('../model/orderModel')
 const nodemailer = require('nodemailer');
 const userOTPverification = require('../model/userOTPverification');
 require('dotenv').config();
+const moment=require('moment')
 
 
 
@@ -361,9 +363,77 @@ const forgotPassSendMail = async (req, res) => {
 
 const loadProfile=async(req,res)=>{
     try {
-        res.render('profile')
+        const userId=req.session.user_id
+        if(!userId){
+            res.redirect('/login')
+        }
+        const user=await User.findById({_id:userId})
+        res.render('user/user',{user})
     } catch (error) {
         console.log(error);
+    }
+}
+const loadOrder=async(req,res)=>{
+    try {
+        const userId=req.session.user_id
+        if(!userId){
+            res.redirect('/login')
+        }
+        const user=await User.findOne({_id:userId})
+        const order=await Order.findOne({user_id:userId}).populate('items.product_id')
+        console.log(user+"this is user");
+        console.log(order+"this is order");
+        res.render('user/orders',{order,user,moment})
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+const editProfile=async(req,res)=>{
+    try {
+        const{username,email,phone}=req.body;
+        userId=req.session.user_id;
+        await User.findByIdAndUpdate(userId, { username, email, phone });
+        res.redirect('/profile')
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const loadChangePass=async(req,res)=>{
+    try {
+        userId=req.session.user_id;
+        res.render('user/changepass',{userId})
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+const changePassword=async(req,res)=>{
+    try {
+      const  {oldPass,newPass,confirmPass}=req.body;
+      console.log(req.body);
+      const userId=req.session.user_id
+      const user=await User.findOne({_id:userId})
+      const passwordMatch = await bcrypt.compare(oldPass, user.password);
+      if(passwordMatch)
+      {
+        if(newPass==confirmPass)
+        {
+            const hashedPassword = await bcrypt.hash(newPass, 10);
+            await User.findByIdAndUpdate(userId, { $set: { password: hashedPassword } });
+            res.redirect('/profile')
+        }
+        else{
+            return res.status(401).json({ error: "passwords do not match" });
+        }
+      }else{
+        return res.status(401).json({ error: "Invalid old password" });
+      }
+    } catch (error) {
+        console.log();
     }
 }
 
@@ -383,5 +453,9 @@ module.exports = {
     userLogout,
     forgotPass,
     forgotPassSendMail,
-    loadProfile
+    loadProfile,
+    loadOrder,
+    editProfile,
+    loadChangePass,
+    changePassword
 }

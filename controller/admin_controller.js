@@ -4,6 +4,8 @@ const product = require('../model/productmodel')
 const path = require('path')
 const sharp = require('sharp')
 const bcrypt = require('bcrypt')
+const moment=require('moment')
+const order=require('../model/orderModel')
 
 
 const loadAdminSignin = async (req, res) => {
@@ -369,6 +371,16 @@ const LogoutAdmin = async (req, res) => {
     }
 }
 
+const loadOrders=async(req,res)=>{
+    try {
+        const orders = await order.find().populate('items.product_id').sort({ _id: 1 });
+
+        res.render('Admin/orders',{  orders, moment })
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 module.exports = {
     loadAdmin,
     loadAdminSignin,
@@ -390,5 +402,6 @@ module.exports = {
     verifyAdminLogin,
     LogoutAdmin,
     editProduct,
-    deleteImg
+    deleteImg,
+    loadOrders
 }

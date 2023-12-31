@@ -27,6 +27,11 @@ userRouter.post('/addAddress',cartController.addAddress)
 userRouter.post('/placeOrder',cartController.placeOrder)
 userRouter.get('/orderPlaced/:id',cartController.orderPlaced)
 userRouter.get('/profile',userController.loadProfile)
+userRouter.post('/profile',userController.editProfile)
+userRouter.get('/profile/changePass',userController.loadChangePass)
+userRouter.post('/profile/changePass',userController.changePassword)
+userRouter.get('/orders',userController.loadOrder)
+
 
 
 module.exports=userRouter
