@@ -141,7 +141,7 @@
                               </div>
                             </td>
                             <td>₹<%= item.total_price %></td>
-                            <td><a href="#" class="btn btn-primary height-auto btn-sm">X</a></td>
+                            <td><a data-item-id="<%= item.product_id %>" href="#" class="btn btn-primary height-auto btn-sm delete-btn">X</a></td>
                           </tr>
                   <%   });
                       } else { %>
@@ -314,5 +314,33 @@
 
   <script src="js/main.js"></script>
     
+  <script>
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const itemId = this.dataset.itemId;
+
+            fetch('/removeCart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ itemId }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log(data);
+                    location.reload();
+                } else {
+                    alert('Error removing item from the cart.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    });
+</script>
+  
   </body>
 </html>

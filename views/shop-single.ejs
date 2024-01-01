@@ -353,7 +353,7 @@ function decreaseQuantity() {
     const quantityInput = document.getElementById('quantityInput');
     let currentQuantity = parseInt(quantityInput.value, 10);
     if (currentQuantity > 1) {
-        currentQuantity--;
+        
         quantityInput.value = currentQuantity;
     }
 }
@@ -361,7 +361,7 @@ function decreaseQuantity() {
 function increaseQuantity() {
     const quantityInput = document.getElementById('quantityInput');
     let currentQuantity = parseInt(quantityInput.value, 10);
-    currentQuantity++;
+    
     quantityInput.value = currentQuantity;
 }
 

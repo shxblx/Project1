@@ -32,6 +32,28 @@
 
     <!-- Template Stylesheet -->
     <link href="/admin/css/style.css" rel="stylesheet">
+
+
+    <style>
+        /* Add this to your existing styles or create a new style block */
+.image-container {
+    display: inline-block; /* Display images horizontally */
+    margin-right: 10px; /* Adjust spacing between images */
+    margin-bottom: 10px; /* Add margin to separate image and delete button vertically */
+}
+
+.image-container img {
+    margin-bottom: 5px; /* Add margin between image and delete button */
+    display: block; /* Ensure images don't affect each other's height */
+}
+
+/* Optionally, you can align the delete button to the center */
+.image-container button {
+    display: block;
+    margin: 0 auto;
+}
+
+    </style>
 </head>
 
 <body>
@@ -224,16 +246,17 @@
                                     placeholder="Price" value="<%= products[j].price %>" required>
                             </div>
                             <div class="form-group">
-                                <!-- Inside your form loop -->
-                                <% for (let i=0; i < products[j].image.length; i++) { %>
-                                    <div>
+                                <% for (let i = 0; i < products[j].image.length; i++) { %>
+                                    <div class="image-container">
                                         <img src="/myImages/<%= products[j].image[i] %>" class="img-sm img-thumbnail"
                                             alt="<%= products[j].name %>" width="50px" height="50px" />
                                         <button type="button" class="btn btn-danger btn-sm deleteImg"
                                             data-product-id="<%= products[j]._id %>"
                                             data-image="<%= products[j].image[i] %>">Delete</button>
                                     </div>
-                                    <% } %>
+                                <% } %>
+                            </div>
+                            
 
                                     <div class="form-group">
                                         <label>File upload</label>

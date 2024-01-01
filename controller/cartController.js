@@ -3,6 +3,7 @@ const product = require('../model/productmodel')
 const cart = require('../model/cartModel')
 const Order = require('../model/orderModel')
 const moment = require('moment')
+const { loadLogin } = require('./user_controller')
 
 
 const loadCart = async (req, res) => {
@@ -86,6 +87,25 @@ const loadAddCart = async (req, res) => {
 };
 
 
+const removeCart = async (req, res) => {
+    try {
+        const itemId = req.body.itemId;
+        
+        console.log(itemId);
+
+        
+
+        
+        
+        
+        res.json({ success: true, message: 'Item removed successfully' });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: 'Error removing item from the cart' });
+    }
+};
+
+
 const loadCheckout = async (req, res) => {
     try {
         const user = await User.findOne({ _id: req.session.user_id });
@@ -148,6 +168,7 @@ const placeOrder = async (req, res) => {
         const date = new Date();
         const user_id = req.session.user_id;
         const { address, paymentMethod } = req.body.orderData;
+        console.log(address);
         if (!user_id) {
            
         }
@@ -219,5 +240,6 @@ module.exports = {
     loadCheckout,
     addAddress,
     placeOrder,
-    orderPlaced
+    orderPlaced,
+    removeCart
 }

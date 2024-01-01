@@ -284,7 +284,7 @@ const verifyOTP = async (req, res) => {
 
 const userLogout = async (req, res) => {
     try {
-        req.session.destroy()
+        req.session.user_id=null;
         res.redirect('/')
     } catch (error) {
         console.log(error);

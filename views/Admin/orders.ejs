@@ -218,13 +218,16 @@
                                     <th scope="col">Total Price</th>
                                     <th scope="col">Order Date</th>
                                     <th scope="col">Payment Method</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Order items</th>
                                     
                                 </tr>
                             </thead>
                             <tbody>
-                                <% orders.forEach(order=> { %>
-                                    <% if (order.items && order.items.length> 0) { %>
-                                        <% order.items.forEach(item=> { %>
+                                <% if (orders.length > 0) { %>
+                                    <% orders.forEach(order => { %>
+                                        <% if (order.items && order.items.length > 0) { %>
+                                            <% order.items.forEach(item => { %>
                                             <tr>
                                                 <td>
                                                     <%=order._id%>
@@ -232,7 +235,7 @@
                                                 <td>
                                                     <a class="itemside" href="#">
                                                         <div class="left">
-                                                            <img style="height: 50px;width: 50px;"
+                                                            <img style="height: 80px;width: 80px;"
                                                                 src="/sharpimages/<%=item.product_id.image[0] %>"
                                                                 class="img-sm img-thumbnail" alt="" />
                                                         </div>
@@ -257,8 +260,15 @@
 
                                                 </td>
                                                 <td>
-                                                    <%=order.status%>
-
+                                                    <select class="form-control" name="status" id="status">
+                                                        <option value="Shipped"><%=order.status%></option>
+                                                        <option id="shipped" value="Shipped">Shipped</option>
+                                                        <option id="Out for Delivery" value="Out for Delivery">Out for Delivery</option>
+                                                        <option id="Delivered" value="Delivered">Delivered</option>
+                                                        <option id="Requested return" value="Requested return">Requested return</option>
+                                                        <option id="Requested cancellation" value="Requested cancellation">Requested cancellation</option>
+                                                        <option id="Cancel" value="Cancel">Cancel</option>
+                                                    </select>
                                                 </td>
                                                 <td>
                                                     <button class="btn btn-outline-light">
@@ -268,9 +278,14 @@
                                             </tr>
 
                                             <% }); %>
-                                                <% } %>
-                                                    <% }); %>
-                            </tbody>
+                        <% } %>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="8" class="text-center">No orders available.</td>
+                    </tr>
+                <% } %>
+            </tbody>
 
                         </table><a href="/admin/product/addProduct"><button type="button" class="btn btn-primary btn-sm"
                                 style="margin-left: 10px; margin-bottom: 10px; margin-top: 50px;">
@@ -333,69 +348,9 @@
 </body>
 
 
-<script>
-
-document.addEventListener('DOMContentLoaded', function () {
-    // Add an event listener to each list/unlist button
-    document.querySelectorAll('.list-unlist-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            const productId = this.dataset.productId;
-
-            fetch('/admin/list-products', { 
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ productId }), 
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('Error updating product status.'); 
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        });
-    });
-});
 
 
 
-/////////////////////
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.delete-btn').forEach(function (button) {
-            button.addEventListener('click', function () {
-                var productId = this.getAttribute('data-product-id');
-                fetch('/admin/product/deleteproduct', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ productId: productId }),
-                })
-                .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            console.log(data);
-                            location.reload();
-                        } else {
-                            alert('Error deleting category.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-            });
-        });
-    });
-    /////////////////////////////////////////////
-
-    
-</script>
 
 
 

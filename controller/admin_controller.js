@@ -64,10 +64,6 @@ const blockUnblockUser = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        data = req.session.user_id
-
-
-
         user.isBlocked = !user.isBlocked;
         await user.save();
 
@@ -364,7 +360,7 @@ const listUnlistProduct = async (req, res) => {
 
 const LogoutAdmin = async (req, res) => {
     try {
-        req.session.destroy()
+        req.session.admin_id=null;
         res.redirect('AdminSignin')
     } catch (error) {
         console.log(error);

@@ -22,6 +22,7 @@ const upload = multer({ storage: storage }).array('image', 4)
 adminRouter.get('/', auth.isLogin,adminController.loadAdmin)
 adminRouter.get('/adminSignin',auth.isLogout,adminController.loadAdminSignin)
 adminRouter.post('/adminSignin',adminController.verifyAdminLogin)
+adminRouter.post('/')
 adminRouter.get('/users',auth.isLogin,adminController.loadUsers)
 adminRouter.post('/block-user', adminController.blockUnblockUser);
 adminRouter.get('/categories',auth.isLogin,adminController.Categories)

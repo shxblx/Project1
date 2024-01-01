@@ -213,9 +213,9 @@
                         <div class="form-group">
                             <label>File upload</label>
                             <div class="input-group col-xs-12">
-                                <input type="file" name="image" class=" file-upload-info" placeholder="Upload Image"
-                                    multiple required>
+                                <div id="imagePreview" class="mt-2"></div>
                             </div>
+                            <input id="productImage" type="file" name="image" class="file-upload-info" placeholder="Upload Image" multiple>
                         </div>
                         <div class="form-group">
                             <label for="exampleInputCity1">Category</label>
@@ -325,7 +325,32 @@
             return true;
         }
     </script>
-    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get the file input element
+            const fileInput = document.getElementById('productImage');
+
+            // Get the image preview container
+            const imagePreviewContainer = document.getElementById('imagePreview');
+
+            // Add an event listener to the file input
+            fileInput.addEventListener('change', function () {
+                // Remove existing preview images
+                imagePreviewContainer.innerHTML = '';
+
+                // Loop through selected files and create image previews
+                for (const file of fileInput.files) {
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    img.className = 'img-sm img-thumbnail mr-2';
+                    img.alt = 'Image Preview';
+                    img.style.width = '80px';
+                    img.style.height = '80px';
+                    imagePreviewContainer.appendChild(img);
+                }
+            });
+        });
+       </script>
 
 
 
