@@ -15,10 +15,23 @@
     <link rel="stylesheet" href="css/owl.theme.default.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
 
+    <!-- Add these links to your HTML head section -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 
     <link rel="stylesheet" href="css/aos.css">
 
     <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+      /* Adjust the position of the right carousel control button */
+      .carousel-control-next {
+       margin-right: 65px; /* Adjust this value as needed */
+      }
+    </style>
     
     
   </head>
@@ -102,32 +115,41 @@
         <div class="row">
           <div class="col-md-6">
             <div class="item-entry">
-              <a href="#" class="d-block">
-                <div class="row">
-                  <div class="col-md-6">
+              <div id="productCarousel<%= i %>" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                  <div class="carousel-item active">
                     <div class="zoom-in">
-                      <img src="/myImages/<%=productsId[i].image[0]%>" alt="Image" class="img-fluid mb-2">
-                    </div>
-                    <div class="zoom-in">
-                      <img src="/myImages/<%=productsId[i].image[1]%>" alt="Image" class="img-fluid">
+                      <img src="/myImages/<%=productsId[i].image[0]%>" alt="Image 1" class="img-fluid mb-2">
                     </div>
                   </div>
-                  <div class="col-md-6">
+                  <div class="carousel-item">
                     <div class="zoom-in">
-                      <img src="/myImages/<%=productsId[i].image[2]%>" alt="Image" class="img-fluid mb-2">
+                      <img src="/myImages/<%=productsId[i].image[1]%>" alt="Image 2" class="img-fluid">
                     </div>
+                  </div>
+                  <div class="carousel-item">
                     <div class="zoom-in">
-                      <img src="/myImages/<%=productsId[i].image[3]%>" alt="Image" class="img-fluid">
+                      <img src="/myImages/<%=productsId[i].image[2]%>" alt="Image 3" class="img-fluid mb-2">
+                    </div>
+                  </div>
+                  <div class="carousel-item">
+                    <div class="zoom-in">
+                      <img src="/myImages/<%=productsId[i].image[3]%>" alt="Image 4" class="img-fluid">
                     </div>
                   </div>
                 </div>
-              </a>
+                <a class="carousel-control-prev" href="#productCarousel<%= i %>" role="button" data-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#productCarousel<%= i %>" role="button" data-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="sr-only">Next</span>
+                </a>
+              </div>
             </div>
-            
-            
-            
-
           </div>
+          
           
               
           <div class="col-md-6">
