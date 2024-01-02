@@ -368,7 +368,7 @@ function increaseQuantity() {
 
     
 function addToCart(button) {
-  const product_id = button.getAttribute('data-productId');
+    const product_id = button.getAttribute('data-productId');
     const quantity = document.getElementById('quantityInput').value;
 
     const data = {
@@ -386,13 +386,26 @@ function addToCart(button) {
     .then(response => response.json())
     .then(result => {
         if (result.success) {
-          Swal.fire({
+            Swal.fire({
                 icon: 'success',
                 title: 'Success!',
                 text: 'Product added to cart successfully!',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Go to Cart',
+                cancelButtonText: 'Continue Shopping',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirect to the cart page or navigate to the cart
+                    window.location.href = '/cart';
+                } else {
+                    // Continue shopping
+                    // You can add any additional action here if needed
+                }
             });
         } else {
-          Swal.fire({
+            Swal.fire({
                 icon: 'error',
                 title: 'Error!',
                 text: 'Failed to add product to cart. Please try again.',
@@ -408,6 +421,7 @@ function addToCart(button) {
         });
     });
 }
+
     </script>
 
   </body>

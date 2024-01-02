@@ -326,10 +326,7 @@ const deleteImg = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Product not found' });
         }
 
-        // Use the pull method to remove the specified image from the images array
         Product.image.pull(imageName);
-
-        // Save the updated product
         await Product.save();
 
         res.json({ success: true, message: 'Image deleted successfully' });

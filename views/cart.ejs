@@ -141,7 +141,8 @@
                               </div>
                             </td>
                             <td>₹<%= item.total_price %></td>
-                            <td><a data-item-id="<%= item.product_id %>" href="#" class="btn btn-primary height-auto btn-sm delete-btn">X</a></td>
+                            <td><a data-item-id="<%= item.product_id._id %>" class="btn btn-primary height-auto btn-sm delete-btn">X</a></td>
+
                           </tr>
                   <%   });
                       } else { %>
@@ -311,6 +312,7 @@
   <script src="js/owl.carousel.min.js"></script>
   <script src="js/jquery.magnific-popup.min.js"></script>
   <script src="js/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script src="js/main.js"></script>
     
@@ -318,6 +320,7 @@
     document.querySelectorAll('.delete-btn').forEach(button => {
         button.addEventListener('click', function () {
             const itemId = this.dataset.itemId;
+            console.log(itemId);
 
             fetch('/removeCart', {
                 method: 'POST',
@@ -328,11 +331,22 @@
             })
             .then(response => response.json())
             .then(data => {
+                console.log(data);
+
                 if (data.success) {
-                    console.log(data);
-                    location.reload();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Product Deleted',
+                        text: 'The product has been removed from the cart successfully.',
+                    }).then(() => {
+                        location.reload();
+                    });
                 } else {
-                    alert('Error removing item from the cart.');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: `Error removing item from the cart: ${data.message}`,
+                    });
                 }
             })
             .catch(error => {
@@ -341,6 +355,7 @@
         });
     });
 </script>
+
   
   </body>
 </html>

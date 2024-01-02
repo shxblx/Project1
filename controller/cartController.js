@@ -8,7 +8,7 @@ const { loadLogin } = require('./user_controller')
 
 const loadCart = async (req, res) => {
     try {
-        
+
         const user = await User.findOne({ _id: req.session.user_id });
         messages = req.flash('message')
         const { user_id } = req.session;
@@ -17,7 +17,7 @@ const loadCart = async (req, res) => {
         }
         const cartData = await cart.findOne({ user_id }).populate('items.product_id');
 
-        res.render('cart', { cartData, messages,user });
+        res.render('cart', { cartData, messages, user });
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ success: false, error: 'Internal Server Error' });
@@ -87,23 +87,26 @@ const loadAddCart = async (req, res) => {
 };
 
 
-const removeCart = async (req, res) => {
-    try {
-        const itemId = req.body.itemId;
+    const removeCart = async (req, res) => {
+        try {
+            const itemId = req.body.itemId
+            console.log("itemId:"+itemId);
+            const userId = req.session.user_id;
+            
         
-        console.log(itemId);
+            const cartItem = await cart.updateOne(
+                { user_id: userId },
+                { $pull: { items: { product_id: itemId } } }
+            );
+            res.json({ success: true, message: 'prodcut removed deleted successfully' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ success: false, message: 'Error removing hrloo item from the cart' });
+        }
+    };
 
-        
 
-        
-        
-        
-        res.json({ success: true, message: 'Item removed successfully' });
-    } catch (error) {
-        console.log(error);
-        res.json({ success: false, message: 'Error removing item from the cart' });
-    }
-};
+
 
 
 const loadCheckout = async (req, res) => {
@@ -120,7 +123,7 @@ const loadCheckout = async (req, res) => {
             req.flash('message', 'Your cart is empty');
             return res.redirect('/cart');
         }
-        res.render('checkout', { cartData, userData,user })
+        res.render('checkout', { cartData, userData, user })
     } catch (error) {
         console.log(error);
     }
@@ -170,19 +173,19 @@ const placeOrder = async (req, res) => {
         const { address, paymentMethod } = req.body.orderData;
         console.log(address);
         if (!user_id) {
-           
+
         }
 
         const cartData = await cart.findOne({ user_id: user_id });
         if (!cartData) {
-            
+
         }
         const totalPrice = cartData.items.reduce((total, item) => total + item.total_price, 0);
 
 
         const userData = await User.findById(user_id);
         if (!userData) {
-            
+
         }
 
         const cartProducts = cartData.items;
@@ -196,16 +199,16 @@ const placeOrder = async (req, res) => {
             })
             .replace(/\//g, '-');
 
-            const orderData = new Order({
-                user_id: user_id,
-                delivery_address: address, 
-                user_name: userData.username,
-                total_amount: totalPrice,
-                date: Date.now(),
-                status: status,
-                expected_delivery: deliveryDate,
-                payment: paymentMethod,  
-                items: cartProducts,
+        const orderData = new Order({
+            user_id: user_id,
+            delivery_address: address,
+            user_name: userData.username,
+            total_amount: totalPrice,
+            date: Date.now(),
+            status: status,
+            expected_delivery: deliveryDate,
+            payment: paymentMethod,
+            items: cartProducts,
         });
 
         let orders = await orderData.save();
