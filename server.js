@@ -4,6 +4,7 @@ const session = require('express-session');
 const flash = require('express-flash');
 const path = require('path');
 require('dotenv').config();
+const morgan=require('morgan')
 
 const app = express();
 
@@ -24,7 +25,7 @@ app.use(session({
 }));
 
 app.use(flash());
-
+app.use(morgan('tiny'));
 
 const userRouter = require('./routes/userRouter');
 app.use('/', userRouter);
