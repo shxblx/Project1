@@ -24,23 +24,43 @@ const loadHome = async (req, res) => {
     }
 }
 
+const ITEMS_PER_PAGE = 6; // Set the number of products per page
+
 const loadShop = async (req, res) => {
     try {
         const user = await User.findOne({ _id: req.session.user_id });
         const category = await Category.find({ isListed: true });
+
         if (category.length === 0) {
             return res.render('Admin/product', { products: [] });
         }
+
         const listedCategoryIds = category.map(category => category._id);
+        const currentPage = parseInt(req.query.page) || 1;
+
+        // Calculate the skip value based on the current page
+        const skip = (currentPage - 1) * ITEMS_PER_PAGE;
+
+        // Fetch products for the current page
         const products = await product.find({
             category: { $in: listedCategoryIds },
             is_listed: true
+        }).skip(skip).limit(ITEMS_PER_PAGE);
+
+        // Calculate total number of pages for pagination links
+        const totalProducts = await product.countDocuments({
+            category: { $in: listedCategoryIds },
+            is_listed: true
         });
-        res.render('shop', { category, products,user })
+        const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
+
+        res.render('shop', { category, products, user, currentPage, totalPages });
     } catch (error) {
-        console.log();
+        console.error('Error loading shop:', error);
+        res.status(500).render('error', { error: 'Internal Server Error' });
     }
-}
+};
+
 
 const loadAbout = async (req, res) => {
     try {
@@ -140,7 +160,7 @@ const loadOTP = async (req, res) => {
     }
 }
 
-const verifySignup = async (req, res) => {
+    const verifySignup = async (req, res) => {
     try {
         const { username, email, phone, password, confirmpassword } = req.body;
 

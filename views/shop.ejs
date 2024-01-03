@@ -19,6 +19,27 @@
 
     <link rel="stylesheet" href="css/style.css">
     
+    <style>
+      .pagination-container {
+   display: flex;
+   justify-content: center;
+   margin-top: 20px;
+}
+
+.pagination-container a {
+   margin: 0 5px;
+   padding: 5px 10px;
+   text-decoration: none;
+   border: 1px solid #ccc;
+   cursor: pointer;
+}
+
+.pagination-container a.active {
+   background-color:#ee4266;
+   color: #fff;
+}
+    </style>
+
   </head>
   <body>
   
@@ -145,20 +166,27 @@
               </div>
             </div>
 
-            <div class="row mb-5">
-              <% if (products.length> 0) { %>
-                <% for (let i=0; i < products.length; i++) { %>
-              <div class="col-lg-6 col-md-6 item-entry mb-4">
-                <a href="/item?id=<%=products[i]._id%>" class="product-item md-height d-block" style="margin-right: 100px;">
-                  <img src="/myImages/<%= products[i].image[0] %>" alt="Image" class="img-fluid">
-                </a>
-                <a href="/item" style="font-size: 20px;color: black;"><%=products[i].name%></a>
-                <h1 style="font-size: 15px;"><%=products[i].description%></h1>
-                <strong class="item-price">₹<%=products[i].price%></strong>
-              </div>
+            <div id="product-list-container" class="row mb-5">
+              <% if (products.length > 0) { %>
+                 <% for (let i = 0; i < products.length; i++) { %>
+                    <div class="col-lg-6 col-md-6 item-entry mb-4">
+                       <a href="/item?id=<%=products[i]._id%>" class="product-item md-height d-block" style="margin-right: 100px;">
+                          <img src="/myImages/<%= products[i].image[0] %>" alt="Image" class="img-fluid">
+                       </a>
+                       <a href="/item" style="font-size: 20px;color: black;"><%=products[i].name%></a>
+                       <h1 style="font-size: 15px;"><%=products[i].description%></h1>
+                       <strong class="item-price">₹<%=products[i].price%></strong>
+                    </div>
+                 <% } %>
               <% } %>
+           </div>
+
+           <div class="pagination-container">
+            <% for (let i = 1; i <= totalPages; i++) { %>
+              <a href="/shop?page=<%= i %>" class="<%= i === currentPage ? 'active' : '' %>"><%= i %></a>
             <% } %>
-            </div>
+          </div>
+           
             <div class="row">
               <div class="col-md-12 text-center">
               </div>
@@ -336,6 +364,63 @@
   <script src="js/aos.js"></script>
 
   <script src="js/main.js"></script>
-    
+  
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+       const productListContainer = document.getElementById('product-list-container');
+       const paginationContainer = document.querySelector('.pagination-container');
+       const pageSize = 6; // Set the number of products per page
+ 
+       async function fetchAndDisplayProducts(page) {
+          try {
+             const response = await fetch(`/api/products?page=${page}&pageSize=${pageSize}`);
+             const data = await response.json();
+ 
+             productListContainer.innerHTML = ''; // Clear the existing product list
+             if (data.products.length > 0) {
+                data.products.forEach(product => {
+                   const productHTML = `<div class="col-lg-6 col-md-6 item-entry mb-4">
+                                         <a href="/item?id=${product._id}" class="product-item md-height d-block" style="margin-right: 100px;">
+                                            <img src="/myImages/${product.image[0]}" alt="Image" class="img-fluid">
+                                         </a>
+                                         <a href="/item" style="font-size: 20px;color: black;">${product.name}</a>
+                                         <h1 style="font-size: 15px;">${product.description}</h1>
+                                         <strong class="item-price">₹${product.price}</strong>
+                                      </div>`;
+                   productListContainer.innerHTML += productHTML;
+                });
+             } else {
+                productListContainer.innerHTML = '<p>No products found.</p>';
+             }
+ 
+             displayPagination(data.totalPages, page);
+          } catch (error) {
+             console.error('Error fetching products:', error);
+          }
+       }
+ 
+       function displayPagination(totalPages, currentPage) {
+          paginationContainer.innerHTML = '';
+          for (let i = 1; i <= totalPages; i++) {
+             const pageLink = document.createElement('a');
+             pageLink.href = '#';
+             pageLink.textContent = i;
+             pageLink.addEventListener('click', () => fetchAndDisplayProducts(i));
+ 
+             if (i === currentPage) {
+                pageLink.classList.add('active');
+             }
+ 
+             paginationContainer.appendChild(pageLink);
+          }
+       }
+ 
+       fetchAndDisplayProducts(1);
+    });
+ </script>
+ 
+
+
   </body>
 </html>

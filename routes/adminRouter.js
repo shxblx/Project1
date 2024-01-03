@@ -42,6 +42,7 @@ adminRouter.get('/product/editproduct',adminController.loadEditProduct)
 adminRouter.post('/product/editproduct',upload,adminController.editProduct)
 adminRouter.post('/product/deleteImg', adminController.deleteImg);
 adminRouter.get('/orders',auth.isLogin,adminController.loadOrders)
+adminRouter.post('/updateOrderStatus', adminController.updateOrderStatus);
 
 
 

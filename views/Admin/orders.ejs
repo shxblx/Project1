@@ -36,15 +36,32 @@
     <link href="css/style.css" rel="stylesheet">
 
     <style>
-        
-    
         #myTable th {
-            background-color: #191C24; /* Change this to the desired header background color */
-            color: #ff0000; 
-        }
-        #myTable td{
             background-color: #191C24;
+            color: #ff0000;
         }
+
+        #myTable td {
+            background-color: #191C24;
+            color:#495057 ;
+        }
+
+        .dataTables_wrapper .dataTables_length select {
+            border: 1px solid #aaa;
+            border-radius: 3px;
+            padding: 5px;
+            background-color: white;
+            padding: 4px;
+        }
+        .dataTables_wrapper .dataTables_filter input {
+    border: 1px solid #aaa;
+    border-radius: 3px 
+px
+;
+    padding: 5px;
+    background-color: white;
+    margin-left: 3px;
+}
     </style>
 </head>
 
@@ -85,7 +102,8 @@
                             class="fa-solid fa-layer-group me-2"></i>Categories</a>
                     <a href="/admin/product" class="nav-item nav-link "><i
                             class="fa-solid fa-list me-2"></i></i>Products</a>
-                            <a href="/admin/orders" class="nav-item nav-link active"><i class="fa-solid fa-list me-2"></i></i>Orders</a>
+                    <a href="/admin/orders" class="nav-item nav-link active"><i
+                            class="fa-solid fa-list me-2"></i></i>Orders</a>
                     <!-- <a href="table.html" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>
                     <a href="chart.html" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Charts</a>
                     <div class="nav-item dropdown">
@@ -203,9 +221,9 @@
                     <h6 class="mb-4">Category Management</h6>
 
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        
 
-                        
+
+
                     </div>
 
                     <div class="table-responsive">
@@ -220,72 +238,77 @@
                                     <th scope="col">Payment Method</th>
                                     <th scope="col">Status</th>
                                     <th scope="col">Order items</th>
-                                    
+
                                 </tr>
                             </thead>
                             <tbody>
-                                <% if (orders.length > 0) { %>
-                                    <% orders.forEach(order => { %>
-                                        <% if (order.items && order.items.length > 0) { %>
-                                            <% order.items.forEach(item => { %>
-                                            <tr>
-                                                <td>
-                                                    <%=order._id%>
-                                                </td>
-                                                <td>
-                                                    <a class="itemside" href="#">
-                                                        <div class="left">
-                                                            <img style="height: 80px;width: 80px;"
-                                                                src="/sharpimages/<%=item.product_id.image[0] %>"
-                                                                class="img-sm img-thumbnail" alt="" />
-                                                        </div>
-                                                        <div class="info">
-                                                            <h6 class="mb-0">
-                                                                <%= item.product_id.name %>
-                                                            </h6>
-                                                        </div>
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    <%=order.user_name%>
-                                                </td>
-                                                <td>
-                                                    <%=order.total_amount%>
-                                                </td>
-                                                <td>
-                                                    <%= moment(order.date).format('DD/MM/YYYY')%>
-                                                </td>
-                                                <td>
-                                                    <%=order.payment%>
+                                <% if (orders.length> 0) { %>
+                                    <% orders.forEach(order=> { %>
+                                        <% if (order.items && order.items.length> 0) { %>
+                                            <% order.items.forEach(item=> { %>
+                                                <tr>
+                                                    <td>
+                                                        <%=order._id%>
+                                                    </td>
+                                                    <td>
+                                                        <a class="itemside" href="#">
+                                                            <div class="left">
+                                                                <img style="height: 80px;width: 80px;"
+                                                                    src="/sharpimages/<%=item.product_id.image[0] %>"
+                                                                    class="img-sm img-thumbnail" alt="" />
+                                                            </div>
+                                                            <div class="info">
+                                                                <h6 class="mb-0">
+                                                                    <%= item.product_id.name %>
+                                                                </h6>
+                                                            </div>
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <%=order.user_name%>
+                                                    </td>
+                                                    <td>
+                                                        <%=order.total_amount%>
+                                                    </td>
+                                                    <td>
+                                                        <%= moment(order.date).format('DD/MM/YYYY')%>
+                                                    </td>
+                                                    <td>
+                                                        <%=order.payment%>
 
-                                                </td>
-                                                <td>
-                                                    <select class="form-control" name="status" id="status">
-                                                        <option value="Shipped"><%=order.status%></option>
-                                                        <option id="shipped" value="Shipped">Shipped</option>
-                                                        <option id="Out for Delivery" value="Out for Delivery">Out for Delivery</option>
-                                                        <option id="Delivered" value="Delivered">Delivered</option>
-                                                        <option id="Requested return" value="Requested return">Requested return</option>
-                                                        <option id="Requested cancellation" value="Requested cancellation">Requested cancellation</option>
-                                                        <option id="Cancel" value="Cancel">Cancel</option>
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <button class="btn btn-outline-light">
-                                                        items
-                                                    </button>
-                                                </td>
-                                            </tr>
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control status-dropdown" name="status"
+                                                            data-order-id="<%= order._id %>"
+                                                            onchange="updateOrderStatus(event)">
+                                                            <% ['Placed', 'Shipped' , 'Out for Delivery' , 'Delivered'
+                                                                , 'Requested return' , 'Requested cancellation'
+                                                                , 'Cancel' ].forEach(status=> { %>
+                                                                <option value="<%= status %>" <%=order.status===status
+                                                                    ? 'selected' : '' %>><%= status %>
+                                                                </option>
+                                                                <% }); %>
+                                                        </select>
 
-                                            <% }); %>
-                        <% } %>
-                    <% }); %>
-                <% } else { %>
-                    <tr>
-                        <td colspan="8" class="text-center">No orders available.</td>
-                    </tr>
-                <% } %>
-            </tbody>
+                                                    </td>
+
+                                                    <td>
+                                                        <button class="btn btn-outline-light">
+                                                            items
+                                                        </button>
+                                                    </td>
+                                                </tr>
+
+                                                <% }); %>
+                                                    <% } %>
+                                                        <% }); %>
+                                                            <% } else { %>
+                                                                <tr>
+                                                                    <td colspan="8" class="text-center">No orders
+                                                                        available.</td>
+                                                                </tr>
+                                                                <% } %>
+                            </tbody>
 
                         </table><a href="/admin/product/addProduct"><button type="button" class="btn btn-primary btn-sm"
                                 style="margin-left: 10px; margin-bottom: 10px; margin-top: 50px;">
@@ -323,7 +346,7 @@
     <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
 
-   
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="lib/chart/chart.min.js"></script>
     <script src="lib/easing/easing.min.js"></script>
@@ -334,7 +357,7 @@
     <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
 
 
-   
+
     <!-- Template Javascript -->
     <script>
         $(document).ready(function () {
@@ -342,7 +365,38 @@
             attachEventListeners();
         });
     </script>
-    
+
+    <script>
+        function updateOrderStatus(event) {
+            var selectedStatus = event.target.value;
+            var orderId = event.target.getAttribute("data-order-id");
+
+            console.log(selectedStatus);
+            console.log(orderId);
+
+            fetch("/admin/updateOrderStatus", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ orderId: orderId, status: selectedStatus }),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Handle the response from the server if needed
+                    console.log(data);
+                })
+                .catch(error => {
+                    // Handle errors during the fetch request
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        }
+    </script>
 
 
 </body>

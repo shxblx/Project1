@@ -35,6 +35,36 @@
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
 
+   <style>
+   #myTable td {
+    background-color: #191C24; 
+    color: #495057;
+}
+   #myTable th {
+    background-color: #191C24; 
+    color: #ff0101;
+}
+
+</style>
+    <style>
+        .dataTables_wrapper .dataTables_filter input {
+    background-color: #e9ecef; 
+    color: #000; 
+    border: 1px solid #000000; 
+}
+.dataTables_wrapper .dataTables_filter select {
+            background-color: #e9ecef;
+            color: #000;
+            border: 1px solid #000000;
+        }
+        .dataTables_wrapper .dataTables_length select {
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    padding: 5px;
+    background-color: #fff;
+    padding: 4px;
+}
+    </style>
     
 </head>
 
@@ -208,8 +238,8 @@
                                     <th scope="col">Price</th>
                                     <th scope="col">Status</th>
                                     <th scope="col">Quantity</th>
-                                    <th scope="col"></th>
-                                    <th scope="col"></th>
+                                    <th scope="col">edit</th>
+                                    <th scope="col">li</th>
                                     <th scope="col"></th>
                                 </tr>
                             </thead>
@@ -230,7 +260,7 @@
                                                 <%= products[i].description %>
                                             </td>
                                             <td>
-                                                <%=products[i].price%>
+                                                ₹<%=products[i].price%>
                                             </td>
                                             <td>
                                                 <% if (products[i].is_listed) { %>

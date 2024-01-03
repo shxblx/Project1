@@ -4,8 +4,8 @@ const product = require('../model/productmodel')
 const path = require('path')
 const sharp = require('sharp')
 const bcrypt = require('bcrypt')
-const moment=require('moment')
-const order=require('../model/orderModel')
+const moment = require('moment')
+const order = require('../model/orderModel')
 
 
 const loadAdminSignin = async (req, res) => {
@@ -113,7 +113,7 @@ const addCategory = async (req, res) => {
         });
 
         await category.save();
-        
+
         return res.redirect('/admin/categories');
     } catch (error) {
         console.log(error);
@@ -357,20 +357,36 @@ const listUnlistProduct = async (req, res) => {
 
 const LogoutAdmin = async (req, res) => {
     try {
-        req.session.admin_id=null;
+        req.session.admin_id = null;
         res.redirect('AdminSignin')
     } catch (error) {
         console.log(error);
     }
 }
 
-const loadOrders=async(req,res)=>{
+const loadOrders = async (req, res) => {
     try {
         const orders = await order.find().populate('items.product_id').sort({ _id: 1 });
 
-        res.render('Admin/orders',{  orders, moment })
+        res.render('Admin/orders', { orders, moment })
     } catch (error) {
         console.log(error);
+    }
+}
+
+const updateOrderStatus = async (req, res) => {
+    try {
+        const{orderId,status}=req.body;
+
+        const updatedOrder = await order.findByIdAndUpdate(orderId, { $set: { status: status } }, { new: true });
+        
+        
+        
+        res.json({ success: true, message: 'Order status updated successfully' });
+    } catch (error) {
+        console.error(error);
+        // Send an error response back to the client
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
 }
 
@@ -396,5 +412,6 @@ module.exports = {
     LogoutAdmin,
     editProduct,
     deleteImg,
-    loadOrders
+    loadOrders,
+    updateOrderStatus
 }
