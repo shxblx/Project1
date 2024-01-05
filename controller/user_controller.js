@@ -6,7 +6,7 @@ const Order = require('../model/orderModel')
 const nodemailer = require('nodemailer');
 const userOTPverification = require('../model/userOTPverification');
 require('dotenv').config();
-const moment=require('moment')
+const moment = require('moment')
 
 
 
@@ -106,19 +106,19 @@ const verifyLogin = async (req, res) => {
 
         if (!userData) {
             req.flash('message', 'User not found'); // Update the error message
-         return   res.redirect('/login');
-            
+            return res.redirect('/login');
+
         }
 
         if (userData.isBlocked === true) {
             req.flash('message', 'You have been blocked');
-         return   res.redirect('/login');
-            
+            return res.redirect('/login');
+
         }
         if (userData.verified === false) {
             req.flash('message', 'You are not verified');
-         return   res.redirect('/login');
-            
+            return res.redirect('/login');
+
         }
 
 
@@ -126,12 +126,12 @@ const verifyLogin = async (req, res) => {
 
         if (!passwordMatch) {
             req.flash('message', 'Wrong password');
-         return  res.redirect('/login');
-            
+            return res.redirect('/login');
+
         }
 
         req.session.user_id = userData._id;
-         return res.redirect('/home');
+        return res.redirect('/home');
     } catch (error) {
         console.log(error);
         req.flash('message', 'An error occurred. Please try again.');
@@ -160,7 +160,7 @@ const loadOTP = async (req, res) => {
     }
 }
 
-    const verifySignup = async (req, res) => {
+const verifySignup = async (req, res) => {
     try {
         const { username, email, phone, password, confirmpassword } = req.body;
 
@@ -304,7 +304,7 @@ const verifyOTP = async (req, res) => {
 
 const userLogout = async (req, res) => {
     try {
-        req.session.user_id=null;
+        req.session.user_id = null;
         res.redirect('/')
     } catch (error) {
         console.log(error);
@@ -369,10 +369,10 @@ const forgotPassSendMail = async (req, res) => {
         await transporter.sendMail(mailOption);
         console.log(`OTP for ${email} will be deleted in 1 minutes`);
         setTimeout(async () => {
-            
+
             await userOTPverification.deleteOne({ email: email });
             console.log(`OTP send for ${email} has been deleted after 1 minutes.`);
-        }, 60000 );
+        }, 60000);
 
         return res.redirect(`/otpVerify?email=${email}`)
 
@@ -381,39 +381,37 @@ const forgotPassSendMail = async (req, res) => {
     }
 }
 
-const loadProfile=async(req,res)=>{
+const loadProfile = async (req, res) => {
     try {
-        const userId=req.session.user_id
-        if(!userId){
+        const userId = req.session.user_id
+        if (!userId) {
             res.redirect('/login')
         }
-        const user=await User.findById({_id:userId})
-        res.render('user/user',{user})
+        const user = await User.findById({ _id: userId })
+        res.render('user/user', { user })
     } catch (error) {
         console.log(error);
     }
 }
-const loadOrder=async(req,res)=>{
+const loadOrder = async (req, res) => {
     try {
-        const userId=req.session.user_id
-        if(!userId){
+        const userId = req.session.user_id
+        if (!userId) {
             res.redirect('/login')
         }
-        const user=await User.findOne({_id:userId})
-        const order=await Order.findOne({user_id:userId}).populate('items.product_id')
-        console.log(user+"this is user");
-        console.log(order+"this is order");
-        res.render('user/orders',{order,user,moment})
+        const user = await User.findOne({ _id: userId })
+        const orders = await Order.find({ user_id: userId }).populate('items.product_id');
+        res.render('user/orders', { orders, user, moment })
     } catch (error) {
         console.log(error);
     }
 }
 
 
-const editProfile=async(req,res)=>{
+const editProfile = async (req, res) => {
     try {
-        const{username,email,phone}=req.body;
-        userId=req.session.user_id;
+        const { username, email, phone } = req.body;
+        userId = req.session.user_id;
         await User.findByIdAndUpdate(userId, { username, email, phone });
         res.redirect('/profile')
     } catch (error) {
@@ -421,40 +419,49 @@ const editProfile=async(req,res)=>{
     }
 }
 
-const loadChangePass=async(req,res)=>{
+const loadChangePass = async (req, res) => {
     try {
-        userId=req.session.user_id;
-        res.render('user/changepass',{userId})
+        userId = req.session.user_id;
+        res.render('user/changepass', { userId })
     } catch (error) {
         console.log(error);
     }
 }
 
 
-const changePassword=async(req,res)=>{
+const changePassword = async (req, res) => {
     try {
-      const  {oldPass,newPass,confirmPass}=req.body;
-      console.log(req.body);
-      const userId=req.session.user_id
-      const user=await User.findOne({_id:userId})
-      const passwordMatch = await bcrypt.compare(oldPass, user.password);
-      if(passwordMatch)
-      {
-        if(newPass==confirmPass)
-        {
-            const hashedPassword = await bcrypt.hash(newPass, 10);
-            await User.findByIdAndUpdate(userId, { $set: { password: hashedPassword } });
-            res.redirect('/profile')
+        const { oldPass, newPass, confirmPass } = req.body;
+        console.log(req.body);
+        const userId = req.session.user_id
+        const user = await User.findOne({ _id: userId })
+        const passwordMatch = await bcrypt.compare(oldPass, user.password);
+        if (passwordMatch) {
+            if (newPass == confirmPass) {
+                const hashedPassword = await bcrypt.hash(newPass, 10);
+                await User.findByIdAndUpdate(userId, { $set: { password: hashedPassword } });
+                res.redirect('/profile')
+            }
+            else {
+                return res.status(401).json({ error: "passwords do not match" });
+            }
+        } else {
+            return res.status(401).json({ error: "Invalid old password" });
         }
-        else{
-            return res.status(401).json({ error: "passwords do not match" });
-        }
-      }else{
-        return res.status(401).json({ error: "Invalid old password" });
-      }
     } catch (error) {
         console.log();
     }
+}
+
+const loadViewOrder = async (req, res) => {
+    try {
+        const userId = req.session.userId;
+        const orderId = req.query.orderId;  
+        const orders = await Order.find({ order_id: orderId  }).populate('items.product_id');
+        res.render('user/viewOrder', { orders: orders, moment })
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 module.exports = {
@@ -477,5 +484,6 @@ module.exports = {
     loadOrder,
     editProfile,
     loadChangePass,
-    changePassword
+    changePassword,
+    loadViewOrder
 }

@@ -166,6 +166,11 @@ const addAddress = async (req, res) => {
     }
 }
 
+const generateRandomOrderId = () => {
+    const randomString = Math.random().toString(36).substring(2, 10).toUpperCase();
+    return `GV${randomString}`;
+};
+
 const placeOrder = async (req, res) => {
     try {
         const date = new Date();
@@ -201,6 +206,7 @@ const placeOrder = async (req, res) => {
 
         const orderData = new Order({
             user_id: user_id,
+            order_id:generateRandomOrderId(),
             delivery_address: address,
             user_name: userData.username,
             total_amount: totalPrice,

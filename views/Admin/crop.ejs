@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Cropper</title>
+    <!-- Include Cropper.js from CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+</head>
+<body>
+    <h1>Image Cropper</h1>
+    
+    <input type="file" id="image-input" accept="image/*" multiple>
+    <div>
+        <img id="image" alt="Image to Crop">
+    </div>
+    
+    <button id="crop-button" onclick="cropImage()">Crop Image</button>
+    <button id="add-another" onclick="addAnother()">Add Another Image</button>
+
+    <!-- Include Cropper.js from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
+    <script>
+        let imageInput = document.getElementById('image-input');
+        let image = document.getElementById('image');
+        let cropButton = document.getElementById('crop-button');
+        let addAnotherButton = document.getElementById('add-another');
+        let cropper;
+
+        imageInput.addEventListener('change', function () {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                image.src = e.target.result;
+
+                // Initialize Cropper.js
+                cropper = new Cropper(image, {
+                    aspectRatio: 1, // Set your desired aspect ratio
+                    viewMode: 2, // Set the crop box to cover the entire canvas
+                });
+            };
+
+            reader.readAsDataURL(this.files[0]);
+        });
+
+        function cropImage() {
+            // Get the cropped data
+            const croppedData = cropper.getData();
+
+            // Assuming the cropped image is represented by the 'croppedImage' variable
+            const croppedImage = cropper.getCroppedCanvas().toDataURL();
+
+            // Store the cropped image data in sessionStorage
+            sessionStorage.setItem('croppedImageData', JSON.stringify({
+                url: croppedImage,
+                data: croppedData,
+            }));
+
+            // Redirect back to the "Add Product" page
+            window.location.href = '/admin/product/addProduct';
+        }
+
+        function addAnother() {
+            // This function can be used to reset the input and allow the user to add another image
+            // Clear the input value
+            imageInput.value = '';
+
+            // Reset the Cropper instance
+            cropper.destroy();
+
+            // Clear the existing image
+            image.src = '';
+
+            // Optionally, you can reset other UI elements or provide feedback to the user
+        }
+    </script>
+</body>
+</html>

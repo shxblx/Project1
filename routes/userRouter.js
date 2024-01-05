@@ -32,6 +32,7 @@ userRouter.post('/profile',userController.editProfile)
 userRouter.get('/profile/changePass',auth.checkBlocked,userController.loadChangePass)
 userRouter.post('/profile/changePass',userController.changePassword)
 userRouter.get('/orders',auth.checkBlocked,userController.loadOrder)
+userRouter.get('/vieworders',auth.checkBlocked,userController.loadViewOrder)
 
 
 

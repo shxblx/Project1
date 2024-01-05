@@ -43,7 +43,7 @@
 
         #myTable td {
             background-color: #191C24;
-            color:#495057 ;
+            color: #495057;
         }
 
         .dataTables_wrapper .dataTables_length select {
@@ -53,15 +53,14 @@
             background-color: white;
             padding: 4px;
         }
+
         .dataTables_wrapper .dataTables_filter input {
-    border: 1px solid #aaa;
-    border-radius: 3px 
-px
-;
-    padding: 5px;
-    background-color: white;
-    margin-left: 3px;
-}
+            border: 1px solid #aaa;
+            border-radius: 3px px;
+            padding: 5px;
+            background-color: white;
+            margin-left: 3px;
+        }
     </style>
 </head>
 
@@ -248,7 +247,7 @@ px
                                             <% order.items.forEach(item=> { %>
                                                 <tr>
                                                     <td>
-                                                        <%=order._id%>
+                                                        <%=order.order_id%>
                                                     </td>
                                                     <td>
                                                         <a class="itemside" href="#">
@@ -283,7 +282,7 @@ px
                                                             onchange="updateOrderStatus(event)">
                                                             <% ['Placed', 'Shipped' , 'Out for Delivery' , 'Delivered'
                                                                 , 'Requested return' , 'Requested cancellation'
-                                                                , 'Cancel' ].forEach(status=> { %>
+                                                                , 'Cancel' , 'Pending' ].forEach(status=> { %>
                                                                 <option value="<%= status %>" <%=order.status===status
                                                                     ? 'selected' : '' %>><%= status %>
                                                                 </option>

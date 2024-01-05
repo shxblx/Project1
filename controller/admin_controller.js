@@ -224,7 +224,6 @@ const addProduct = async (req, res) => {
         if (req.files.length !== 4) {
             return res.render('addProduct', { message: '4 images needed', category: data })
         }
-        // resize and save each uploaded images
         for (let i = 0; i < req.files.length; i++) {
             const imagesPath = path.join(__dirname, '../public/sharpimages', req.files[i].filename)
             await sharp(req.files[i].path).resize(800, 1200, { fit: 'fill' }).toFile(imagesPath)
@@ -390,6 +389,14 @@ const updateOrderStatus = async (req, res) => {
     }
 }
 
+const loadCrop=async(req,res)=>{
+    try {
+        res.render('Admin/crop')
+    } catch (error) {
+        
+    }
+}
+
 module.exports = {
     loadAdmin,
     loadAdminSignin,
@@ -413,5 +420,6 @@ module.exports = {
     editProduct,
     deleteImg,
     loadOrders,
-    updateOrderStatus
+    updateOrderStatus,
+    loadCrop
 }
