@@ -168,7 +168,7 @@ const addAddress = async (req, res) => {
 
 const generateRandomOrderId = () => {
     const randomString = Math.random().toString(36).substring(2, 10).toUpperCase();
-    return `GV${randomString}`;
+    return `GVS${randomString}`;
 };
 
 const placeOrder = async (req, res) => {

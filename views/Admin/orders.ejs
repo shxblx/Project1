@@ -237,25 +237,25 @@
                                     <th scope="col">Payment Method</th>
                                     <th scope="col">Status</th>
                                     <th scope="col">Order items</th>
-
                                 </tr>
                             </thead>
                             <tbody>
-                                <% if (orders.length> 0) { %>
-                                    <% orders.forEach(order=> { %>
-                                        <% if (order.items && order.items.length> 0) { %>
-                                            <% order.items.forEach(item=> { %>
+                                <% if (orders.length > 0) { %>
+                                    <% let prevOrderId = null; %>
+                                    <% orders.forEach((order, index) => { %>
+                                        <% if (order.items && order.items.length > 0) { %>
+                                            <% order.items.forEach((item, itemIndex) => { %>
                                                 <tr>
-                                                    <td>
-                                                        <%=order.order_id%>
-                                                    </td>
+                                                    <% if (prevOrderId !== order.order_id || itemIndex === 0) { %>
+                                                        <td rowspan="<%= order.items.length %>">
+                                                            <%= order.order_id %>
+                                                        </td>
+                                                    <% } %>
                                                     <td>
                                                         <a class="itemside" href="#">
-                                                            <div class="left">
-                                                                <img style="height: 80px;width: 80px;"
-                                                                    src="/sharpimages/<%=item.product_id.image[0] %>"
-                                                                    class="img-sm img-thumbnail" alt="" />
-                                                            </div>
+                                                            <!-- <div class="left">
+                                                                <img style="height: 80px;width: 80px;" src="/sharpimages/<%= item.product_id.image[0] %>" class="img-sm img-thumbnail" alt="" />
+                                                            </div> -->
                                                             <div class="info">
                                                                 <h6 class="mb-0">
                                                                     <%= item.product_id.name %>
@@ -263,56 +263,49 @@
                                                             </div>
                                                         </a>
                                                     </td>
-                                                    <td>
-                                                        <%=order.user_name%>
+                                                    <% if (prevOrderId !== order.order_id || itemIndex === 0) { %>
+                                                    <td rowspan="<%= order.items.length %>">
+                                                        <%= order.user_name %>
                                                     </td>
-                                                    <td>
-                                                        <%=order.total_amount%>
+                                                    <td rowspan="<%= order.items.length %>">
+                                                        ₹<%= order.total_amount %>
                                                     </td>
-                                                    <td>
-                                                        <%= moment(order.date).format('DD/MM/YYYY')%>
+                                                    <td rowspan="<%= order.items.length %>">
+                                                        <%= moment(order.date).format('DD/MM/YYYY') %>
                                                     </td>
-                                                    <td>
-                                                        <%=order.payment%>
-
+                                                    <td rowspan="<%= order.items.length %>">
+                                                        <%= order.payment %>
                                                     </td>
-                                                    <td>
-                                                        <select class="form-control status-dropdown" name="status"
-                                                            data-order-id="<%= order._id %>"
-                                                            onchange="updateOrderStatus(event)">
-                                                            <% ['Placed', 'Shipped' , 'Out for Delivery' , 'Delivered'
-                                                                , 'Requested return' , 'Requested cancellation'
-                                                                , 'Cancel' , 'Pending' ].forEach(status=> { %>
-                                                                <option value="<%= status %>" <%=order.status===status
-                                                                    ? 'selected' : '' %>><%= status %>
-                                                                </option>
-                                                                <% }); %>
-                                                        </select>
-
-                                                    </td>
-
-                                                    <td>
-                                                        <button class="btn btn-outline-light">
-                                                            items
-                                                        </button>
-                                                    </td>
-                                                </tr>
-
-                                                <% }); %>
                                                     <% } %>
-                                                        <% }); %>
-                                                            <% } else { %>
-                                                                <tr>
-                                                                    <td colspan="8" class="text-center">No orders
-                                                                        available.</td>
-                                                                </tr>
-                                                                <% } %>
+                                                    <td>
+                                                    
+                                                        <select class="form-control status-dropdown" data-product-id="<%=item.product_id._id%>" name="status" data-order-id="<%= order.order_id %>"  onchange="updateOrderStatus(event)">
+                                                            <% ['Placed', 'Shipped', 'Out for Delivery', 'Delivered', 'Requested return', 'Requested cancellation', 'Cancel', 'Pending'].forEach(status => { %>
+                                                                <option value="<%= status %>" <%= item.ordered_status === status ? 'selected' : '' %>><%= status %></option>
+                                                            <% }); %>
+                                                        </select>
+                                                        
+                                                        
+                                                       
+                                                    </td>
+                                                    <% if (itemIndex === 0) { %>
+                                                        <td rowspan="<%= order.items.length %>">
+                                                            <button class="btn btn-outline-light">items</button>
+                                                        </td>
+                                                    <% } %>
+                                                </tr>
+                                                <% prevOrderId = order.order_id; %>
+                                            <% }); %>
+                                        <% } %>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="8" class="text-center">No orders available.</td>
+                                    </tr>
+                                <% } %>
                             </tbody>
-
-                        </table><a href="/admin/product/addProduct"><button type="button" class="btn btn-primary btn-sm"
-                                style="margin-left: 10px; margin-bottom: 10px; margin-top: 50px;">
-                                Add Product
-                            </button></a>
+                        </table>
+                        
 
                     </div>
                 </div>
@@ -369,6 +362,7 @@
         function updateOrderStatus(event) {
             var selectedStatus = event.target.value;
             var orderId = event.target.getAttribute("data-order-id");
+            var productId=event.target.getAttribute("data-product-id");
 
             console.log(selectedStatus);
             console.log(orderId);
@@ -378,7 +372,7 @@
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ orderId: orderId, status: selectedStatus }),
+                body: JSON.stringify({ orderId: orderId, status: selectedStatus,productId:productId }),
             })
                 .then(response => {
                     if (!response.ok) {

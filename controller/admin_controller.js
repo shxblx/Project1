@@ -375,13 +375,22 @@ const loadOrders = async (req, res) => {
 
 const updateOrderStatus = async (req, res) => {
     try {
-        const{orderId,status}=req.body;
+        const{orderId,status,productId}=req.body;
 
-        const updatedOrder = await order.findByIdAndUpdate(orderId, { $set: { status: status } }, { new: true });
+        console.log("this is the product id="+productId);
+        console.log("this is the order id="+orderId);
         
         
+        const result = await order.updateOne(
+            { "order_id": orderId, "items.product_id": productId },
+            { $set: { "items.$.ordered_status": status } }
+        );
         
-        res.json({ success: true, message: 'Order status updated successfully' });
+        if (result.modifiedCount === 1) {
+            res.json({ success: true, message: 'Order status updated successfully' });
+        } else {
+            res.status(404).json({ success: false, message: 'Order or product not found' });
+        }
     } catch (error) {
         console.error(error);
         // Send an error response back to the client
