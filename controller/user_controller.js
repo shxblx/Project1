@@ -566,9 +566,8 @@ const loadAddAddress=async(req,res)=>{
 const addAddress = async (req, res) => {
     try {
         const { name, housename, city, state, phone, pincode } = req.body;
-
         const user = await User.findOne({ _id: req.session.user_id })
-
+        console.log(user);
         if (user) {
             await User.updateOne(
                 { _id: req.session.user_id },
@@ -587,7 +586,7 @@ const addAddress = async (req, res) => {
                     }
                 }, { new: true }
             )
-            res.json({ success: true, message: 'Address added successfully' })
+            res.redirect('/viewAddress')
         } else {
             res.status(400).json({ success: false, message: "User not found" })
         }

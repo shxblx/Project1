@@ -62,10 +62,30 @@
         }
 
         input {
-            width: calc(100% - 16px); /* Adjusted width and added left margin */
             padding: 8px;
             margin-bottom: 15px;
             box-sizing: border-box;
+        }
+
+        #name {
+            width: 50%; /* 50% width for name */
+        }
+
+        #housename {
+            width: 100%; /* Full width for housename */
+        }
+
+        #city,
+        #state {
+            width: 50%; /* 50% width for city and state */
+        }
+
+        #phone {
+            width: 70%; /* 70% width for phone */
+        }
+
+        #pincode {
+            width: 30%; /* 30% width for pincode */
         }
 
         button {
@@ -79,6 +99,12 @@
 
         button:hover {
             background-color: #45a049;
+        }
+
+        .error {
+            color: red;
+            margin-top: 5px;
+            display: none;
         }
     </style>
 
@@ -156,26 +182,32 @@
             <!-- End Navbar -->
 
             <div id="addAddressContainer">
-                <form id="addAddressForm">
+                <form id="addAddressForm" action="/userAddAddress" method="post" onsubmit="return validateForm()">
                     <label for="name">Name:</label>
                     <input type="text" id="name" name="name" required>
+                    <span class="error" id="nameError">Please enter a valid name</span>
         
                     <label for="housename">House Name:</label>
                     <input type="text" id="housename" name="housename" required>
+                    <span class="error" id="housenameError">Please enter a valid house name</span>
         
                     <label for="city">City:</label>
                     <input type="text" id="city" name="city" required>
+                    <span class="error" id="cityError">Please enter a valid city</span>
         
                     <label for="state">State:</label>
                     <input type="text" id="state" name="state" required>
+                    <span class="error" id="stateError">Please enter a valid state</span>
         
                     <label for="phone">Phone:</label>
-                    <input type="tel" id="phone" name="phone" required>
+                    <input type="text" id="phone" name="phone" required>
+                    <span class="error" id="phoneError">Please enter a valid phone number</span>
         
                     <label for="pincode">Pincode:</label>
                     <input type="text" id="pincode" name="pincode" required>
+                    <span class="error" id="pincodeError">Please enter a valid pincode</span>
         
-                    <button type="button" onclick="addAddress()">Add Address</button>
+                    <button type="submit">Add Address</button>
                 </form>
             </div>
         
@@ -223,5 +255,33 @@
 <script src="../assets/js/light-bootstrap-dashboard.js?v=2.0.0 " type="text/javascript"></script>
 <!-- Light Bootstrap Dashboard DEMO methods, don't include it in your project! -->
 <script src="../assets/js/demo.js"></script>
+
+<script>
+    function validateForm() {
+        var name = document.getElementById('name').value;
+        var housename = document.getElementById('housename').value;
+        var city = document.getElementById('city').value;
+        var state = document.getElementById('state').value;
+        var phone = document.getElementById('phone').value;
+        var pincode = document.getElementById('pincode').value;
+
+        var nameError = document.getElementById('nameError');
+        var housenameError = document.getElementById('housenameError');
+        var cityError = document.getElementById('cityError');
+        var stateError = document.getElementById('stateError');
+        var phoneError = document.getElementById('phoneError');
+        var pincodeError = document.getElementById('pincodeError');
+
+        nameError.style.display = (name === '') ? 'block' : 'none';
+        housenameError.style.display = (housename === '') ? 'block' : 'none';
+        cityError.style.display = (city === '') ? 'block' : 'none';
+        stateError.style.display = (state === '') ? 'block' : 'none';
+        phoneError.style.display = (phone === '' || isNaN(phone)) ? 'block' : 'none';
+        pincodeError.style.display = (pincode === '' || isNaN(pincode)) ? 'block' : 'none';
+
+        return (name !== '' && housename !== '' && city !== '' && state !== '' && phone !== '' && !isNaN(phone) && pincode !== '' && !isNaN(pincode));
+    }
+</script>
+
 
 </html>
