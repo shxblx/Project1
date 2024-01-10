@@ -19,7 +19,7 @@ const orderSchema = mongoose.Schema({
         required: true
     },
     total_amount: {
-        type: String,
+        type: Number,
         required: true
     },
     date: {

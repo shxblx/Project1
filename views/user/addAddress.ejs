@@ -27,6 +27,9 @@
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
     <!-- CSS Files -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
     <link href="assets/css/light-bootstrap-dashboard.css?v=2.0.0 " rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
@@ -35,17 +38,58 @@
 
 <body>
     <style>
-        .hidden {
-            display: none;
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #addAddressContainer {
+            width: 650px; /* Set your preferred width */
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: calc(100% - 16px); /* Adjusted width and added left margin */
+            padding: 8px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
         }
     </style>
+
+
     <div class="wrapper">
         <div class="sidebar">
             <!--
-         Tip 1: You can change the color of the sidebar using: data-color="purple | blue | green | orange | red"
- 
-         Tip 2: you can also add an image using data-image tag
-     -->
+           Tip 1: You can change the color of the sidebar using: data-color="purple | blue | green | orange | red"
+   
+           Tip 2: you can also add an image using data-image tag
+       -->
             <div class="sidebar-wrapper" style="background-color: #ee4266;">
                 <div class="logo">
                     <a href="http://www.creative-tim.com" class="simple-text">
@@ -59,13 +103,13 @@
                             <p>User Profile</p>
                         </a>
                     </li>
-                    <li class="nav-item active">
+                    <li class="nav-item ">
                         <a class="nav-link" href="/orders">
                             <i class="nc-icon nc-circle-09"></i>
                             <p>Orders</p>
                         </a>
                     </li>
-                    <li class="nav-item ">
+                    <li class="nav-item active">
                         <a class="nav-link" href="/viewAddress">
                             <i class="nc-icon nc-circle-09"></i>
                             <p>Address</p>
@@ -111,53 +155,30 @@
             </nav>
             <!-- End Navbar -->
 
-
-
-
-            <div class="col-md-8">
-                <% orders.forEach(order=> { %>
-                    <% if(order.items && order.items.length> 0) {%>
-                        <% order.items.forEach(item=> { %>
-                            <div class="card ">
-                                <div class="card-header ">
-                                    <h4 class="card-title ">
-                                        #Order ID : <%= order.order_id %>
-                                    </h4>
-                                    <hr>
-
-                                    <div class="card-body bg-light">
-                                        <img src="/myImages/<%= item.product_id.image[0] %>"
-                                            class="img-sm img-thumbnail mb-2" alt="" width="60px" height="50px"><br>
-                                        <span>Price : ₹<%= item.product_id.price %></span><br><br>
-                                        <span>Order Date : <%= moment(order.date).format('dddd, MMMM Do YYYY') %>
-                                        </span><br><br>
-                                        <span> Delivery Address: <%= order.delivery_address %></span><br><br>
-                                        <span>Payment Method : <%= order.payment %></span><br><br>
-                                        <span>Expected Delivery : <%= order.expected_delivery %></span><br><br>
-
-                                        <span>status : <span style="color: red;">
-                                                <%= item.ordered_status %>
-                                            </span></span><br><br>
-                                    </div>
-                                    <button type="button" onclick="openOrderActionModal(event)"
-                                        data-product-id="<%= item.product_id._id %>"
-                                        data-order-id="<%= order.order_id %>"
-                                        data-status-name="<%= item.ordered_status %>"
-                                        data-item-quantity="<%=item.quantity%>"
-                                        class="btn btn-danger btn-fill pull-right mr-4 mt-2 mb-2 <%= ['Requested cancellation', 'Requested return','Cancelled','Returned'].includes(item.ordered_status) ? 'hidden' : '' %>">
-                                        <%= item.ordered_status==='Delivered' ? 'Return Order' : 'Cancel Order' %>
-                                    </button>
-
-
-                                </div>
-                            </div>
-
-
-                            <% }) %>
-                                <% }%>
-                                    <% }) %>
+            <div id="addAddressContainer">
+                <form id="addAddressForm">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+        
+                    <label for="housename">House Name:</label>
+                    <input type="text" id="housename" name="housename" required>
+        
+                    <label for="city">City:</label>
+                    <input type="text" id="city" name="city" required>
+        
+                    <label for="state">State:</label>
+                    <input type="text" id="state" name="state" required>
+        
+                    <label for="phone">Phone:</label>
+                    <input type="tel" id="phone" name="phone" required>
+        
+                    <label for="pincode">Pincode:</label>
+                    <input type="text" id="pincode" name="pincode" required>
+        
+                    <button type="button" onclick="addAddress()">Add Address</button>
+                </form>
             </div>
-
+        
 
 
 
@@ -185,28 +206,6 @@
         </div>
     </div>
 
-    <div class="modal" id="orderActionModal" tabindex="-1" role="dialog" aria-labelledby="orderActionModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="orderActionModalLabel">Reason for Cancellation</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <label for="actionReason">Please provide the reason for cancellation:</label>
-                    <textarea class="form-control" id="actionReason" rows="3" ></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="submitOrderAction()">Submit</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
 </body>
 <!--   Core JS Files   -->
 <script src="../assets/js/core/jquery.3.2.1.min.js" type="text/javascript"></script>
@@ -224,57 +223,5 @@
 <script src="../assets/js/light-bootstrap-dashboard.js?v=2.0.0 " type="text/javascript"></script>
 <!-- Light Bootstrap Dashboard DEMO methods, don't include it in your project! -->
 <script src="../assets/js/demo.js"></script>
-
-
-<script>
-    function openOrderActionModal(event) {
-        var productId = event.target.getAttribute("data-product-id");
-        var orderId = event.target.getAttribute("data-order-id");
-        var orderedStatus = event.target.getAttribute("data-status-name");
-        var quantity = event.target.getAttribute("data-item-quantity");
-
-        $('#orderActionModal').modal('show');
-
-        $('#orderActionModal').data('order-id', orderId);
-        $('#orderActionModal').data('product-id', productId);
-        $('#orderActionModal').data('ordered-status', orderedStatus);
-        $('#orderActionModal').data('data-item-quantity', quantity);
-    }
-
-    function submitOrderAction() {
-        var orderId = $('#orderActionModal').data('order-id');
-        var productId = $('#orderActionModal').data('product-id');
-        var orderedStatus = $('#orderActionModal').data('ordered-status');
-        var quantity = $('#orderActionModal').data('data-item-quantity');
-        var actionReason = $('#actionReason').val();
-        console.log(orderedStatus + "ordered");
-        var route = (orderedStatus === 'Delivered') ? '/returnOrderStatus' : '/cancelOrderStatus';
-
-        fetch(route, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ orderId: orderId, productId: productId, actionReason: actionReason,quantity:quantity }),
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log(data);
-
-                $('#orderActionModal').modal('hide');
-
-                window.location.reload();
-            })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
-            });
-    }
-</script>
-
 
 </html>

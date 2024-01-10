@@ -42,7 +42,74 @@ const verifyAdminLogin = async (req, res) => {
 
 const loadAdmin = async (req, res) => {
     try {
-        res.render('Admin/index')
+        const result = await order.aggregate([
+            {
+              $match: {
+                'items.ordered_status': 'Delivered'
+              }
+            },
+            {
+              $group: {
+                _id: null,
+                totalAmount: { $sum: { $toDouble: '$total_amount' } }
+              }
+            }
+          ]);
+          
+        const totalAmount = result.length > 0 ? result[0].totalAmount : 0;
+
+        const monthlyTotalSales = await order.aggregate([
+            {
+                $match: {
+                    'items.ordered_status': 'Delivered' 
+                }
+            },
+            {
+                $group: {
+                    _id: { $month: '$date' }, 
+                    totalSales: { $sum: '$total_amount' } 
+                }
+            },
+            {
+                $sort: { _id: 1 } 
+            }
+        ]);
+        
+        const totalSales = monthlyTotalSales.map(monthlySale => monthlySale.totalSales);
+        const totalSalesSum = totalSales.reduce((acc, current) => acc + current, 0);
+        
+
+        const productCount = await product.countDocuments();
+        
+        const totalAmountandQuantity = await order.aggregate([
+            {
+                $unwind: '$items'
+            },
+            {
+                $match: {
+                    'items.ordered_status': 'Delivered' 
+                }
+            },
+            {
+                $group: {
+                    _id: '$_id',
+                    totalItemsInOrder: { $sum: 1 }, 
+                    totalQuantityInOrder: { $sum: '$items.quantity' } 
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalItems: { $sum: '$totalItemsInOrder' }, 
+                    totalQuantity: { $sum: '$totalQuantityInOrder' } 
+                }
+            }
+        ]);
+
+        const totalItems = totalAmountandQuantity.length > 0 ? totalAmountandQuantity[0].totalItems : 0;
+        const totalQuantity = totalAmountandQuantity.length > 0 ? totalAmountandQuantity[0].totalQuantity : 0;
+
+        res.render('Admin/index',{productCount,totalQuantity,totalAmount,totalSalesSum})
     } catch (error) {
         console.log(error);
     }
@@ -394,9 +461,12 @@ const updateOrderStatus = async (req, res) => {
     }
 }
 
-const loadCrop=async(req,res)=>{
+const viewOrders=async(req,res)=>{
     try {
-        res.render('Admin/crop')
+        const userId = req.session.userId;
+        const orderId = req.query.orderId;
+        const orders = await order.find({ order_id: orderId }).populate('items.product_id');
+        res.render('Admin/viewOrders',{ orders: orders, moment })
     } catch (error) {
         
     }
@@ -426,5 +496,5 @@ module.exports = {
     deleteImg,
     loadOrders,
     updateOrderStatus,
-    loadCrop
+    viewOrders
 }

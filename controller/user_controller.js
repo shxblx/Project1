@@ -469,9 +469,20 @@ const cancelOrderStatus = async (req, res) => {
         const { orderId, productId, actionReason, quantity } = req.body;
         const status = 'Requested cancellation';
 
+        const Product = await product.findById(productId);
+        const decrementAmount = Product.price * quantity;
+
         const result = await Order.updateOne(
             { "order_id": orderId, "items.product_id": productId },
-            { $set: { "items.$.ordered_status": status, "items.$.cancellationReason": actionReason } }
+            { 
+                $set: { 
+                    "items.$.ordered_status": status, 
+                    "items.$.cancellationReason": actionReason 
+                },
+                $inc: { 
+                    "total_amount": -decrementAmount 
+                }
+            }
         );
         const updateQuantity=await product.updateOne(
             {_id:productId},
@@ -496,15 +507,27 @@ const returnOrderStatus = async (req, res) => {
 
         console.log("Order ID:", actionReason);
 
+        const Product = await product.findById(productId);
+        const decrementAmount = Product.price * quantity;
+
         const result = await Order.updateOne(
             { "order_id": orderId, "items.product_id": productId },
-            { $set: { "items.$.ordered_status": status, "items.$.cancellationReason": actionReason } }
+            { 
+                $set: { 
+                    "items.$.ordered_status": status, 
+                    "items.$.cancellationReason": actionReason 
+                },
+                $inc: { 
+                    "total_amount": -decrementAmount 
+                }
+            }
         );
         const updateQuantity=await product.updateOne(
             {_id:productId},
             {$inc:{"quantity":quantity}}
         )
-        if (result.nModified > 0) {
+
+        if (result.nModified > 0 && updateQuantity.nModified > 0) {
             res.status(200).json({ success: true, message: 'Order status updated successfully' });
         } else {
             res.status(200).json({ success: false, message: 'No changes were made to the order status' });
@@ -515,6 +538,67 @@ const returnOrderStatus = async (req, res) => {
     }
 };
 
+const loadAddress=async(req,res)=>{
+    try {
+        
+        const { user_id } = req.session;
+        if (!user_id) {
+            res.redirect('login')
+        }
+        const userData = await User.findOne({ _id: user_id })
+
+        res.render('user/address',{userData})
+
+
+    } catch (error) {
+        
+    }
+}
+
+const loadAddAddress=async(req,res)=>{
+    try {
+        res.render('user/addAddress')
+    } catch (error) {
+        
+    }
+}
+
+const addAddress = async (req, res) => {
+    try {
+        const { name, housename, city, state, phone, pincode } = req.body;
+
+        const user = await User.findOne({ _id: req.session.user_id })
+
+        if (user) {
+            await User.updateOne(
+                { _id: req.session.user_id },
+                {
+                    $push: {
+                        address: [
+                            {
+                                name: name,
+                                housename: housename,
+                                phone: phone,
+                                city: city,
+                                state: state,
+                                pincode: pincode
+                            }
+                        ]
+                    }
+                }, { new: true }
+            )
+            res.json({ success: true, message: 'Address added successfully' })
+        } else {
+            res.status(400).json({ success: false, message: "User not found" })
+        }
+
+
+
+        console.log(req.body);
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 module.exports = {
     loadHome,
@@ -539,5 +623,8 @@ module.exports = {
     changePassword,
     loadViewOrder,
     cancelOrderStatus,
-    returnOrderStatus
+    returnOrderStatus,
+    loadAddress,
+    loadAddAddress,
+    addAddress
 }

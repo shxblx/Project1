@@ -35,6 +35,9 @@ userRouter.get('/orders',auth.checkBlocked,userController.loadOrder)
 userRouter.get('/vieworders',auth.checkBlocked,userController.loadViewOrder)
 userRouter.post('/cancelOrderStatus',userController.cancelOrderStatus)
 userRouter.post('/returnOrderStatus',userController.returnOrderStatus)
+userRouter.get('/viewAddress',userController.loadAddress)
+userRouter.get('/addAddress',userController.loadAddAddress)
+userRouter.post('/addAddress',userController.addAddress)
 
 
 

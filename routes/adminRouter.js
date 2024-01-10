@@ -43,7 +43,7 @@ adminRouter.post('/product/editproduct',upload,adminController.editProduct)
 adminRouter.post('/product/deleteImg', adminController.deleteImg);
 adminRouter.get('/orders',auth.isLogin,adminController.loadOrders)
 adminRouter.post('/updateOrderStatus', adminController.updateOrderStatus);
-adminRouter.get('/crop',adminController.loadCrop)
+adminRouter.get('/viewOrders',adminController.viewOrders)
 
 
 
