@@ -182,9 +182,6 @@ const placeOrder = async (req, res) => {
         }
 
         const cartData = await cart.findOne({ user_id: user_id });
-        if (!cartData) {
-
-        }
         const totalPrice = cartData.items.reduce((total, item) => total + item.total_price, 0);
 
 
@@ -194,6 +191,10 @@ const placeOrder = async (req, res) => {
         }
 
         const cartProducts = cartData.items;
+        const productIds = cartProducts.map(item => item.product_id.toString());
+        const productQ = cartProducts.map(item => parseInt(item.quantity, 10));
+        console.log("this is productID "+productIds);
+        console.log("this is productQ "+productQ);
         const status = paymentMethod === 'COD' ? 'placed' : 'pending';
         const delivery = new Date(date.getTime() + 10 * 24 * 60 * 60 * 1000);
         const deliveryDate = delivery
@@ -222,6 +223,18 @@ const placeOrder = async (req, res) => {
 
         if (orders.status === 'placed') {
             await cart.deleteOne({ user_id: user_id });
+
+            for (let i = 0; i < productIds.length; i++) {
+                const productId = productIds[i];
+                const quantityToDecrease = productQ[i];
+            
+                // Find and update the product in the products collection
+                await product.updateOne(
+                    { "_id":productId },
+                    { $inc: { "quantity": -quantityToDecrease } }
+                );
+            }
+
             return res.json({ success: true, params: orderId });
         }
     } catch (error) {

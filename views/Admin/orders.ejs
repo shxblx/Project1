@@ -279,8 +279,8 @@
                                                     <% } %>
                                                     <td>
                                                     
-                                                        <select class="form-control status-dropdown" data-product-id="<%=item.product_id._id%>" name="status" data-order-id="<%= order.order_id %>"  onchange="updateOrderStatus(event)">
-                                                            <% ['Placed', 'Shipped', 'Out for Delivery', 'Delivered', 'Requested return', 'Requested cancellation', 'Cancel', 'Pending'].forEach(status => { %>
+                                                        <select class="form-control status-dropdown"  name="status" data-product-id="<%=item.product_id._id%>" data-order-id="<%= order.order_id %>"  onchange="updateOrderStatus(event)">
+                                                            <% ['Placed', 'Shipped', 'Out for Delivery', 'Delivered', 'Requested return','Returned', 'Requested cancellation', 'Cancelled', 'Pending'].forEach(status => { %>
                                                                 <option value="<%= status %>" <%= item.ordered_status === status ? 'selected' : '' %>><%= status %></option>
                                                             <% }); %>
                                                         </select>

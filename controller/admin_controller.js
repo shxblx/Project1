@@ -377,10 +377,6 @@ const updateOrderStatus = async (req, res) => {
     try {
         const{orderId,status,productId}=req.body;
 
-        console.log("this is the product id="+productId);
-        console.log("this is the order id="+orderId);
-        
-        
         const result = await order.updateOne(
             { "order_id": orderId, "items.product_id": productId },
             { $set: { "items.$.ordered_status": status } }

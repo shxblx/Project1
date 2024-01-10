@@ -464,6 +464,30 @@ const loadViewOrder = async (req, res) => {
     }
 }
 
+const cancelOrderStatus = async (req, res) => {
+    try {
+        const { orderId, productId } = req.body;
+        const status = 'Requested cancellation';
+
+        console.log("Order ID:", orderId);
+        console.log("Product ID:", productId);
+
+        const result = await Order.updateOne(
+            { "order_id": orderId, "items.product_id": productId },
+            { $set: { "items.$.ordered_status": status } }
+        );
+        if (result.nModified > 0) {
+            res.status(200).json({ success: true, message: 'Order status updated successfully' });
+        } else {
+            res.status(200).json({ success: false, message: 'No changes were made to the order status' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+};
+
+
 module.exports = {
     loadHome,
     loadShop,
@@ -485,5 +509,6 @@ module.exports = {
     editProfile,
     loadChangePass,
     changePassword,
-    loadViewOrder
+    loadViewOrder,
+    cancelOrderStatus
 }
