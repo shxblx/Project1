@@ -133,11 +133,15 @@
                                                 <%= item.ordered_status %>
                                             </span></span><br><br>
                                     </div>
-                                    <button type="button" onclick="openCancelOrderModal(event)"
-        data-product-id="<%= item.product_id._id %>" data-order-id="<%= order.order_id %>"
-        class="btn btn-danger btn-fill pull-right mr-4 mt-2 mb-2 <%= item.ordered_status === 'Requested cancellation' ? 'hidden' : '' %>">
-    <%= item.ordered_status === 'Delivered' ? 'Return Order' : 'Cancel Order' %>
-</button>
+                                    <button type="button" onclick="openOrderActionModal(event)"
+                                        data-product-id="<%= item.product_id._id %>"
+                                        data-order-id="<%= order.order_id %>"
+                                        data-status-name="<%= item.ordered_status %>"
+                                        data-item-quantity="<%=item.quantity%>"
+                                        class="btn btn-danger btn-fill pull-right mr-4 mt-2 mb-2 <%= ['Requested cancellation', 'Requested return','Cancelled','Returned'].includes(item.ordered_status) ? 'hidden' : '' %>">
+                                        <%= item.ordered_status==='Delivered' ? 'Return Order' : 'Cancel Order' %>
+                                    </button>
+
 
                                 </div>
                             </div>
@@ -175,23 +179,23 @@
         </div>
     </div>
 
-    <div class="modal" id="cancelOrderModal" tabindex="-1" role="dialog" aria-labelledby="cancelOrderModalLabel"
+    <div class="modal" id="orderActionModal" tabindex="-1" role="dialog" aria-labelledby="orderActionModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="cancelOrderModalLabel">Reason for Cancellation</h5>
+                    <h5 class="modal-title" id="orderActionModalLabel">Reason for Cancellation</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <label for="cancellationReason">Please provide the reason for cancellation:</label>
-                    <textarea class="form-control" id="cancellationReason" rows="3"></textarea>
+                    <label for="actionReason">Please provide the reason for cancellation:</label>
+                    <textarea class="form-control" id="actionReason" rows="3"></textarea>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="submitCancellationReason()">Submit</button>
+                    <button type="button" class="btn btn-primary" onclick="submitOrderAction()">Submit</button>
                 </div>
             </div>
         </div>
@@ -217,30 +221,35 @@
 
 
 <script>
-    function openCancelOrderModal(event) {
+    function openOrderActionModal(event) {
         var productId = event.target.getAttribute("data-product-id");
         var orderId = event.target.getAttribute("data-order-id");
+        var orderedStatus = event.target.getAttribute("data-status-name");
+        var quantity = event.target.getAttribute("data-item-quantity");
 
-        // Open the cancellation reason modal
-        $('#cancelOrderModal').modal('show');
+        $('#orderActionModal').modal('show');
 
-        // Pass order and product IDs to the modal for reference
-        $('#cancelOrderModal').data('order-id', orderId);
-        $('#cancelOrderModal').data('product-id', productId);
+        $('#orderActionModal').data('order-id', orderId);
+        $('#orderActionModal').data('product-id', productId);
+        $('#orderActionModal').data('ordered-status', orderedStatus);
+        $('#orderActionModal').data('data-item-quantity', quantity);
     }
 
-    function submitCancellationReason() {
-        var orderId = $('#cancelOrderModal').data('order-id');
-        var productId = $('#cancelOrderModal').data('product-id');
-        var cancellationReason = $('#cancellationReason').val();
+    function submitOrderAction() {
+        var orderId = $('#orderActionModal').data('order-id');
+        var productId = $('#orderActionModal').data('product-id');
+        var orderedStatus = $('#orderActionModal').data('ordered-status');
+        var quantity = $('#orderActionModal').data('data-item-quantity');
+        var actionReason = $('#actionReason').val();
+        console.log(orderedStatus + "ordered");
+        var route = (orderedStatus === 'Delivered') ? '/returnOrderStatus' : '/cancelOrderStatus';
 
-        // Send the data to the server
-        fetch("/cancelOrderStatus", {
+        fetch(route, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ orderId: orderId, productId: productId, cancellationReason: cancellationReason }),
+            body: JSON.stringify({ orderId: orderId, productId: productId, actionReason: actionReason,quantity:quantity }),
         })
             .then(response => {
                 if (!response.ok) {
@@ -251,9 +260,9 @@
             .then(data => {
                 console.log(data);
 
-                $('#cancelOrderModal').modal('hide');
-                window.location.reload()
+                $('#orderActionModal').modal('hide');
 
+                window.location.reload();
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);

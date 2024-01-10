@@ -34,6 +34,7 @@ userRouter.post('/profile/changePass',userController.changePassword)
 userRouter.get('/orders',auth.checkBlocked,userController.loadOrder)
 userRouter.get('/vieworders',auth.checkBlocked,userController.loadViewOrder)
 userRouter.post('/cancelOrderStatus',userController.cancelOrderStatus)
+userRouter.post('/returnOrderStatus',userController.returnOrderStatus)
 
 
 

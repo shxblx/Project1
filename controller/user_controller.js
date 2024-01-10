@@ -456,26 +456,54 @@ const changePassword = async (req, res) => {
 const loadViewOrder = async (req, res) => {
     try {
         const userId = req.session.userId;
-        const orderId = req.query.orderId;  
-        const orders = await Order.find({ order_id: orderId  }).populate('items.product_id');
+        const orderId = req.query.orderId;
+        const orders = await Order.find({ order_id: orderId }).populate('items.product_id');
         res.render('user/viewOrder', { orders: orders, moment })
     } catch (error) {
         console.log(error);
-    }
+    }
 }
 
 const cancelOrderStatus = async (req, res) => {
     try {
-        const { orderId, productId } = req.body;
+        const { orderId, productId, actionReason, quantity } = req.body;
         const status = 'Requested cancellation';
-
-        console.log("Order ID:", orderId);
-        console.log("Product ID:", productId);
 
         const result = await Order.updateOne(
             { "order_id": orderId, "items.product_id": productId },
-            { $set: { "items.$.ordered_status": status } }
+            { $set: { "items.$.ordered_status": status, "items.$.cancellationReason": actionReason } }
         );
+        const updateQuantity=await product.updateOne(
+            {_id:productId},
+            {$inc:{"quantity":quantity}}
+        )
+        if (result.nModified > 0) {
+            res.status(200).json({ success: true, message: 'Order status updated successfully' });
+        } else {
+            res.status(200).json({ success: false, message: 'No changes were made to the order status' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+};
+
+
+const returnOrderStatus = async (req, res) => {
+    try {
+        const { orderId, productId, actionReason, quantity } = req.body;
+        const status = 'Requested return';
+
+        console.log("Order ID:", actionReason);
+
+        const result = await Order.updateOne(
+            { "order_id": orderId, "items.product_id": productId },
+            { $set: { "items.$.ordered_status": status, "items.$.cancellationReason": actionReason } }
+        );
+        const updateQuantity=await product.updateOne(
+            {_id:productId},
+            {$inc:{"quantity":quantity}}
+        )
         if (result.nModified > 0) {
             res.status(200).json({ success: true, message: 'Order status updated successfully' });
         } else {
@@ -510,5 +538,6 @@ module.exports = {
     loadChangePass,
     changePassword,
     loadViewOrder,
-    cancelOrderStatus
+    cancelOrderStatus,
+    returnOrderStatus
 }
