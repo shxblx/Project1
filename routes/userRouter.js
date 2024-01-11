@@ -39,6 +39,8 @@ userRouter.get('/viewAddress',userController.loadAddress)
 userRouter.get('/userAddAddress',userController.loadAddAddress)
 userRouter.post('/userAddAddress',userController.addAddress)
 userRouter.post('/deleteAddress',userController.deleteAddress)
+userRouter.get('/editAddress',userController.loadEditAddress)
+userRouter.post('/editAddress',userController.editAddress)
 
 
 

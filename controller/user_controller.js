@@ -611,6 +611,30 @@ const deleteAddress = async (req, res) => {
     }
 }
 
+const loadEditAddress = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        const userData = await User.findOne({ _id: userId });
+
+        const addressIdToEdit = req.query.addressId;
+        const addressToEdit = userData.address.find(address => address._id == addressIdToEdit);
+
+        res.render('user/editAddress', { userData, addressToEdit });
+    } catch (error) {
+        console.error('Error loading edit address page:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+
+const editAddress=async(req,res)=>{
+    try {
+        
+    } catch (error) {
+        
+    }
+}
+
 module.exports = {
     loadHome,
     loadShop,
@@ -638,5 +662,7 @@ module.exports = {
     loadAddress,
     loadAddAddress,
     addAddress,
-    deleteAddress
+    deleteAddress,
+    loadEditAddress,
+    editAddress
 }

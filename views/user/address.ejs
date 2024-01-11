@@ -210,8 +210,7 @@
                         <div class="address-details">
                             <button class="delete-button" onclick="deleteAddress(event,'<%= address.id %>')"><i
                                     class="fa-solid fa-trash"></i></button>
-                            <button class="edit-button" onclick="editAddress(event)"><i
-                                    class="fa-solid fa-pen"></i></button>
+                            <a href="/editAddress?addressId=<%=address._id%>"><button class="edit-button"><i class="fa-solid fa-pen"></i></button></a>
                             <h4>Address <%= index + 1 %>
                             </h4>
                             <p>Name: <%= address.name %>
