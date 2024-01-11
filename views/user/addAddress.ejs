@@ -276,10 +276,10 @@
         housenameError.style.display = (housename === '') ? 'block' : 'none';
         cityError.style.display = (city === '') ? 'block' : 'none';
         stateError.style.display = (state === '') ? 'block' : 'none';
-        phoneError.style.display = (phone === '' || isNaN(phone)) ? 'block' : 'none';
-        pincodeError.style.display = (pincode === '' || isNaN(pincode)) ? 'block' : 'none';
+        phoneError.style.display = (phone === '' || isNaN(phone) || phone.length !== 10) ? 'block' : 'none';
+        pincodeError.style.display = (pincode === '' || isNaN(pincode) || pincode.length !== 6) ? 'block' : 'none';
 
-        return (name !== '' && housename !== '' && city !== '' && state !== '' && phone !== '' && !isNaN(phone) && pincode !== '' && !isNaN(pincode));
+        return (name !== '' && housename !== '' && city !== '' && state !== '' && phone !== '' && !isNaN(phone) && phone.length === 10 && pincode !== '' && !isNaN(pincode) && pincode.length === 6);
     }
 </script>
 

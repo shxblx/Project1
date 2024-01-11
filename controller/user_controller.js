@@ -474,19 +474,19 @@ const cancelOrderStatus = async (req, res) => {
 
         const result = await Order.updateOne(
             { "order_id": orderId, "items.product_id": productId },
-            { 
-                $set: { 
-                    "items.$.ordered_status": status, 
-                    "items.$.cancellationReason": actionReason 
+            {
+                $set: {
+                    "items.$.ordered_status": status,
+                    "items.$.cancellationReason": actionReason
                 },
-                $inc: { 
-                    "total_amount": -decrementAmount 
+                $inc: {
+                    "total_amount": -decrementAmount
                 }
             }
         );
-        const updateQuantity=await product.updateOne(
-            {_id:productId},
-            {$inc:{"quantity":quantity}}
+        const updateQuantity = await product.updateOne(
+            { _id: productId },
+            { $inc: { "quantity": quantity } }
         )
         if (result.nModified > 0) {
             res.status(200).json({ success: true, message: 'Order status updated successfully' });
@@ -512,19 +512,19 @@ const returnOrderStatus = async (req, res) => {
 
         const result = await Order.updateOne(
             { "order_id": orderId, "items.product_id": productId },
-            { 
-                $set: { 
-                    "items.$.ordered_status": status, 
-                    "items.$.cancellationReason": actionReason 
+            {
+                $set: {
+                    "items.$.ordered_status": status,
+                    "items.$.cancellationReason": actionReason
                 },
-                $inc: { 
-                    "total_amount": -decrementAmount 
+                $inc: {
+                    "total_amount": -decrementAmount
                 }
             }
         );
-        const updateQuantity=await product.updateOne(
-            {_id:productId},
-            {$inc:{"quantity":quantity}}
+        const updateQuantity = await product.updateOne(
+            { _id: productId },
+            { $inc: { "quantity": quantity } }
         )
 
         if (result.nModified > 0 && updateQuantity.nModified > 0) {
@@ -538,28 +538,28 @@ const returnOrderStatus = async (req, res) => {
     }
 };
 
-const loadAddress=async(req,res)=>{
+const loadAddress = async (req, res) => {
     try {
-        
+
         const { user_id } = req.session;
         if (!user_id) {
             res.redirect('login')
         }
         const userData = await User.findOne({ _id: user_id })
 
-        res.render('user/address',{userData})
+        res.render('user/address', { userData })
 
 
     } catch (error) {
-        
+
     }
 }
 
-const loadAddAddress=async(req,res)=>{
+const loadAddAddress = async (req, res) => {
     try {
         res.render('user/addAddress')
     } catch (error) {
-        
+
     }
 }
 
@@ -590,12 +590,24 @@ const addAddress = async (req, res) => {
         } else {
             res.status(400).json({ success: false, message: "User not found" })
         }
-
-
-
-        console.log(req.body);
     } catch (error) {
         console.log(error);
+    }
+}
+
+const deleteAddress = async (req, res) => {
+    try {
+
+        const addressId = req.body.addressId;
+        const userId = req.session.user_id;
+
+        await User.updateOne({_id:userId},
+            {$pull:{address:{_id:addressId}}});
+
+            res.json({success:true,message:"addres deleted successfully"})
+
+    } catch (error) {
+        res.json({success:false,message:"error while deleting the address"})
     }
 }
 
@@ -625,5 +637,6 @@ module.exports = {
     returnOrderStatus,
     loadAddress,
     loadAddAddress,
-    addAddress
+    addAddress,
+    deleteAddress
 }

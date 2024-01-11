@@ -38,6 +38,7 @@ userRouter.post('/returnOrderStatus',userController.returnOrderStatus)
 userRouter.get('/viewAddress',userController.loadAddress)
 userRouter.get('/userAddAddress',userController.loadAddAddress)
 userRouter.post('/userAddAddress',userController.addAddress)
+userRouter.post('/deleteAddress',userController.deleteAddress)
 
 
 

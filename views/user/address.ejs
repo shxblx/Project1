@@ -208,7 +208,7 @@
                 <% if (userData && userData.address && userData.address.length> 0) { %>
                     <% userData.address.forEach((address, index)=> { %>
                         <div class="address-details">
-                            <button class="delete-button" onclick="deleteAddress(event)"><i
+                            <button class="delete-button" onclick="deleteAddress(event,'<%= address.id %>')"><i
                                     class="fa-solid fa-trash"></i></button>
                             <button class="edit-button" onclick="editAddress(event)"><i
                                     class="fa-solid fa-pen"></i></button>
@@ -280,41 +280,33 @@
 
 
 <script>
-    async function deleteAddress(addressId) {
+    async function deleteAddress(event, addressId) {
+        event.preventDefault();
         try {
-            const response = await fetch(`/deleteAddress/${addressId}`, {
-                method: 'DELETE',
+            const response = await fetch('/deleteAddress', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                body: JSON.stringify({ addressId }),
             });
 
-            if (response.ok) {
-                // Address successfully deleted, you can update the UI accordingly
+            const result = await response.json();
+
+            if (result.success) {
                 console.log('Address deleted successfully');
-                // You might want to reload the page or update the UI without a page reload
+                window.location.reload();
             } else {
-                // Handle the error if the server responds with an error status
                 console.error('Failed to delete address');
             }
         } catch (error) {
-            // Handle any network or fetch-related errors
             console.error('Error while deleting address', error);
         }
     }
+</script>
 
-    function deleteAddress(event) {
-        // Extract addressId from the event or any other way you have it
-        const addressId = 'addressId'; // Replace 'addressId' with your actual addressId
 
-        // Confirm deletion (you can use a modal or any other confirmation method)
-        const isConfirmed = confirm('Are you sure you want to delete this address?');
 
-        if (isConfirmed) {
-            // Call the deleteAddress function
-            deleteAddress(addressId);
-        }
-    }
 </script>
 
 
