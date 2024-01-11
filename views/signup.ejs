@@ -67,13 +67,21 @@
             color: #0056b3;
         }
 
-        .progress-7 {
-            width: 120px;
-            height: 24px;
-            -webkit-mask: radial-gradient(circle closest-side, #000 94%, #0000) 0 0/25% 100%, linear-gradient(#000 0 0) center/calc(100% - 12px) calc(100% - 12px) no-repeat;
-            background: linear-gradient(#ee4266 0 0) 0/0% no-repeat #ddd;
-            animation: p7 5s infinite linear;
-            margin-left: 170px;
+        .progress-8 {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            -webkit-mask: linear-gradient(0deg, #000 55%, #0000 0) bottom/100% 18.18%;
+            background:
+                linear-gradient(#f03355 0 0) bottom/100% 0% no-repeat #ddd;
+            animation: p8 3.2s infinite steps(10000);
+            margin-left: 200px;
+        }
+
+        @keyframes p8 {
+            100% {
+                background-size: 100% 115%
+            }
         }
     </style>
 </head>
@@ -297,7 +305,7 @@
                 <div class="modal-content">
                     <div class="modal-body text-center">
                         <div class="spinner-border text-primary" role="status">
-                            <div class="progress-7 d-flex justify-content-center"></div>
+                            <div class="progress-8 d-flex justify-content-center"></div>
                             <span class="sr-only">Loading...</span>
                         </div>
                         <p class="mt-2">Please wait...</p>
