@@ -36,23 +36,27 @@
 
     <style>
         /* Add this to your existing styles or create a new style block */
-.image-container {
-    display: inline-block; /* Display images horizontally */
-    margin-right: 10px; /* Adjust spacing between images */
-    margin-bottom: 10px; /* Add margin to separate image and delete button vertically */
-}
+        .image-container {
+            display: inline-block;
+            /* Display images horizontally */
+            margin-right: 10px;
+            /* Adjust spacing between images */
+            margin-bottom: 10px;
+            /* Add margin to separate image and delete button vertically */
+        }
 
-.image-container img {
-    margin-bottom: 5px; /* Add margin between image and delete button */
-    display: block; /* Ensure images don't affect each other's height */
-}
+        .image-container img {
+            margin-bottom: 5px;
+            /* Add margin between image and delete button */
+            display: block;
+            /* Ensure images don't affect each other's height */
+        }
 
-/* Optionally, you can align the delete button to the center */
-.image-container button {
-    display: block;
-    margin: 0 auto;
-}
-
+        /* Optionally, you can align the delete button to the center */
+        .image-container button {
+            display: block;
+            margin: 0 auto;
+        }
     </style>
 </head>
 
@@ -93,7 +97,8 @@
                             class="fa-solid fa-layer-group me-2"></i>Categories</a>
                     <a href="/admin/product" class="nav-item nav-link active"><i
                             class="fa-solid fa-list me-2"></i></i>Products</a>
-                            <a href="/admin/orders" class="nav-item nav-link"><i class="fa-solid fa-list me-2"></i></i>Orders</a>
+                    <a href="/admin/orders" class="nav-item nav-link"><i
+                            class="fa-solid fa-list me-2"></i></i>Orders</a>
                     <!-- <a href="table.html" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>
                     <a href="chart.html" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Charts</a>
                     <div class="nav-item dropdown">
@@ -241,7 +246,7 @@
                                     placeholder="Quantity" value="<%= products[j].quantity %>" required>
                             </div>
                             <div class="form-group">
-                                <label for="exampleSelectGender">Price</label>
+                                <label for="exampleInputPassword4">Price</label>
                                 <input type="number" class="form-control" name="price" id="exampleInputPassword4"
                                     placeholder="Price" value="<%= products[j].price %>" required>
                             </div>
@@ -256,36 +261,32 @@
                                     </div>
                                 <% } %>
                             </div>
-                            
-
-                                    <div class="form-group">
-                                        <label>File upload</label>
-                                        <div class="input-group col-xs-12">
-                                            <input type="file" name="image" class=" file-upload-info" placeholder="Upload Image"
-                                                multiple>
-                                        </div>
-                                    </div>
+                            <div class="form-group">
+                                <label>File upload</label>
+                                <div class="input-group col-xs-12">
+                                    <input type="file" name="image" class="file-upload-info" placeholder="Upload Image" multiple>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputCity1">Category</label>
                                 <select class="form-control" name="category" id="exampleInputCity1" required>
-                                    <% catId.forEach(catId=>{ %>
+                                    <% catId.forEach(catId => { %>
                                         <option>
                                             <%= catId.name %>
                                         </option>
-                                        <% }) %>
+                                    <% }) %>
                                 </select>
                             </div>
-
                             <div class="form-group">
                                 <label for="exampleTextarea1">Brand</label>
                                 <input type="text" class="form-control" name="brand" id="exampleInputCity1"
                                     placeholder="Brand" value="<%= products[j].brand %>" required>
                             </div>
                             <button type="submit" class="btn btn-primary mr-2">Submit</button>
-                            <button class="btn btn-dark">Cancel</button>
+                            <button type="button" class="btn btn-dark" onclick="window.location.href='/cancelPage'">Cancel</button>
                         </form>
-                        <% } %>
+                    <% } %>
+                    
 
 
 
@@ -293,20 +294,20 @@
 
 
 
-                            <!-- Button for Adding Category (if you prefer a button outside the form) -->
-                            <!--
+                    <!-- Button for Adding Category (if you prefer a button outside the form) -->
+                    <!--
                     <button type="button" class="btn btn-primary btn-sm mt-3">
                         Add Category
                     </button>
                     -->
 
-                            <div class="table-responsive">
-                                <!-- Your table or other content goes here -->
-                            </div>
-                </div>
+                    <div class="table-responsive">
+                        <!-- Your table or other content goes here -->
+                    </div>
             </div>
-
         </div>
+
+    </div>
     </div>
     <!-- Table End -->
 

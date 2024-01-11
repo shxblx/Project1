@@ -182,11 +182,11 @@
              <!-- End Navbar -->
  
              <div id="addAddressContainer">
-                <form id="editAddressForm" action="/updateAddress" method="post" onsubmit="return validateForm()">
+                <form id="editAddressForm" action="/editAddress" method="post" onsubmit="return validateForm()">
                     <label for="name">Name:</label>
                     <input type="text" value="<%= addressToEdit.name %>" id="name" name="name" required>
                     <span class="error" id="nameError">Please enter a valid name</span>
-            
+                    <input type="hidden" name="addressId" value="<%= addressToEdit._id %>">
                     <label for="housename">House Name:</label>
                     <input type="text" value="<%= addressToEdit.housename %>" id="housename" name="housename" required>
                     <span class="error" id="housenameError">Please enter a valid house name</span>

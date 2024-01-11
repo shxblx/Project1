@@ -129,7 +129,20 @@
             background-color: #d12e51;
         }
     </style>
+<style>
+    @keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
 
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+</style>
     <div class="wrapper">
         <div class="sidebar">
             <!--
@@ -202,11 +215,12 @@
             </nav>
             <!-- End Navbar -->
 
-
+            
             <div class="container">
                 <a href="/userAddAddress"><button class="add-address-button">Add Address</button></a>
                 <% if (userData && userData.address && userData.address.length> 0) { %>
                     <% userData.address.forEach((address, index)=> { %>
+                        <div class="card fade-in">
                         <div class="address-details">
                             <button class="delete-button" onclick="deleteAddress(event,'<%= address.id %>')"><i
                                     class="fa-solid fa-trash"></i></button>
@@ -226,6 +240,7 @@
                             <p>Pincode: <%= address.pincode %>
                             </p>
                         </div>
+                    </div>
                         <% }); %>
                             <% } else { %>
                                 <div class="no-address">
@@ -233,7 +248,7 @@
                                 </div>
                                 <% } %>
             </div>
-
+            
 
 
 

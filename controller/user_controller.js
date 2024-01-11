@@ -10,9 +10,6 @@ const moment = require('moment')
 
 
 
-
-
-
 const loadHome = async (req, res) => {
     try {
         const user = await User.findOne({ _id: req.session.user_id });
@@ -627,13 +624,42 @@ const loadEditAddress = async (req, res) => {
 };
 
 
-const editAddress=async(req,res)=>{
+const editAddress = async (req, res) => {
     try {
-        
+        const { addressId, name, housename, city, state, phone, pincode } = req.body;
+
+        const user = await User.findOne({ _id: req.session.user_id });
+
+        if (user) {
+            const addressIndex = user.address.findIndex(address => address._id == addressId);
+            if (addressIndex !== -1) {
+                await User.updateOne(
+                    { _id: req.session.user_id, 'address._id': addressId },
+                    {
+                        $set: {
+                            'address.$.name': name,
+                            'address.$.housename': housename,
+                            'address.$.phone': phone,
+                            'address.$.city': city,
+                            'address.$.state': state,
+                            'address.$.pincode': pincode
+                        }
+                    },
+                    { new: true }
+                );
+                res.redirect('/viewAddress');
+            } else {
+                res.status(404).json({ success: false, message: "Address not found" });
+            }
+        } else {
+            res.status(400).json({ success: false, message: "User not found" });
+        }
     } catch (error) {
-        
+        console.error('Error updating address:', error);
+        res.status(500).send('Internal Server Error');
     }
-}
+};
+
 
 module.exports = {
     loadHome,

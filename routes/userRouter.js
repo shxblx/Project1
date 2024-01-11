@@ -4,7 +4,6 @@ const userController=require('../controller/user_controller')
 const cartController=require('../controller/cartController')
 const auth=require('../middleware/auth')
 
-
 userRouter.get("/",auth.isLogout,auth.checkBlocked,userController.loadHome)
 userRouter.get("/home",auth.isLogin,auth.checkBlocked,userController.loadHome)
 userRouter.get("/shop",auth.checkBlocked,userController.loadShop)

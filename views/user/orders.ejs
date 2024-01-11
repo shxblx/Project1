@@ -34,38 +34,96 @@
 </head>
 
 <body>
+
     <style>
+        .container {
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
         .order-details {
             background-color: #f5f5f5;
             padding: 15px;
             margin-bottom: 15px;
             border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
-    
+
         .fs-4 {
             margin-bottom: 10px;
+            color: #333;
         }
-    
+
         .total-amount {
-            font-size: 18px;
+            font-size: 1.2rem;
             margin-top: 15px;
+            color: #dc3545;
         }
-    
+
         .product-details {
             display: flex;
+            align-items: center;
             margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 15px;
         }
-    
+
         .product-details img {
             max-width: 100px;
             max-height: 100px;
             margin-right: 15px;
             border-radius: 5px;
         }
-    
+
         .product-details .details {
             flex: 1;
         }
+
+        .btn-end {
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-end:hover {
+            background-color: #dc3545;
+            color: #fff;
+            /* Text color when button is hovered */
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            /* Add color transition */
+        }
+
+        .no-items {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            color: #6c757d;
+        }
+    </style>
+    <style>
+        @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    .fade-in {
+        animation: fadeIn 0.5s ease-in-out;
+    }
     </style>
     <div class="wrapper">
         <div class="sidebar">
@@ -141,40 +199,52 @@
 
 
 
-
+            <div class="card fade-in">
             <div class="container w-50">
-                <% if (orders.length > 0) { %>
-                    <% orders.forEach(order => { %>
+                <% if (orders.length> 0) { %>
+                    <% orders.forEach(order=> { %>
                         <div class="order-details">
-                            <div class="fs-4"><strong># Order ID:</strong> <b><%= order.order_id %></b></div>
+                            <div class="fs-4"><strong># Order ID:</strong> <b>
+                                    <%= order.order_id %>
+                                </b></div>
                             <hr>
                             <div class="d-flex flex-wrap">
                                 <!-- Iterate through each item in the order -->
-                                <% order.items.forEach(item => { %>
+                                <% order.items.forEach(item=> { %>
                                     <div class="product-details">
-                                        <img src="/myImages/<%= item.product_id.image[0] %>" class="img-fluid" alt="Product Image">
+                                        <img src="/myImages/<%= item.product_id.image[0] %>" class="img-fluid"
+                                            alt="Product Image">
                                         <div class="details">
-                                            <p><strong>Name:</strong> <%= item.product_id.name %></p>
-                                            <p><strong>Price:</strong> ₹ <%= item.product_id.price %></p>
-                                            <p><strong>Quantity:</strong> <%= item.quantity %></p>
-                                            <p><strong>Expected Delivery:</strong> <%= order.expected_delivery %></p>
+                                            <p><strong>Name:</strong>
+                                                <%= item.product_id.name %>
+                                            </p>
+                                            <p><strong>Price:</strong> ₹ <%= item.product_id.price %>
+                                            </p>
+                                            <p><strong>Quantity:</strong>
+                                                <%= item.quantity %>
+                                            </p>
+                                            <p><strong>Expected Delivery:</strong>
+                                                <%= order.expected_delivery %>
+                                            </p>
                                         </div>
                                     </div>
-                                <% }) %>
+                                    <% }) %>
                             </div>
-                            <p class="total-amount"><strong>Total Amount:</strong> ₹ <%= order.total_amount %></p>
+                            <p class="total-amount"><strong>Total Amount:</strong> ₹ <%= order.total_amount %>
+                            </p>
                             <div class="d-flex justify-content-end">
-                                <a href="/vieworders?orderId=<%= order.order_id %>"><input type="button" class="btn btn-md btn-danger btn-end" value="View Order"></a>
+                                <a href="/vieworders?orderId=<%= order.order_id %>"><input type="button"
+                                        class="btn btn-md btn-danger btn-end" value="View Order"></a>
                             </div>
                             <!-- You can include more details if needed -->
                         </div>
-                    <% }) %>
-                <% } else { %>
-                    <div class="no-items">No items found in the order.</div>
-                    <!-- If the order or items are null or empty, show a message or handle as needed -->
-                <% } %>
+                        <% }) %>
+                            <% } else { %>
+                                <div class="no-items">No items found in the order.</div>
+                                <!-- If the order or items are null or empty, show a message or handle as needed -->
+                                <% } %>
             </div>
-
+            </div>
 
 
 
