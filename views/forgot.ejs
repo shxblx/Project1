@@ -66,7 +66,23 @@
     a:hover {
       color: #0056b3;
     }
-    
+
+    .progress-8 {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      -webkit-mask: linear-gradient(0deg, #000 55%, #0000 0) bottom/100% 18.18%;
+      background:
+        linear-gradient(#f03355 0 0) bottom/100% 0% no-repeat #ddd;
+      animation: p8 3.2s infinite steps(10000);
+      margin-left: 200px;
+    }
+
+    @keyframes p8 {
+      100% {
+        background-size: 100% 115%
+      }
+    }
   </style>
 </head>
 
@@ -150,18 +166,18 @@
               <label for="username" class="text-black">Username:</label>
               <input type="text" name="email" id="username" class="form-control">
             </div>
-            <% if (messages.length > 0) { %>
+            <% if (messages.length> 0) { %>
               <div style="color: red; text-align: center;">
-                  <%= messages[0] %>
+                <%= messages[0] %>
               </div>
-          <% } %> 
+              <% } %>
 
-            <!-- Submit Button -->
-            <div class="form-group text-center">
-              <input type="submit" value="Login" class="btn btn-primary btn-pill">
-            </div>
-            <!-- Register Link -->
-            <p class="text-center">Don't have an account? <a href="/signup">Register here</a>.</p>
+                <!-- Submit Button -->
+                <div class="form-group text-center">
+                  <input type="submit" value="Login" class="btn btn-primary btn-pill" id="loginButton">
+                </div>
+                <!-- Register Link -->
+                <p class="text-center">Don't have an account? <a href="/signup">Register here</a>.</p>
           </form>
         </div>
       </div>
@@ -169,9 +185,9 @@
   </div>
 
 
- 
 
-  <footer class="site-footer custom-border-top" >
+
+  <footer class="site-footer custom-border-top">
     <div class="container">
       <div class="row">
         <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
@@ -249,7 +265,19 @@
     </div>
   </footer>
   </div>
-
+  <div id="loadingModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <div class="spinner-border text-primary" role="status">
+            <div class="progress-8 d-flex justify-content-center"></div>
+            <span class="sr-only">Generating Otp</span>
+          </div>
+          <p class="mt-2">Generating Otp</p>
+        </div>
+      </div>
+    </div>
+  </div>
   <script src="js/jquery-3.3.1.min.js"></script>
   <script src="js/jquery-ui.js"></script>
   <script src="js/popper.min.js"></script>
@@ -257,9 +285,20 @@
   <script src="js/owl.carousel.min.js"></script>
   <script src="js/jquery.magnific-popup.min.js"></script>
   <script src="js/aos.js"></script>
+  <!-- Include SweetAlert JS -->
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
   <script src="js/main.js"></script>
-
+  <script>
+    $(document).ready(function() {
+      // When the login button is clicked
+      $('#loginButton').click(function() {
+        // Show the loading modal
+        $('#loadingModal').modal('show');
+      });
+    });
+  </script>
+  
 </body>
 
 </html>

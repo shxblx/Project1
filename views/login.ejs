@@ -66,7 +66,6 @@
     a:hover {
       color: #0056b3;
     }
-    
   </style>
 </head>
 
@@ -145,7 +144,7 @@
       <div class="row justify-content-center">
         <div class="col-md-5">
           <h2 class="h3 mb-5 text-black text-center">Login</h2>
-          <form method="post" class="p-4 bg-white">
+          <form id="loginForm" method="post" class="p-4 bg-white">
             <div class="form-group">
               <label for="username" class="text-black">Username:</label>
               <input type="text" name="email" id="username" class="form-control">
@@ -156,22 +155,22 @@
               <label for="password" class="text-black">Password:</label>
               <input type="password" name="password" id="password" class="form-control">
             </div>
-            <% if (messages.length > 0) { %>
+            <% if (messages.length> 0) { %>
               <div style="color: red; text-align: center;">
-                  <%= messages[0] %>
+                <%= messages[0] %>
               </div>
-          <% } %> 
-            <!-- Forgot Password -->
-            <div class="form-group">
-              <a href="/forgotPassword" class="text-primary">Forgot Password?</a>
-            </div>
+              <% } %>
+                <!-- Forgot Password -->
+                <div class="form-group">
+                  <a href="/forgotPassword" class="text-primary">Forgot Password?</a>
+                </div>
 
-            <!-- Submit Button -->
-            <div class="form-group text-center">
-              <input type="submit" value="Login" class="btn btn-primary btn-pill">
-            </div>
-            <!-- Register Link -->
-            <p class="text-center">Don't have an account? <a href="/signup">Register here</a>.</p>
+                <!-- Submit Button -->
+                <div class="form-group text-center">
+                  <input type="submit" value="Login" class="btn btn-primary btn-pill" id="loginButton">
+                </div>
+                <!-- Register Link -->
+                <p class="text-center">Don't have an account? <a href="/signup">Register here</a>.</p>
           </form>
         </div>
       </div>
@@ -179,9 +178,9 @@
   </div>
 
 
- 
 
-  <footer class="site-footer custom-border-top" >
+
+  <footer class="site-footer custom-border-top">
     <div class="container">
       <div class="row">
         <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
@@ -267,8 +266,46 @@
   <script src="js/owl.carousel.min.js"></script>
   <script src="js/jquery.magnific-popup.min.js"></script>
   <script src="js/aos.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
   <script src="js/main.js"></script>
+
+  <script>
+    $(document).ready(function () {
+        $('#loginForm').submit(function (event) {
+            event.preventDefault();
+
+            const email = $('#username').val();
+            const password = $('#password').val();
+
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'You have logged in successfully!',
+                    }).then(() => {
+                        window.location.href = '/home';
+                    });
+                } else {
+                    console.error(data.message);
+                    $('#errorMessage').text(data.message);
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        });
+    });
+</script>
+
 
 </body>
 

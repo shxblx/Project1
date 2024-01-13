@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .progress-8 {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            -webkit-mask: linear-gradient(0deg, #000 55%, #0000 0) bottom/100% 18.18%;
+            background:
+                linear-gradient(#f03355 0 0) bottom/100% 0% no-repeat #ddd;
+            animation: p8 2s infinite steps(7);
+        }
+
+        @keyframes p8 {
+            100% {
+                background-size: 100% 115%
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loadingModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <div class="progress-8 d-flex justify-content-center"></div>
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <p class="mt-2">Please wait...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

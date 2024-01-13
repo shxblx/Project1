@@ -7,7 +7,7 @@ const nodemailer = require('nodemailer');
 const userOTPverification = require('../model/userOTPverification');
 require('dotenv').config();
 const moment = require('moment')
-
+const Swal = require('sweetalert2'); 
 
 
 const loadHome = async (req, res) => {
@@ -21,7 +21,7 @@ const loadHome = async (req, res) => {
     }
 }
 
-const ITEMS_PER_PAGE = 6; // Set the number of products per page
+const ITEMS_PER_PAGE = 6; 
 
 const loadShop = async (req, res) => {
     try {
@@ -97,8 +97,9 @@ const loadLogin = async (req, res) => {
 
 const verifyLogin = async (req, res) => {
     try {
+        
         const { email, password } = req.body;
-        console.log(req.body);
+        console.log(req.body+"body");
         const userData = await User.findOne({ email: email });
 
         if (!userData) {
@@ -118,9 +119,9 @@ const verifyLogin = async (req, res) => {
 
         }
 
-
+        
         const passwordMatch = await bcrypt.compare(password, userData.password);
-
+        
         if (!passwordMatch) {
             req.flash('message', 'Wrong password');
             return res.redirect('/login');
@@ -128,7 +129,11 @@ const verifyLogin = async (req, res) => {
         }
 
         req.session.user_id = userData._id;
-        return res.redirect('/home');
+
+        
+        return res.json({ success: true, message: 'Login successful' });   
+        
+        
     } catch (error) {
         console.log(error);
         req.flash('message', 'An error occurred. Please try again.');

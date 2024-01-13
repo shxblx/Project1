@@ -6,6 +6,13 @@ const moment = require('moment')
 const { loadLogin } = require('./user_controller')
 
 
+const Razorpay = require('razorpay');
+
+var instance = new Razorpay({
+    key_id: 'rzp_test_CWNRPvTS2QujT5',
+    key_secret: 'HSTYr5vjQ4sBgoUmnlOEPEnn',
+});
+
 const loadCart = async (req, res) => {
     try {
 
@@ -87,23 +94,23 @@ const loadAddCart = async (req, res) => {
 };
 
 
-    const removeCart = async (req, res) => {
-        try {
-            const itemId = req.body.itemId
-            console.log("itemId:"+itemId);
-            const userId = req.session.user_id;
-            
-        
-            const cartItem = await cart.updateOne(
-                { user_id: userId },
-                { $pull: { items: { product_id: itemId } } }
-            );
-            res.json({ success: true, message: 'prodcut removed deleted successfully' });
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ success: false, message: 'Error removing hrloo item from the cart' });
-        }
-    };
+const removeCart = async (req, res) => {
+    try {
+        const itemId = req.body.itemId
+        console.log("itemId:" + itemId);
+        const userId = req.session.user_id;
+
+
+        const cartItem = await cart.updateOne(
+            { user_id: userId },
+            { $pull: { items: { product_id: itemId } } }
+        );
+        res.json({ success: true, message: 'prodcut removed deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error removing hrloo item from the cart' });
+    }
+};
 
 
 
@@ -193,8 +200,8 @@ const placeOrder = async (req, res) => {
         const cartProducts = cartData.items;
         const productIds = cartProducts.map(item => item.product_id.toString());
         const productQ = cartProducts.map(item => parseInt(item.quantity, 10));
-        console.log("this is productID "+productIds);
-        console.log("this is productQ "+productQ);
+        console.log("this is productID " + productIds);
+        console.log("this is productQ " + productQ);
         const status = paymentMethod === 'COD' ? 'placed' : 'pending';
         const delivery = new Date(date.getTime() + 10 * 24 * 60 * 60 * 1000);
         const deliveryDate = delivery
@@ -207,7 +214,7 @@ const placeOrder = async (req, res) => {
 
         const orderData = new Order({
             user_id: user_id,
-            order_id:generateRandomOrderId(),
+            order_id: generateRandomOrderId(),
             delivery_address: address,
             user_name: userData.username,
             total_amount: totalPrice,
@@ -227,21 +234,91 @@ const placeOrder = async (req, res) => {
             for (let i = 0; i < productIds.length; i++) {
                 const productId = productIds[i];
                 const quantityToDecrease = productQ[i];
-            
+
                 // Find and update the product in the products collection
                 await product.updateOne(
-                    { "_id":productId },
+                    { "_id": productId },
                     { $inc: { "quantity": -quantityToDecrease } }
                 );
             }
 
             return res.json({ success: true, params: orderId });
+        } else {
+            const orderId = orders.order_id;
+            const totalAmount = orders.total_amount
+
+
+            var options = {
+                amount: totalAmount * 100,
+                currency: "INR",
+                receipt: "" + orderId,
+            };
+
+            instance.orders.create(options, function (err, orderData) {
+                return res.json({ success: false, order: orderData });
+            });
+
         }
     } catch (error) {
         console.log(error);
         return res.status(500).json({ success: false, message: 'Internal server error.' });
     }
 };
+
+const verifyPayment = async (req, res) => {
+    try {
+        const cartData = await cart.findOne({ user_id: req.session.user_id });
+        const cartProducts = cartData.items;
+        const details = req.body;
+        const crypto = require("crypto");
+
+        const secretKey = "HSTYr5vjQ4sBgoUmnlOEPEnn";
+
+        const hmac = crypto.createHmac("sha256", secretKey);
+
+        // Updating the HMAC with the data
+        hmac.update(
+            details.payment.razorpay_order_id +
+            "|" +
+            details.payment.razorpay_payment_id
+        );
+
+        // Getting the hexadecimal representation of the HMAC
+        const hmacFormat = hmac.digest("hex");
+
+        if (hmacFormat == details.payment.razorpay_signature) {
+            await Order.findByIdAndUpdate(
+                { _id: details.order.receipt },
+                { $set: { paymentId: details.payment.razorpay_payment_id } }
+            );
+
+            for (let i = 0; i < cartProducts.length; i++) {
+                console.log(cartProducts[i].quantity);
+                let count = cartProducts[i].quantity;
+                await product.findByIdAndUpdate(
+                    { _id: cartProducts[i].product_id },
+                    { $inc: { stockQuantity: -count } }
+                );
+            }
+
+            await Order.findByIdAndUpdate(
+                { _id: details.order.receipt },
+                { $set: { status: "placed" } }
+            );
+
+            const userData = await User.findOne({ _id: req.session.userId });
+            await cart.deleteOne({ user_id: userData._id });
+
+            res.json({ success: true, params: details.order.receipt });
+        } else {
+            await Order.findByIdAndDelete({ _id: details.order.receipt });
+            res.json({ success: false });
+        }
+    } catch (error) {
+        res.redirect("/500");
+    }
+};
+
 
 const orderPlaced = async (req, res) => {
     try {
@@ -263,5 +340,6 @@ module.exports = {
     addAddress,
     placeOrder,
     orderPlaced,
-    removeCart
+    removeCart,
+    verifyPayment
 }

@@ -247,7 +247,7 @@
                                             <% order.items.forEach((item, itemIndex) => { %>
                                                 <tr>
                                                     <% if (prevOrderId !== order.order_id || itemIndex === 0) { %>
-                                                        <td rowspan="<%= order.items.length %>">
+                                                        <td  rowspan="<%= order.items.length %>">
                                                             <%= order.order_id %>
                                                         </td>
                                                     <% } %>
@@ -280,7 +280,7 @@
                                                     <td>
                                                     
                                                         <select class="form-control status-dropdown"  name="status" data-product-id="<%=item.product_id._id%>" data-order-id="<%= order.order_id %>"  onchange="updateOrderStatus(event)">
-                                                            <% ['Placed', 'Shipped', 'Out for Delivery', 'Delivered', 'Requested return','Returned', 'Requested cancellation', 'Cancelled', 'Pending'].forEach(status => { %>
+                                                            <% ['Placed', 'Shipped', 'Out for Delivery', 'Delivered', 'Requested return','Returned', 'Requested cancellation', 'Cancelled', 'pending'].forEach(status => { %>
                                                                 <option value="<%= status %>" <%= item.ordered_status === status ? 'selected' : '' %>><%= status %></option>
                                                             <% }); %>
                                                         </select>
