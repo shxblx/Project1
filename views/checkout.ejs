@@ -272,6 +272,7 @@
                       <tr>
                         <td>
                           <%= item.product_id.name %> <strong class="mx-2">x</strong> "<%= item.quantity %>"
+                              <input id="productId" hidden value="<%=item.product_id._id%>">
                         </td>
                         <td>₹<%= item.total_price %>
                         </td>
@@ -494,6 +495,8 @@
     async function placeOrder() {
       const selectedAddress = document.querySelector('input[name="options"]:checked');
       const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
+      const productId = document.getElementById('productId').value
+      console.log(productId)
       console.log(selectedAddress);
       console.log(selectedPayment);
       if (!selectedAddress || !selectedPayment) {
@@ -516,6 +519,7 @@
         const orderData = {
           address: JSON.stringify(selectedAddress.value),
           paymentMethod: selectedPayment.value,
+          productId
         };
         $.ajax({
           type: "POST",
@@ -535,7 +539,14 @@
               setTimeout(() => {
                 window.location.href = '/orderPlaced/' + param;
               }, 2000);
-            } else {
+            } else if (response.outOfStock) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Cannot Add Product!',
+                text: 'Product Out of Stock',
+              });
+            }
+            else {
               razorpayPayment(response.order);
             }
           },
@@ -547,7 +558,6 @@
     }
 
     function razorpayPayment(order) {
-      
       var options = {
         "key": "rzp_test_CWNRPvTS2QujT5",
         "amount": order.amount,
@@ -555,7 +565,7 @@
         "name": "GrooveStyle",
         "description": "Test Transaction",
         "image": "https://example.com/your_logo",
-        "order_id": order.order_id,
+        "order_id": order.id,
         "handler": function (response) {
           verifyPayment(response, order)
         },

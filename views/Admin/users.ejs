@@ -37,32 +37,32 @@
     <link href="css/style.css" rel="stylesheet">
     <style>
         .dataTables_filter {
-          margin-bottom: 10px;
-          margin-left: 750px;
+            margin-bottom: 10px;
+            margin-left: 750px;
         }
-    
+
         .dataTables_filter input {
-          padding: 5px;
-          border: 1px solid #ccc;
-          border-radius: 4px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
-      </style>
-      <style>
+    </style>
+    <style>
         /* Override DataTables default show entries styling */
         .dataTables_length {
-          margin-bottom: -30px;
+            margin-bottom: -30px;
         }
-    
+
         .dataTables_length label {
-          font-weight: bold;
-          margin-right: 10px;
+            font-weight: bold;
+            margin-right: 10px;
         }
-    
+
         .dataTables_length select {
-          padding: 5px;
+            padding: 5px;
         }
-      </style>
-      <style>
+    </style>
+    <style>
         #myTable th {
             background-color: #191C24;
             color: #ff0000;
@@ -70,34 +70,35 @@
 
         #myTable td {
             background-color: #191C24;
-            color:#495057 ;
+            color: #495057;
         }
+
         /* Override DataTables default pagination styling */
         .dataTables_paginate {
-          display: flex;
-          justify-content: center;
-          align-items: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-    
+
         .paginate_button {
-          /* Add your custom styles here */
-          display: inline-block;
-          padding: 5px 10px;
-          margin-right: 10px;
-          border: 1px solid #ff0000;
-          border-radius: 4px;
-          cursor: pointer;
-          color: #ffffff;
-          background-color: #ff0000;
+            /* Add your custom styles here */
+            display: inline-block;
+            padding: 5px 10px;
+            margin-right: 10px;
+            border: 1px solid #ff0000;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #ffffff;
+            background-color: #ff0000;
         }
-    
+
         .paginate_button.current {
-          /* Add your custom styles for the current page button */
-          background-color: #ffffff;
-          color: #000000;
-          border-color: #ffffff;
+            /* Add your custom styles for the current page button */
+            background-color: #ffffff;
+            color: #000000;
+            border-color: #ffffff;
         }
-      </style>
+    </style>
 </head>
 
 <body>
@@ -132,10 +133,14 @@
                 </div>
                 <div class="navbar-nav w-100">
                     <a href="/admin" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
-                    <a href="/admin/users" class="nav-item nav-link active"><i class="fa-solid fa-user-alt me-2"></i>Users</a>
-                    <a href="/admin/categories" class="nav-item nav-link"><i class="fa-solid fa-layer-group me-2"></i>Categories</a>
-                    <a href="/admin/product" class="nav-item nav-link"><i class="fa-solid fa-list me-2"></i></i>Products</a>
-                    <a href="/admin/orders" class="nav-item nav-link"><i class="fa-solid fa-list me-2"></i></i>Orders</a>
+                    <a href="/admin/users" class="nav-item nav-link active"><i
+                            class="fa-solid fa-user-alt me-2"></i>Users</a>
+                    <a href="/admin/categories" class="nav-item nav-link"><i
+                            class="fa-solid fa-layer-group me-2"></i>Categories</a>
+                    <a href="/admin/product" class="nav-item nav-link"><i
+                            class="fa-solid fa-list me-2"></i></i>Products</a>
+                    <a href="/admin/orders" class="nav-item nav-link"><i
+                            class="fa-solid fa-list me-2"></i></i>Orders</a>
                     <!-- <a href="table.html" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>
                     <a href="chart.html" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Charts</a>
                     <div class="nav-item dropdown">
@@ -261,7 +266,7 @@
                                     <th scope="col">Phone Number</th>
                                     <th scope="col">Status</th>
                                     <th scope="col">Action</th>
-                                    
+
                                 </tr>
                             </thead>
 
@@ -287,16 +292,17 @@
                                             </td>
 
                                             <td>
-                                                <form action="/admin/block-user" method="POST">
-                                                    <input type="hidden" name="userId" value="<%= user[i]._id %>">
-                                                    <% if (user[i].isBlocked) { %>
-                                                        <button type="submit"
-                                                            class="btn btn-success btn-sm">Unblock</button>
-                                                        <% } else { %>
-                                                            <button type="submit"
-                                                                class="btn btn-danger btn-sm">Block</button>
-                                                            <% } %>
-                                                </form>
+                                                <% if (user[i].isBlocked) { %>
+                                                    <button id="toggle-button"
+                                                        data-is-blocked="<%= user[i].isBlocked %>"
+                                                        class="btn btn-success btn-sm" value="<%=user[i]._id%>"
+                                                        onclick="blockUnblock(event)">Unblock</button>
+                                                    <% } else { %>
+                                                        <button id="toggle-button"
+                                                            data-is-blocked="<%= user[i].isBlocked %>"
+                                                            class="btn btn-danger btn-sm" value="<%=user[i]._id%>"
+                                                            onclick="blockUnblock(event)">Block</button>
+                                                        <% } %>
                                             </td>
                                         </tr>
                                         <% } %>
@@ -338,7 +344,7 @@
     <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
 
-    
+
     <!-- JavaScript Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="lib/chart/chart.min.js"></script>
@@ -348,7 +354,7 @@
     <script src="lib/tempusdominus/js/moment.min.js"></script>
     <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
     <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
         $(document).ready(function () {
             $('#myTable').DataTable();
@@ -356,13 +362,24 @@
         });
     </script>
     <!-- Template Javascript -->
-    <script src="js/main.js">
-        document.addEventListener('DOMContentLoaded', function () {
-            // Add an event listener to each block/unblock button
-            document.querySelectorAll('.block-unblock-btn').forEach(button => {
-                button.addEventListener('click', function () {
-                    const userId = this.dataset.userId;
-
+    <script>
+        function blockUnblock(event) {
+            const button = event.target;
+            const userId = document.getElementById('toggle-button').value;
+            const isBlockedString = button.dataset.isBlocked;
+            const isBlocked = isBlockedString === 'true';
+            const action = isBlocked ? 'unblock' : 'block';
+    
+            // Use SweetAlert to confirm the action
+            Swal.fire({
+                title: `Are you sure you want to ${action} this user?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: `${action}`,
+                cancelButtonText: 'Cancel',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // User confirmed, proceed with the request
                     fetch('/admin/block-user', {
                         method: 'POST',
                         headers: {
@@ -372,20 +389,40 @@
                     })
                         .then(response => response.json())
                         .then(data => {
+                            console.log(data);
                             if (data.success) {
-                                alert('User status updated successfully!');
-                                location.reload();
+                                const message = data.isBlocked ? 'User is now blocked!' : 'User is now unblocked!';
+    
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success!',
+                                    text: message,
+                                }).then(() => {
+                                    window.location.reload();
+                                });
                             } else {
-                                alert('Error updating user status.');
+                                // Use SweetAlert for a nicer alert
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error!',
+                                    text: 'Error updating user status.',
+                                });
                             }
                         })
                         .catch(error => {
                             console.error('Error:', error);
+                            // Use SweetAlert for a nicer alert
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: 'Something went wrong.',
+                            });
                         });
-                });
+                }
             });
-        });
+        }
     </script>
+    
 </body>
 
 </html>

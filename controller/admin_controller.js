@@ -42,78 +42,136 @@ const verifyAdminLogin = async (req, res) => {
 
 const loadAdmin = async (req, res) => {
     try {
-        const result = await order.aggregate([
-            {
-              $match: {
-                'items.ordered_status': 'Delivered'
-              }
-            },
-            {
-              $group: {
-                _id: null,
-                totalAmount: { $sum: { $toDouble: '$total_amount' } }
-              }
-            }
-          ]);
-          
-        const totalAmount = result.length > 0 ? result[0].totalAmount : 0;
-
-        const monthlyTotalSales = await order.aggregate([
+        // Total Delivered
+        const totalDeliveredResult = await order.aggregate([
             {
                 $match: {
-                    'items.ordered_status': 'Delivered' 
-                }
-            },
-            {
-                $group: {
-                    _id: { $month: '$date' }, 
-                    totalSales: { $sum: '$total_amount' } 
-                }
-            },
-            {
-                $sort: { _id: 1 } 
-            }
-        ]);
-        
-        const totalSales = monthlyTotalSales.map(monthlySale => monthlySale.totalSales);
-        const totalSalesSum = totalSales.reduce((acc, current) => acc + current, 0);
-        
-
-        const productCount = await product.countDocuments();
-        
-        const totalAmountandQuantity = await order.aggregate([
-            {
-                $unwind: '$items'
-            },
-            {
-                $match: {
-                    'items.ordered_status': 'Delivered' 
-                }
-            },
-            {
-                $group: {
-                    _id: '$_id',
-                    totalItemsInOrder: { $sum: 1 }, 
-                    totalQuantityInOrder: { $sum: '$items.quantity' } 
+                    'items.ordered_status': 'Delivered'
                 }
             },
             {
                 $group: {
                     _id: null,
-                    totalItems: { $sum: '$totalItemsInOrder' }, 
-                    totalQuantity: { $sum: '$totalQuantityInOrder' } 
+                    totalAmount: { $sum: { $toDouble: '$total_amount' } }
                 }
             }
         ]);
 
-        const totalItems = totalAmountandQuantity.length > 0 ? totalAmountandQuantity[0].totalItems : 0;
-        const totalQuantity = totalAmountandQuantity.length > 0 ? totalAmountandQuantity[0].totalQuantity : 0;
+        const totalAmount = totalDeliveredResult.length > 0 ? totalDeliveredResult[0].totalAmount : 0;
 
-        res.render('Admin/index',{productCount,totalQuantity,totalAmount,totalSalesSum})
+        // Monthly Total Sales
+        const monthlyTotalSalesResult = await order.aggregate([
+            {
+                $match: {
+                    'items.ordered_status': 'Delivered'
+                }
+            },
+            {
+                $group: {
+                    _id: { $month: '$date' },
+                    totalSales: { $sum: '$total_amount' }
+                }
+            },
+            {
+                $sort: { _id: 1 }
+            }
+        ]);
+
+        const monthlyTotalSales = monthlyTotalSalesResult.map(monthlySale => monthlySale.totalSales);
+        const totalMonthlySalesSum = monthlyTotalSales.reduce((acc, current) => acc + current, 0);
+
+        // Weekly Total Sales
+        const weeklyTotalSalesResult = await order.aggregate([
+            {
+                $match: {
+                    'items.ordered_status': 'Delivered',
+                    'date': { $gte: new Date(new Date() - 7 * 24 * 60 * 60 * 1000) }
+                }
+            },
+            {
+                $group: {
+                    _id: { $week: '$date' },
+                    totalSales: { $sum: '$total_amount' }
+                }
+            },
+            {
+                $sort: { _id: 1 }
+            }
+        ]);
+
+        const weeklyTotalSales = weeklyTotalSalesResult.map(weeklySale => weeklySale.totalSales);
+        const totalWeeklySalesSum = weeklyTotalSales.reduce((acc, current) => acc + current, 0);
+
+        // Yearly Total Sales
+        const yearlyTotalSalesResult = await order.aggregate([
+            {
+                $match: {
+                    'items.ordered_status': 'Delivered'
+                }
+            },
+            {
+                $group: {
+                    _id: { $year: '$date' },
+                    totalSales: { $sum: '$total_amount' }
+                }
+            },
+            {
+                $sort: { _id: 1 }
+            }
+        ]);
+
+        const yearlyTotalSales = yearlyTotalSalesResult.map(yearlySale => yearlySale.totalSales);
+        const totalYearlySalesSum = yearlyTotalSales.reduce((acc, current) => acc + current, 0);
+
+        // Product Count
+        const totalProductCount = await product.countDocuments();
+
+        // Total Amount and Quantity
+        const totalAmountAndQuantityResult = await order.aggregate([
+            {
+                $unwind: '$items'
+            },
+            {
+                $match: {
+                    'items.ordered_status': 'Delivered'
+                }
+            },
+            {
+                $group: {
+                    _id: '$_id',
+                    totalItemsInOrder: { $sum: 1 },
+                    totalQuantityInOrder: { $sum: '$items.quantity' }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalItems: { $sum: '$totalItemsInOrder' },
+                    totalQuantity: { $sum: '$totalQuantityInOrder' }
+                }
+            }
+        ]);
+
+        const totalItemsCount = totalAmountAndQuantityResult.length > 0 ? totalAmountAndQuantityResult[0].totalItems : 0;
+        const totalQuantityCount = totalAmountAndQuantityResult.length > 0 ? totalAmountAndQuantityResult[0].totalQuantity : 0;
+
+        res.render('Admin/index', {
+            totalProductCount,
+            totalQuantityCount,
+            totalAmount,
+            totalMonthlySalesSum,
+            totalWeeklySalesSum,
+            totalYearlySalesSum
+        });
     } catch (error) {
         console.log(error);
+        res.status(500).send('Internal Server Error');
     }
-}
+};
+
+
+
+
 const loadUsers = async (req, res) => {
     try {
         const userData = await User.find({ isAdmin: 0 })
@@ -134,12 +192,15 @@ const blockUnblockUser = async (req, res) => {
         user.isBlocked = !user.isBlocked;
         await user.save();
 
-        res.redirect('/admin/users');
+        // Send the updated user status in the response
+        res.json({ success: true, message: 'User status updated successfully', isBlocked: user.isBlocked });
+
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 
 const Categories = async (req, res) => {
     try {

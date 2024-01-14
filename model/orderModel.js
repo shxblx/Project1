@@ -30,10 +30,6 @@ const orderSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    status: {
-        type: String,
-        required: true
-    },
     payment: {
         type: String,
         required: true
@@ -65,7 +61,7 @@ const orderSchema = mongoose.Schema({
         },
         ordered_status: {
             type: String,
-            default: "placed"
+            default: "pending"
         },
         cancellationReason: {
             type: String
@@ -74,4 +70,4 @@ const orderSchema = mongoose.Schema({
 })
 
 const order = mongoose.model('order', orderSchema)
-module.exports = order
+module.exports = order

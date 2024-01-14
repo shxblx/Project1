@@ -47,15 +47,23 @@ const loadAddCart = async (req, res) => {
             const existProduct = cartData.items.find((x) => x.product_id.toString() === product_id);
 
             if (existProduct) {
-                await cart.updateOne(
-                    { user_id: user_id, 'items.product_id': product_id },
-                    {
-                        $inc: {
-                            'items.$.quantity': quantity,
-                            'items.$.total_price': quantity * existProduct.price,
-                        },
-                    }
-                );
+                console.log();
+
+                if (cartData.items[0].quantity + parseInt(quantity) <= productData.quantity) {
+                    await cart.updateOne(
+                        { user_id: user_id, 'items.product_id': product_id },
+                        {
+                            $inc: {
+                                'items.$.quantity': quantity,
+                                'items.$.total_price': quantity * existProduct.price,
+                            },
+                        }
+                    );
+
+                } else {
+                    return res.json({ outOfStock: true });
+                }
+
             } else {
                 await cart.findOneAndUpdate(
                     { user_id: user_id },
@@ -182,20 +190,25 @@ const placeOrder = async (req, res) => {
     try {
         const date = new Date();
         const user_id = req.session.user_id;
-        const { address, paymentMethod } = req.body.orderData;
-        console.log(address);
-        if (!user_id) {
-
-        }
+        const { address, paymentMethod, productId } = req.body.orderData;
 
         const cartData = await cart.findOne({ user_id: user_id });
         const totalPrice = cartData.items.reduce((total, item) => total + item.total_price, 0);
 
 
         const userData = await User.findById(user_id);
-        if (!userData) {
+        const productData = await product.find({ _id: productId });
 
+        for (let i = 0; i < cartData.items.length; i++) {
+            const cartItem = cartData.items[i];
+            const productQuantity = productData[i].quantity;
+
+            if (cartItem.quantity > productQuantity) {
+               
+                return res.json({outOfStock:true });
+            }
         }
+
 
         const cartProducts = cartData.items;
         const productIds = cartProducts.map(item => item.product_id.toString());
@@ -219,16 +232,15 @@ const placeOrder = async (req, res) => {
             user_name: userData.username,
             total_amount: totalPrice,
             date: Date.now(),
-            status: status,
             expected_delivery: deliveryDate,
             payment: paymentMethod,
-            items: cartProducts,
+            items: cartProducts.map(item => ({ ...item, ordered_status: status })),
         });
 
         let orders = await orderData.save();
-        const orderId = orders._id;
+        const orderId = orders.order_id;
 
-        if (orders.status === 'placed') {
+        if (orders.items.some(item => item.ordered_status === 'placed')) {
             await cart.deleteOne({ user_id: user_id });
 
             for (let i = 0; i < productIds.length; i++) {
@@ -246,7 +258,6 @@ const placeOrder = async (req, res) => {
         } else {
             const orderId = orders.order_id;
             const totalAmount = orders.total_amount
-
 
             var options = {
                 amount: totalAmount * 100,
@@ -270,11 +281,14 @@ const verifyPayment = async (req, res) => {
         const cartData = await cart.findOne({ user_id: req.session.user_id });
         const cartProducts = cartData.items;
         const details = req.body;
+        console.log(req.body);
         const crypto = require("crypto");
-
         const secretKey = "HSTYr5vjQ4sBgoUmnlOEPEnn";
 
         const hmac = crypto.createHmac("sha256", secretKey);
+
+        console.log("Order ID:", details.payment.razorpay_order_id);
+        console.log("Payment ID:", details.payment.razorpay_payment_id);
 
         // Updating the HMAC with the data
         hmac.update(
@@ -283,38 +297,37 @@ const verifyPayment = async (req, res) => {
             details.payment.razorpay_payment_id
         );
 
-        // Getting the hexadecimal representation of the HMAC
         const hmacFormat = hmac.digest("hex");
-
         if (hmacFormat == details.payment.razorpay_signature) {
-            await Order.findByIdAndUpdate(
-                { _id: details.order.receipt },
-                { $set: { paymentId: details.payment.razorpay_payment_id } }
+
+            await Order.updateOne(
+                { "order_id": details.order.receipt },
+                {
+                    $set: {
+                        "paymentId": details.payment.razorpay_payment_id,
+                        "items.$[].ordered_status": "placed"
+                    }
+                }
             );
 
+
             for (let i = 0; i < cartProducts.length; i++) {
-                console.log(cartProducts[i].quantity);
                 let count = cartProducts[i].quantity;
-                await product.findByIdAndUpdate(
-                    { _id: cartProducts[i].product_id },
-                    { $inc: { stockQuantity: -count } }
+                await product.updateOne(
+                    { "_id": cartProducts[i].product_id },
+                    { $inc: { "quantity": -count } }
                 );
             }
 
-            await Order.findByIdAndUpdate(
-                { _id: details.order.receipt },
-                { $set: { status: "placed" } }
-            );
-
-            const userData = await User.findOne({ _id: req.session.userId });
-            await cart.deleteOne({ user_id: userData._id });
+            await cart.deleteOne({ user_id: req.session.user_id });
 
             res.json({ success: true, params: details.order.receipt });
         } else {
-            await Order.findByIdAndDelete({ _id: details.order.receipt });
+            await Order.deleteOne({ "order_id": details.order.receipt });
             res.json({ success: false });
         }
     } catch (error) {
+        console.log("error aayi muthe nee mooonji");
         res.redirect("/500");
     }
 };
@@ -324,7 +337,7 @@ const orderPlaced = async (req, res) => {
     try {
         orderId = req.params.id;
         userId = req.session.user_id
-        const orders = await Order.findOne({ _id: orderId })
+        const orders = await Order.findOne({ order_id: orderId })
         const user = await User.findOne({ _id: userId })
         res.render('orderPlaced', { user: user, orders: orders, moment })
     } catch (error) {

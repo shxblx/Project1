@@ -241,7 +241,7 @@
                           <button class="btn btn-outline-primary js-btn-minus" type="button" onclick="decreaseQuantity()">−</button>
                       </div>
                       <input id="quantityInput" data-quantity="<%= productsId[i].quantity %>" type="text"
-                          class="form-control text-center" value="1" placeholder="" aria-label="Example text with button addon"
+                          class="form-control text-center" value="0" placeholder="" aria-label="Example text with button addon"
                           aria-describedby="button-addon1">
                       <div class="input-group-append">
                           <button class="btn btn-outline-primary js-btn-plus" type="button" onclick="increaseQuantity()">+</button>
@@ -461,7 +461,15 @@
                 // You can add any additional action here if needed
               }
             });
-          } else {
+          }
+         else if(result.outOfStock){
+          Swal.fire({
+              icon: 'error',
+              title: 'Cannot Add Product!',
+              text: 'Product Out of Stock',
+            });
+
+         } else {
             Swal.fire({
               icon: 'error',
               title: 'Error!',

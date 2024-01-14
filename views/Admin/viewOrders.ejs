@@ -191,7 +191,7 @@
                                                 class="img-sm img-thumbnail mb-2" alt="" width="60px" height="50px"><br>
                                             <span>Price : ₹<%= item.product_id.price %></span><br><br>
                                             <span>Order Date : <%= moment(order.date).format('dddd, MMMM Do YYYY') %>
-                                                    </span><br><br>
+                                            </span><br><br>
                                             <span>Delivery Address: <%= order.delivery_address %></span><br><br>
                                             <span>Payment Method : <%= order.payment %></span><br><br>
                                             <span>Expected Delivery : <%= order.expected_delivery %></span><br><br>
@@ -203,8 +203,9 @@
                                             </span><br><br>
 
                                             <% if (item.ordered_status==='Cancelled' || item.ordered_status==='Returned'
-                                                ||item.ordered_status ==='Requested cancellation'||item.ordered_status ==='Requested return') { %>
-                                                <span>Cancellation Reason: <%= item.cancellationReason %></span><br><br>
+                                                ||item.ordered_status==='Requested cancellation'
+                                                ||item.ordered_status==='Requested return' ) { %>
+                                                <span>Reason: <%= item.cancellationReason %></span><br><br>
                                                 <% } %>
                                         </div>
 

@@ -176,7 +176,9 @@
 
             <!-- Sale & Revenue Start -->
             <div class="container-fluid pt-4 px-4">
+                
                 <div class="row g-4">
+                    <!-- Existing Revenue Section -->
                     <div class="col-sm-6 col-xl-3">
                         <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
                             <i class="fa fa-chart-line fa-3x text-primary"></i>
@@ -186,40 +188,66 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Existing Total Orders Section -->
                     <div class="col-sm-6 col-xl-3">
                         <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
                             <i class="fa fa-chart-area fa-3x text-primary"></i>
                             <div class="ms-3">
                                 <p class="mb-2">Total Orders</p>
-                                <h6 class="mb-0"><%=totalQuantity%></h6>
+                                <h6 class="mb-0"><%=totalQuantityCount%></h6>
                             </div>
                         </div>
                     </div>
+                    <!-- Existing Products Section -->
                     <div class="col-sm-6 col-xl-3">
                         <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
                             <i class="fa fa-chart-bar fa-3x text-primary"></i>
                             <div class="ms-3">
                                 <p class="mb-2">Products</p>
-                                <h6 class="mb-0"><%=productCount%></h6>
+                                <h6 class="mb-0"><%=totalProductCount%></h6>
                             </div>
                         </div>
                     </div>
+                    <!-- Existing Monthly Total Sales Section -->
                     <div class="col-sm-6 col-xl-3">
                         <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
                             <i class="fa fa-chart-pie fa-3x text-primary"></i>
                             <div class="ms-3">
-                                <p class="mb-2">Monthly totalSales</p>
-                                <h6 class="mb-0">₹<%=totalSalesSum%></h6>
+                                <p class="mb-2">Monthly Total Sales</p>
+                                <h6 class="mb-0">₹<%=totalMonthlySalesSum%></h6>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <!-- New Weekly Sales Section -->
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
+                            <i class="fa fa-calendar fa-3x text-primary"></i>
+                            <div class="ms-3">
+                                <p class="mb-2">Weekly Sales</p>
+                                <h6 class="mb-0">₹<%=totalWeeklySalesSum%></h6>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- New Monthly Total Sales Section -->
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
+                            <i class="fa fa-calendar-alt fa-3x text-primary"></i>
+                            <div class="ms-3">
+                                <p class="mb-2">Yearly Sales</p>
+                                <h6 class="mb-0">₹<%=totalYearlySalesSum%></h6>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            
             <!-- Sale & Revenue End -->
 
 
             <!-- Sales Chart Start -->
             <div class="container-fluid pt-4 px-4">
+                <button style="margin-left: 90%;" class="btn btn-primary mb-4">Sales Report</button>
                 <div class="row g-4">
                     <div class="col-sm-12 col-xl-6">
                         <div class="bg-secondary text-center rounded p-4">
@@ -248,7 +276,7 @@
             <div class="container-fluid pt-4 px-4">
                 <div class="bg-secondary text-center rounded p-4">
                     <div class="d-flex align-items-center justify-content-between mb-4">
-                        <h6 class="mb-0">Recent Salse</h6>
+                        <h6 class="mb-0">Recent Users</h6>
                         <a href="">Show All</a>
                     </div>
                     <div class="table-responsive">
