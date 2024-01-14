@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
     }
 })
 
-const upload = multer({ storage: storage }).array('image', 4)
+const upload = multer({ storage: storage }).array('image')
 
 adminRouter.get('/', auth.isLogin,adminController.loadAdmin)
 adminRouter.get('/adminSignin',auth.isLogout,adminController.loadAdminSignin)
@@ -44,6 +44,7 @@ adminRouter.post('/product/deleteImg', adminController.deleteImg);
 adminRouter.get('/orders',auth.isLogin,adminController.loadOrders)
 adminRouter.post('/updateOrderStatus', adminController.updateOrderStatus);
 adminRouter.get('/viewOrders',adminController.viewOrders)
+adminRouter.get('/salesReport',adminController.salesReport)
 
 
 

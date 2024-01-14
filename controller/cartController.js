@@ -190,25 +190,32 @@ const placeOrder = async (req, res) => {
     try {
         const date = new Date();
         const user_id = req.session.user_id;
-        const { address, paymentMethod, productId } = req.body.orderData;
+        const { address, paymentMethod, productIdArray } = req.body.orderData;
+
+
 
         const cartData = await cart.findOne({ user_id: user_id });
         const totalPrice = cartData.items.reduce((total, item) => total + item.total_price, 0);
 
-
         const userData = await User.findById(user_id);
-        const productData = await product.find({ _id: productId });
 
-        for (let i = 0; i < cartData.items.length; i++) {
-            const cartItem = cartData.items[i];
-            const productQuantity = productData[i].quantity;
+        for (let i = 0; i < productIdArray.length; i++) {
+            const currentProductId = productIdArray[i];
+
+            const productData = await product.findById(currentProductId);
+            const cartItem = cartData.items.find(item => item.product_id.toString() === currentProductId);
+
+            if (!productData || !cartItem) {
+                return res.status(400).json({ error: `Product with ID ${currentProductId} not found in cart or database.` });
+            }
+
+            const productQuantity = productData.quantity;
 
             if (cartItem.quantity > productQuantity) {
-               
-                return res.json({outOfStock:true });
+                return res.json({ outOfStock: true, productId: currentProductId });
             }
-        }
 
+        }
 
         const cartProducts = cartData.items;
         const productIds = cartProducts.map(item => item.product_id.toString());
@@ -247,7 +254,6 @@ const placeOrder = async (req, res) => {
                 const productId = productIds[i];
                 const quantityToDecrease = productQ[i];
 
-                // Find and update the product in the products collection
                 await product.updateOne(
                     { "_id": productId },
                     { $inc: { "quantity": -quantityToDecrease } }
@@ -275,6 +281,7 @@ const placeOrder = async (req, res) => {
         return res.status(500).json({ success: false, message: 'Internal server error.' });
     }
 };
+
 
 const verifyPayment = async (req, res) => {
     try {

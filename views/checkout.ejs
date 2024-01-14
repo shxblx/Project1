@@ -272,7 +272,7 @@
                       <tr>
                         <td>
                           <%= item.product_id.name %> <strong class="mx-2">x</strong> "<%= item.quantity %>"
-                              <input id="productId" hidden value="<%=item.product_id._id%>">
+                              <input class="productId" hidden value="<%=item.product_id._id%>">
                         </td>
                         <td>₹<%= item.total_price %>
                         </td>
@@ -495,10 +495,15 @@
     async function placeOrder() {
       const selectedAddress = document.querySelector('input[name="options"]:checked');
       const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
-      const productId = document.getElementById('productId').value
-      console.log(productId)
-      console.log(selectedAddress);
-      console.log(selectedPayment);
+
+      const productIdElements = document.querySelectorAll('.productId');
+
+      const productIdArray = Array.from(productIdElements).map(element => element.value);
+
+      console.log("Selected Address:", selectedAddress);
+      console.log("Selected Payment:", selectedPayment);
+      console.log("Product IDs:", productIdArray);
+
       if (!selectedAddress || !selectedPayment) {
         let errorMessage = '';
 
@@ -519,7 +524,7 @@
         const orderData = {
           address: JSON.stringify(selectedAddress.value),
           paymentMethod: selectedPayment.value,
-          productId
+          productIdArray
         };
         $.ajax({
           type: "POST",
@@ -542,8 +547,14 @@
             } else if (response.outOfStock) {
               Swal.fire({
                 icon: 'error',
-                title: 'Cannot Add Product!',
+                title: 'Cannot Proceed!',
                 text: 'Product Out of Stock',
+              });
+            } else if (response.notFoundProduct) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Cannot Proceed!',
+                text: 'Product Not Found',
               });
             }
             else {

@@ -42,7 +42,12 @@ const verifyAdminLogin = async (req, res) => {
 
 const loadAdmin = async (req, res) => {
     try {
-        // Total Delivered
+        const orders = await order.find({}).sort({ createdAt: -1 }).limit(5);
+        const users = await User.find({}).sort({ date: -1 }).limit(5);
+
+        const currentDateTime = new Date();
+
+        // Total Delivered Amount
         const totalDeliveredResult = await order.aggregate([
             {
                 $match: {
@@ -59,11 +64,14 @@ const loadAdmin = async (req, res) => {
 
         const totalAmount = totalDeliveredResult.length > 0 ? totalDeliveredResult[0].totalAmount : 0;
 
-        // Monthly Total Sales
         const monthlyTotalSalesResult = await order.aggregate([
             {
                 $match: {
-                    'items.ordered_status': 'Delivered'
+                    'items.ordered_status': 'Delivered',
+                    'date': {
+                        $gte: new Date(currentDateTime.getFullYear(), currentDateTime.getMonth(), 1),
+                        $lt: new Date(currentDateTime.getFullYear(), currentDateTime.getMonth() + 1, 1)
+                    }
                 }
             },
             {
@@ -85,7 +93,7 @@ const loadAdmin = async (req, res) => {
             {
                 $match: {
                     'items.ordered_status': 'Delivered',
-                    'date': { $gte: new Date(new Date() - 7 * 24 * 60 * 60 * 1000) }
+                    'date': { $gte: new Date(currentDateTime - 7 * 24 * 60 * 60 * 1000) }
                 }
             },
             {
@@ -106,7 +114,11 @@ const loadAdmin = async (req, res) => {
         const yearlyTotalSalesResult = await order.aggregate([
             {
                 $match: {
-                    'items.ordered_status': 'Delivered'
+                    'items.ordered_status': 'Delivered',
+                    'date': {
+                        $gte: new Date(currentDateTime.getFullYear(), 0, 1),
+                        $lt: new Date(currentDateTime.getFullYear() + 1, 0, 1)
+                    }
                 }
             },
             {
@@ -161,7 +173,9 @@ const loadAdmin = async (req, res) => {
             totalAmount,
             totalMonthlySalesSum,
             totalWeeklySalesSum,
-            totalYearlySalesSum
+            totalYearlySalesSum,
+            users,
+            orders
         });
     } catch (error) {
         console.log(error);
@@ -169,6 +183,32 @@ const loadAdmin = async (req, res) => {
     }
 };
 
+
+
+const salesReport = async (req, res) => {
+    try {
+      const moment = require("moment");
+  
+      const firstOrder = await order.find().sort({ createdAt: 1 });
+      const lastOreder = await order.find().sort({ createdAt: -1 });
+  
+      const salesReport = await order.find({
+        "items.ordered_status": "Delivered",
+      })
+        .populate("user_id")
+        .populate("items.product_id")
+        .sort({ createdAt: -1 });
+  
+      res.render("Admin/salesReport", {
+        firstOrder: moment(firstOrder[0].createdAt).format("YYYY-MM-DD"),
+        lastOrder: moment(lastOreder[0].createdAt).format("YYYY-MM-DD"),
+        salesReport,
+        moment,
+      });
+    } catch (err) {
+      res.redirect("/500");
+    }
+  };
 
 
 
@@ -321,6 +361,7 @@ const deleteCategory = async (req, res) => {
 
 const loadProducts = async (req, res) => {
     try {
+
         const products = await product.find({});
         res.render('Admin/product', { products });
     } catch (error) {
@@ -333,8 +374,9 @@ const loadProducts = async (req, res) => {
 
 const loadAddProduct = async (req, res) => {
     try {
+        const messages = req.flash('message')
         const data = await Category.find({ isListed: true })
-        res.render('Admin/addProduct', { category: data })
+        res.render('Admin/addProduct', { category: data, messages })
     } catch (error) {
         console.log(error);
     }
@@ -344,13 +386,13 @@ const addProduct = async (req, res) => {
     try {
         const { productName, description, quantity, price, category, brand, date } = req.body
         const filenames = []
-
         const selectedCategory = await Category.findOne({ name: category })
 
-        const data = await Category.find({ is_listed: false })
+        const data = await Category.find({ is_listed: true })
         console.log(data);
         if (req.files.length !== 4) {
-            return res.render('addProduct', { message: '4 images needed', category: data })
+            req.flash('message', 'You can only add upto 4 images');
+            return res.redirect('/admin/product/addProduct')
         }
         for (let i = 0; i < req.files.length; i++) {
             const imagesPath = path.join(__dirname, '../public/sharpimages', req.files[i].filename)
@@ -503,13 +545,13 @@ const loadOrders = async (req, res) => {
 
 const updateOrderStatus = async (req, res) => {
     try {
-        const{orderId,status,productId}=req.body;
+        const { orderId, status, productId } = req.body;
 
         const result = await order.updateOne(
             { "order_id": orderId, "items.product_id": productId },
             { $set: { "items.$.ordered_status": status } }
         );
-        
+
         if (result.modifiedCount === 1) {
             res.json({ success: true, message: 'Order status updated successfully' });
         } else {
@@ -522,14 +564,14 @@ const updateOrderStatus = async (req, res) => {
     }
 }
 
-const viewOrders=async(req,res)=>{
+const viewOrders = async (req, res) => {
     try {
         const userId = req.session.userId;
         const orderId = req.query.orderId;
         const orders = await order.find({ order_id: orderId }).populate('items.product_id');
-        res.render('Admin/viewOrders',{ orders: orders, moment })
+        res.render('Admin/viewOrders', { orders: orders, moment })
     } catch (error) {
-        
+
     }
 }
 
@@ -557,5 +599,6 @@ module.exports = {
     deleteImg,
     loadOrders,
     updateOrderStatus,
-    viewOrders
+    viewOrders,
+    salesReport
 }
