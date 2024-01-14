@@ -98,6 +98,18 @@
             color: #000000;
             border-color: #ffffff;
         }
+
+        #myTable td {
+            background-color: #191C24;
+            color: #ffffff;
+        }
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter,
+        .dataTables_wrapper .dataTables_info,
+        .dataTables_wrapper .dataTables_processing,
+        .dataTables_wrapper .dataTables_paginate {
+            color: #fff;
+        }
     </style>
 </head>
 
@@ -369,7 +381,7 @@
             const isBlockedString = button.dataset.isBlocked;
             const isBlocked = isBlockedString === 'true';
             const action = isBlocked ? 'unblock' : 'block';
-    
+
             // Use SweetAlert to confirm the action
             Swal.fire({
                 title: `Are you sure you want to ${action} this user?`,
@@ -392,7 +404,7 @@
                             console.log(data);
                             if (data.success) {
                                 const message = data.isBlocked ? 'User is now blocked!' : 'User is now unblocked!';
-    
+
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Success!',
@@ -422,7 +434,7 @@
             });
         }
     </script>
-    
+
 </body>
 
 </html>

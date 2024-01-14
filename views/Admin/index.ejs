@@ -248,6 +248,11 @@
             <!-- Sales Chart Start -->
             <div class="container-fluid pt-4 px-4">
                 <a href="/admin/salesReport"><button style="margin-left: 90%;" class="btn btn-primary mb-4">Sales Report</button></a>
+                <% if (messages.length > 0) { %>
+                    <div style="color: red;">
+                        <%= messages[0] %>
+                    </div>
+                <% } %>
                 <div class="row g-4">
                     <div class="col-sm-12 col-xl-6">
                         <div class="bg-secondary text-center rounded p-4">

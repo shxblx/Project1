@@ -45,6 +45,7 @@ adminRouter.get('/orders',auth.isLogin,adminController.loadOrders)
 adminRouter.post('/updateOrderStatus', adminController.updateOrderStatus);
 adminRouter.get('/viewOrders',adminController.viewOrders)
 adminRouter.get('/salesReport',adminController.salesReport)
+adminRouter.post("/salesReport", adminController.datePicker);
 
 
 

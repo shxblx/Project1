@@ -189,8 +189,10 @@ const salesReport = async (req, res) => {
     try {
       const moment = require("moment");
   
-      const firstOrder = await order.find().sort({ createdAt: 1 });
-      const lastOreder = await order.find().sort({ createdAt: -1 });
+      const firstOrder = await order.find({}).sort({ createdAt: 1 });
+      const lastOreder = await order.find({}).sort({ createdAt: -1 });
+
+      
   
       const salesReport = await order.find({
         "items.ordered_status": "Delivered",
@@ -206,7 +208,67 @@ const salesReport = async (req, res) => {
         moment,
       });
     } catch (err) {
+        console.log(err);
       res.redirect("/500");
+    }
+  };
+
+  const datePicker = async (req, res) => {
+    try {
+      const { startDate, endDate } = req.body;
+      const startDateObj = new Date(startDate);
+      startDateObj.setHours(0, 0, 0, 0);
+      const endDateObj = new Date(endDate);
+      endDateObj.setHours(23, 59, 59, 999);
+  
+      const selectedDate = await order.aggregate([
+        {
+          $match: {
+            createdAt: {
+              $gte: startDateObj,
+              $lte: endDateObj,
+            },
+            "items.ordered_status": "delivered",
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "user_id",
+            foreignField: "_id",
+            as: "user",
+          },
+        },
+        {
+          $unwind: "$items", 
+        },
+        {
+          $lookup: {
+            from: "products", // Use the correct name of your products collection
+            localField: "items.product_id",
+            foreignField: "_id",
+            as: "items.product",
+          },
+        },
+        {
+          $unwind: "$items.product", // Unwind the product array
+        },
+        {
+          $group: {
+            _id: "$_id", // Group by the order ID
+            user: { $first: "$user" }, // Preserve the user information
+            delivery_address: { $first: "$delivery_address" },
+            order_id: { $first: "$order_id" },
+            date: { $first: "$date" },
+            payment: { $first: "$payment" },
+            items: { $push: "$items" }, // Push items into an array
+          },
+        },
+      ]);
+      console.log(selectedDate);
+      res.status(200).json({ selectedDate: selectedDate });
+    } catch (err) {
+      
     }
   };
 
@@ -600,5 +662,6 @@ module.exports = {
     loadOrders,
     updateOrderStatus,
     viewOrders,
-    salesReport
+    salesReport,
+    datePicker
 }

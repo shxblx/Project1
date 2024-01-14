@@ -35,37 +35,62 @@
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
 
-   <style>
-   #myTable td {
-    background-color: #191C24; 
-    color: #495057;
-}
-   #myTable th {
-    background-color: #191C24; 
-    color: #ff0101;
-}
+    <style>
+        #myTable td {
+            background-color: #191C24;
+            color: #495057;
+        }
 
-</style>
+        #myTable th {
+            background-color: #191C24;
+            color: #ff0101;
+        }
+    </style>
     <style>
         .dataTables_wrapper .dataTables_filter input {
-    background-color: #e9ecef; 
-    color: #000; 
-    border: 1px solid #000000; 
-}
-.dataTables_wrapper .dataTables_filter select {
             background-color: #e9ecef;
             color: #000;
             border: 1px solid #000000;
         }
+
+        .dataTables_wrapper .dataTables_filter select {
+            background-color: #e9ecef;
+            color: #000;
+            border: 1px solid #000000;
+        }
+
         .dataTables_wrapper .dataTables_length select {
-    border: 1px solid #aaa;
-    border-radius: 3px;
-    padding: 5px;
-    background-color: #fff;
-    padding: 4px;
-}
+            border: 1px solid #aaa;
+            border-radius: 3px;
+            padding: 5px;
+            background-color: #fff;
+            padding: 4px;
+        }
+
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter,
+        .dataTables_wrapper .dataTables_info,
+        .dataTables_wrapper .dataTables_processing,
+        .dataTables_wrapper .dataTables_paginate {
+            color: #fff;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:active {
+            cursor: default;
+            color: #f00 !important;
+            border: 1px solid transparent;
+            background: transparent;
+            box-shadow: none;
+        }
+
+        #myTable td {
+            background-color: #191C24;
+            color: #ffffff;
+        }
     </style>
-    
+
 </head>
 
 <body>
@@ -105,7 +130,8 @@
                             class="fa-solid fa-layer-group me-2"></i>Categories</a>
                     <a href="/admin/product" class="nav-item nav-link active"><i
                             class="fa-solid fa-list me-2"></i></i>Products</a>
-                            <a href="/admin/orders" class="nav-item nav-link"><i class="fa-solid fa-list me-2"></i></i>Orders</a>
+                    <a href="/admin/orders" class="nav-item nav-link"><i
+                            class="fa-solid fa-list me-2"></i></i>Orders</a>
                     <!-- <a href="table.html" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>
                     <a href="chart.html" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Charts</a>
                     <div class="nav-item dropdown">
@@ -223,9 +249,9 @@
                     <h6 class="mb-4">Category Management</h6>
 
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        
 
-                        
+
+
                     </div>
 
                     <div class="table-responsive">
@@ -252,10 +278,10 @@
                                             </td>
                                             <td>
                                                 <img src="/myImages/<%= products[i].image[0] %>"
-                                                            class="img-sm img-thumbnail" alt="<%= products[i].name %>"
-                                                            width="50px" height="50px" />
+                                                    class="img-sm img-thumbnail" alt="<%= products[i].name %>"
+                                                    width="50px" height="50px"   />
                                             </td>
-                                            
+
                                             <td>
                                                 <%= products[i].description %>
                                             </td>
@@ -300,12 +326,13 @@
                                                 </form>
                                             </td>
                                             <td>
-                                                <button type="button" class="btn btn-outline-danger btn-sm delete-btn" data-product-id="<%= products[i]._id %>">
+                                                <button type="button" class="btn btn-outline-danger btn-sm delete-btn"
+                                                    data-product-id="<%= products[i]._id %>">
                                                     <i class="fa-solid fa-trash"></i>
                                                 </button>
                                             </td>
-                                            
-                                            
+
+
                                         </tr>
                                         <% } %>
                                             <% } %>
@@ -346,7 +373,7 @@
     <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
 
-   
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="lib/chart/chart.min.js"></script>
     <script src="lib/easing/easing.min.js"></script>
@@ -357,7 +384,7 @@
     <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
 
 
-   
+
     <!-- Template Javascript -->
     <script>
         $(document).ready(function () {
@@ -365,7 +392,7 @@
             attachEventListeners();
         });
     </script>
-    
+
 
 
 </body>
@@ -373,37 +400,37 @@
 
 <script>
 
-document.addEventListener('DOMContentLoaded', function () {
-    // Add an event listener to each list/unlist button
-    document.querySelectorAll('.list-unlist-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            const productId = this.dataset.productId;
+    document.addEventListener('DOMContentLoaded', function () {
+        // Add an event listener to each list/unlist button
+        document.querySelectorAll('.list-unlist-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const productId = this.dataset.productId;
 
-            fetch('/admin/list-products', { 
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ productId }), 
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('Error updating product status.'); 
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
+                fetch('/admin/list-products', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ productId }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('Error updating product status.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
             });
         });
     });
-});
 
 
 
-/////////////////////
+    /////////////////////
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.delete-btn').forEach(function (button) {
             button.addEventListener('click', function () {
@@ -415,7 +442,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     },
                     body: JSON.stringify({ productId: productId }),
                 })
-                .then(response => response.json())
+                    .then(response => response.json())
                     .then(data => {
                         if (data.success) {
                             console.log(data);
@@ -432,7 +459,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     /////////////////////////////////////////////
 
-    
+
 </script>
 
 
