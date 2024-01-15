@@ -54,6 +54,10 @@ const loadAddCart = async (req, res) => {
         if (!user_id) {
             return res.redirect('/login');
         }
+        console.log(quantity);
+        if (quantity === "0") {
+            return res.json({ zeroQuantity: true })
+        }
 
         const productData = await product.findOne({ _id: product_id });
         const cartData = await cart.findOne({ user_id: user_id });
@@ -119,22 +123,49 @@ const loadAddCart = async (req, res) => {
 
 const updateQuantity = async (req, res) => {
     try {
-      const { productId, newQuantity } = req.body;
-      console.log("here"+productId+"here");
-
-      await cart.updateOne(
-        { 'items.product_id': productId },
-        { $set: { 'items.$.quantity': newQuantity } }
-      );
+        const { productId, newQuantity } = req.body;
+        console.log("here" + productId + "here");
+        const userId = req.session.user_id;
         
-      return res.json({ success: true, message: 'Quantity updated successfully' });
-      
+        // Find the cart item that matches the user_id
+        const cartItem = await cart.findOne({ user_id: userId });
+
+        console.log(cartItem);
+
+        if (!cartItem) {
+            return res.status(404).json({ success: false, error: 'Cart not found for the user' });
+        }
+
+        // Find the index of the item in the array
+        const itemIndex = cartItem.items.findIndex(item => item.product_id.equals(productId));
+
+        if (itemIndex === -1) {
+            return res.status(404).json({ success: false, error: 'Product not found in cart' });
+        }
+
+        // Access and log the current price of the item
+        const currentPrice = cartItem.items[itemIndex].price;
+        console.log('Current Item Price:', currentPrice);
+
+        // Update the quantity
+        cartItem.items[itemIndex].quantity = newQuantity;
+
+        // Calculate and update the new total_price
+        const newTotalPrice = currentPrice * newQuantity;
+        cartItem.items[itemIndex].total_price = newTotalPrice;
+
+        // Save the updated cart
+        await cartItem.save();
+
+        return res.json({ success: true, message: 'Quantity and total_price updated successfully' });
+
     } catch (error) {
-      console.error('Error:', error);
-      res.status(500).json({ success: false, error: 'Internal Server Error' });
+        console.error('Error:', error);
+        res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
-  };
-  
+};
+
+
 
 
 const removeCart = async (req, res) => {

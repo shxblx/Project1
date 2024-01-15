@@ -434,17 +434,16 @@
       updateQuantityOnServer(productId, currentQuantity);
       enableAddToCartButton();
 
-      if (currentQuantity  >= maxQuantity) {
-        const addToCartButton = document.getElementById('proceed-btn');
-        addToCartButton.disabled = true;
+      if (currentQuantity  === maxQuantity) {
         const increaseButton = parentContainer.querySelector('.js-btn-plus');
         increaseButton.disabled = true;
       }
-
-      if (currentQuantity  === 1) {
-        const decreaseButton = parentContainer.querySelector('.js-btn-minus');
-        decreaseButton.disabled = true;
+      if (currentQuantity  > maxQuantity) {
+        const addToCartButton = document.getElementById('proceed-btn');
+        addToCartButton.disabled = true;
       }
+
+      
     }
 
     function enableAddToCartButton() {
@@ -469,6 +468,7 @@
         .then(data => {
           if (data.success) {
             console.log('Quantity updated successfully');
+            window.location.reload()
           } else {
             console.error('Failed to update quantity:', data.error);
           }

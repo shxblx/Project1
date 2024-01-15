@@ -469,6 +469,12 @@
               text: 'Product Out of Stock',
             });
 
+         } else if(result.zeroQuantity){
+          Swal.fire({
+              icon: 'error',
+              title: 'Cannot Add Product!',
+              text: 'Give some Quantity',
+            });
          } else {
             Swal.fire({
               icon: 'error',

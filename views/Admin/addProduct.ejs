@@ -188,27 +188,26 @@
                 <div class="bg-secondary rounded h-100 p-4" style="margin-top: 100px; margin-left: 100px;">
                     <h6 class="mb-4">Add Product</h6>
 
-                    <form  method="post" onsubmit="return validateProductForm(event)"
-                        enctype="multipart/form-data">
+                    <form method="post" onsubmit="return validateProductForm(event)" enctype="multipart/form-data">
                         <div class="form-group">
                             <label for="exampleInputName1">Product Name</label>
-                            <input type="text" class="form-control" name="productName" id="productName"
-                                placeholder="Product Name" required>
+                            <input type="text" class="form-control" name="productName" id="productName" placeholder="Product Name" >
+                            <span id="productNameError" style="color: red;"  hidden>Product Name is required.</span>
                         </div>
                         <div class="form-group">
                             <label for="exampleInputEmail3">Description</label>
-                            <input type="text" class="form-control" name="description" id="description"
-                                placeholder="Description" required>
+                            <input type="text" class="form-control" name="description" id="description" placeholder="Description" >
+                            <span id="descriptionError" style="color: red;" hidden>Description is required.</span>
                         </div>
                         <div class="form-group">
                             <label for="exampleInputPassword4">Quantity</label>
-                            <input type="number" class="form-control" name="quantity" id="quantity"
-                                placeholder="Quantity" required>
+                            <input type="number" class="form-control" name="quantity" id="quantity" placeholder="Quantity" >
+                            <span id="quantityError" style="color: red;" hidden>Quantity must be a positive number.</span>
                         </div>
                         <div class="form-group">
                             <label for="exampleSelectGender">Price</label>
-                            <input type="number" class="form-control" name="price" id="price"
-                                placeholder="Price" required>
+                            <input type="number" class="form-control" name="price" id="price" placeholder="Price" >
+                            <span id="priceError" style="color: red;" hidden>Price must be a positive number.</span>
                         </div>
                         <div class="form-group">
                             <label>File upload</label>
@@ -216,30 +215,28 @@
                                 <div id="imagePreview" class="mt-2"></div>
                             </div>
                             <input id="productImage" type="file" name="image" class="file-upload-info" placeholder="Upload Image" multiple>
-                            <% if (messages.length > 0) { %>
-                                <div style="color: red;">
-                                    <%= messages[0] %>
-                                </div>
-                            <% } %>
+                            <!-- Add any error handling for file upload if needed -->
                         </div>
-                        
                         <div class="form-group">
                             <label for="exampleInputCity1">Category</label>
-                            <select class="form-control" name="category" id="category" required>
+                            <select class="form-control" name="category" id="category" >
                                 <% category.forEach(category=>{ %>
                                     <option>
                                         <%= category.name %>
                                     </option>
-                                    <% }) %>
+                                <% }) %>
                             </select>
+                            <span id="categoryError" style="color: red;" hidden>Category is required.</span>
                         </div>
                         <div class="form-group">
                             <label for="exampleTextarea1">Brand</label>
-                            <input type="text" class="form-control" name="brand" id="brand"
-                                placeholder="Brand" required>
+                            <input type="text" class="form-control" name="brand" id="brand" placeholder="Brand" >
+                            <span id="brandError" style="color: red;" hidden>Brand is required.</span>
                         </div>
                         <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                        <button class="btn btn-dark">Cancel</button>
                     </form>
+                    
 
 
                     <div class="table-responsive">
@@ -289,46 +286,55 @@
     <!-- Template Javascript -->
 
     <script>
-        function validateProductForm(event) {
-            const productName = document.getElementById('productName').value;
-            const description = document.getElementById('description').value;
-            const quantity = document.getElementById('quantity').value;
-            const price = document.getElementById('price').value; 
-            const category = document.getElementById('category').value; 
-            const brand = document.getElementById('brand').value; 
-    
-            if (productName.trim() === '') {
-                alert('Product Name is required.');
-                return false;
-            }
-    
-            if (description.trim() === '') {
-                alert('Description is required.');
-                return false;
-            }
-            if (isNaN(quantity) || quantity <= 0) {
-                alert('Quantity must be a positive number.');
-                return false;
-            }
-    
-            if (isNaN(price) || price <= 0) {
-                alert('Price must be a positive number.');
-                return false;
-            }
-    
-            if (category.trim() === '') {
-                alert('Category is required.');
-                return false;
-            }
-    
-            if (brand.trim() === '') {
-                alert('Brand is required.');
-                return false;
-            }
-    
-            return true;
+    function validateProductForm(event) {
+        const productName = document.getElementById('productName').value;
+        const description = document.getElementById('description').value;
+        const quantity = document.getElementById('quantity').value;
+        const price = document.getElementById('price').value;
+        const category = document.getElementById('category').value;
+        const brand = document.getElementById('brand').value;
+
+        // Hide all error messages
+        document.getElementById('productNameError').hidden = true;
+        document.getElementById('descriptionError').hidden = true;
+        document.getElementById('quantityError').hidden = true;
+        document.getElementById('priceError').hidden = true;
+        document.getElementById('categoryError').hidden = true;
+        document.getElementById('brandError').hidden = true;
+
+        if (productName.trim() === '') {
+            document.getElementById('productNameError').hidden = false;
+            return false;
         }
-    </script>
+
+        if (description.trim() === '') {
+            document.getElementById('descriptionError').hidden = false;
+            return false;
+        }
+
+        if (isNaN(quantity) || quantity <= 0) {
+            document.getElementById('quantityError').hidden = false;
+            return false;
+        }
+
+        if (isNaN(price) || price <= 0) {
+            document.getElementById('priceError').hidden = false;
+            return false;
+        }
+
+        if (category.trim() === '') {
+            document.getElementById('categoryError').hidden = false;
+            return false;
+        }
+
+        if (brand.trim() === '') {
+            document.getElementById('brandError').hidden = false;
+            return false;
+        }
+
+        return true;
+    }
+</script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Get the file input element
