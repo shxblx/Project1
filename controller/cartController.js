@@ -15,21 +15,36 @@ var instance = new Razorpay({
 
 const loadCart = async (req, res) => {
     try {
-
+        const productData = await product.find();
         const user = await User.findOne({ _id: req.session.user_id });
-        messages = req.flash('message')
+        messages = req.flash('message');
         const { user_id } = req.session;
+
         if (!user_id) {
             return res.redirect('/login');
         }
+
         const cartData = await cart.findOne({ user_id }).populate('items.product_id');
 
-        res.render('cart', { cartData, messages, user });
+        // Check if cartData is null or undefined
+        if (!cartData || !cartData.items) {
+            // Handle the case where cartData is null or has no items
+            // For example, you might want to render an empty cart page
+            return res.render('cart', { cartData: { items: [] }, messages, user, productData });
+        }
+
+        const combinedData = cartData.items.map(cartItem => {
+            const productInfo = productData.find(product => product._id.toString() === cartItem.product_id._id.toString());
+            return { ...cartItem.toObject(), productInfo };
+        });
+        res.render('cart', { cartData: { items: combinedData }, messages, user, productData });
     } catch (error) {
         console.error('Error:', error);
-        res.status(500).json({ success: false, error: 'Internal Server Error' });
+        res.status(500).json({ success: false, error: 'Internal Server Error c' });
     }
 };
+
+
 
 
 const loadAddCart = async (req, res) => {
@@ -100,6 +115,26 @@ const loadAddCart = async (req, res) => {
         res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
 };
+
+
+const updateQuantity = async (req, res) => {
+    try {
+      const { productId, newQuantity } = req.body;
+      console.log("here"+productId+"here");
+
+      await cart.updateOne(
+        { 'items.product_id': productId },
+        { $set: { 'items.$.quantity': newQuantity } }
+      );
+        
+      return res.json({ success: true, message: 'Quantity updated successfully' });
+      
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ success: false, error: 'Internal Server Error' });
+    }
+  };
+  
 
 
 const removeCart = async (req, res) => {
@@ -361,5 +396,6 @@ module.exports = {
     placeOrder,
     orderPlaced,
     removeCart,
-    verifyPayment
+    verifyPayment,
+    updateQuantity
 }

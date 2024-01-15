@@ -35,12 +35,13 @@ userRouter.get('/orders',auth.checkBlocked,userController.loadOrder)
 userRouter.get('/vieworders',auth.checkBlocked,userController.loadViewOrder)
 userRouter.post('/cancelOrderStatus',userController.cancelOrderStatus)
 userRouter.post('/returnOrderStatus',userController.returnOrderStatus)
-userRouter.get('/viewAddress',userController.loadAddress)
-userRouter.get('/userAddAddress',userController.loadAddAddress)
+userRouter.get('/viewAddress',auth.checkBlocked,userController.loadAddress)
+userRouter.get('/userAddAddress',auth.checkBlocked,userController.loadAddAddress)
 userRouter.post('/userAddAddress',userController.addAddress)
 userRouter.post('/deleteAddress',userController.deleteAddress)
-userRouter.get('/editAddress',userController.loadEditAddress)
+userRouter.get('/editAddress',auth.checkBlocked,userController.loadEditAddress)
 userRouter.post('/editAddress',userController.editAddress)
+userRouter.post('/updateQuantity',cartController.updateQuantity)
 
 
 
