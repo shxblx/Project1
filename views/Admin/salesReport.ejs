@@ -287,11 +287,20 @@
                                                                                     <%= order.order_id %>
                                                                                 </td>
                                                                                 <td rowspan="<%= order.items.length %>">
-                                                                                    <%= order.user_id.email %>
+                                                                                    <% if (order.user_id && order.user_id.email) { %>
+                                                                                        <%= order.user_id.email %>
+                                                                                    <% } else { %>
+                                                                                        User doesn't exist
+                                                                                    <% } %>
                                                                                 </td>
                                                                                 <td rowspan="<%= order.items.length %>">
-                                                                                    <%= order.user_id.phone %>
+                                                                                    <% if (order.user_id && order.user_id.phone) { %>
+                                                                                        <%= order.user_id.phone %>
+                                                                                    <% } else { %>
+                                                                                        User doesn't exist
+                                                                                    <% } %>
                                                                                 </td>
+                                                                                
                                                                                 <td rowspan="<%= order.items.length %>">
                                                                                     <%= order.delivery_address %>
                                                                                 </td>
@@ -385,6 +394,7 @@
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
 </body>
+
 
 
 <script>
@@ -516,5 +526,7 @@
         document.body.removeChild(link);
     }
 </script>
+
+
 
 </html>

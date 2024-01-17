@@ -14,6 +14,7 @@ const loadHome = async (req, res) => {
     try {
         const user = req.session.user_id ? await User.findOne({ _id: req.session.user_id }) : null;
 
+
         const cartData = await cart.aggregate([
             {
                 $match: {
@@ -32,7 +33,7 @@ const loadHome = async (req, res) => {
         res.render('index', { user, itemCount });
     } catch (error) {
         console.error('Error:', error);
-        res.status(500).send('Internal Server Error');
+        res.redirect('/500')
     }
 };
 
@@ -244,15 +245,15 @@ const sendOTPverificationEmail = async ({ email }, res) => {
             port: 587,
             secure: true,
             auth: {
-                user: "shiblibasheer27@gmail.com",
-                pass: "rgmv lili pgqj gpzu"
+                user: process.env.EMAIL,
+                pass: process.env.PASS
             }
         })
         const otp = `${Math.floor(1000 + Math.random() * 9000)}`
 
 
         const mailOption = {
-            from: "shiblibasheer27@gmail.com",
+            from: process.env.EMAIL,
             to: email,
             subject: "Verify Your Email",
             html: `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
@@ -356,14 +357,14 @@ const forgotPassSendMail = async (req, res) => {
             port: 587,
             secure: true,
             auth: {
-                user: "shiblibasheer27@gmail.com",
-                pass: "rgmv lili pgqj gpzu"
+                user: process.env.EMAIL,
+                pass: process.env.PASS
             }
         })
         const otp = `${Math.floor(1000 + Math.random() * 9000)}`
 
         const mailOption = {
-            from: "shiblibasheer27@gmail.com",
+            from: process.env.EMAIL,
             to: email,
             subject: "Verify Your Email",
             html: `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
@@ -688,6 +689,13 @@ const editAddress = async (req, res) => {
     }
 };
 
+const load500=async(req,res)=>{
+    try {
+        res.render('500')
+    } catch (error) {
+        
+    }
+}
 
 module.exports = {
     loadHome,
@@ -718,5 +726,6 @@ module.exports = {
     addAddress,
     deleteAddress,
     loadEditAddress,
-    editAddress
+    editAddress,
+    load500
 }

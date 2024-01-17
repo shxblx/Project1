@@ -42,8 +42,9 @@ const verifyAdminLogin = async (req, res) => {
 
 const loadAdmin = async (req, res) => {
     try {
-        const orders = await order.find({}).sort({ createdAt: -1 }).limit(5);
-        const users = await User.find({}).sort({ date: -1 }).limit(5);
+        const orders = await order.find({}).sort({ date: -1 }).limit(5);
+        const users = await User.find({}).sort({ createdAt: -1 }).limit(5);
+
 
         const currentDateTime = new Date();
 
@@ -188,9 +189,12 @@ const loadAdmin = async (req, res) => {
 const salesReport = async (req, res) => {
     try {
         const moment = require("moment");
-      
+
+
         const firstOrder = await order.find({}).sort({ createdAt: 1 });
-        const lastOrder = await order.find({}).sort({ createdAt: -1 });
+        const lastOreder = await order.find({}).sort({ createdAt: -1 });
+
+
 
         const salesReport = await order.find({
             "items.ordered_status": "Delivered",
@@ -201,7 +205,7 @@ const salesReport = async (req, res) => {
 
         res.render("Admin/salesReport", {
             firstOrder: moment(firstOrder[0].createdAt).format("YYYY-MM-DD"),
-            lastOrder: moment(lastOrder[0].createdAt).format("YYYY-MM-DD"),
+            lastOrder: moment(lastOreder[0].createdAt).format("YYYY-MM-DD"),
             salesReport,
             moment,
         });
@@ -210,6 +214,7 @@ const salesReport = async (req, res) => {
         res.redirect("/500");
     }
 };
+
 
 const datePicker = async (req, res) => {
     try {
@@ -652,6 +657,14 @@ const viewOrders = async (req, res) => {
     }
 }
 
+const load404 = async (req, res) => {
+    try {
+        res.render('Admin/404')
+    } catch (error) {
+
+    }
+}
+
 module.exports = {
     loadAdmin,
     loadAdminSignin,
@@ -678,5 +691,6 @@ module.exports = {
     updateOrderStatus,
     viewOrders,
     salesReport,
-    datePicker
+    datePicker,
+    load404
 }

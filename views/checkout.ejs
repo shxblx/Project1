@@ -22,6 +22,26 @@
 
   <link rel="stylesheet" href="css/style.css">
 
+  <style>
+    .progress-7 {
+      width: 120px;
+      height: 24px;
+      -webkit-mask:
+        radial-gradient(circle closest-side, #000 94%, #0000) 0 0/25% 100%,
+        linear-gradient(#000 0 0) center/calc(100% - 12px) calc(100% - 12px) no-repeat;
+      background:
+        linear-gradient(#ee4866 0 0) 0/0% no-repeat #ddd;
+      animation: p7 3.2s infinite linear;
+      margin-left: 170px;
+    }
+
+    @keyframes p7 {
+      100% {
+        background-size: 100%
+      }
+    }
+  </style>
+
 </head>
 
 <body>
@@ -410,6 +430,21 @@
           </p>
         </div>
 
+        <div id="loadingModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static"
+          data-keyboard="false">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-body text-center">
+                <div class="spinner-border text-primary" role="status">
+                  <div class="progress-7 d-flex justify-content-center"></div>
+                  <span class="sr-only">Generating Otp</span>
+                </div>
+                <p class="mt-2">Please wait...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </footer>
@@ -539,11 +574,16 @@
                 title: 'Success!',
                 text: 'Your order has been placed successfully!',
                 timer: 2000
-              })
-              const param = response.params;
-              setTimeout(() => {
-                window.location.href = '/orderPlaced/' + param;
-              }, 2000);
+              }).then((result) => {
+                if (result.isConfirmed || result.isDismissed) {
+                  $('#loadingModal').modal('show');
+
+                  const param = response.params;
+                  setTimeout(() => {
+                    window.location.href = '/orderPlaced/' + param;
+                  }, 3200);
+                }
+              });
             } else if (response.outOfStock) {
               Swal.fire({
                 icon: 'error',
@@ -556,8 +596,8 @@
                 title: 'Cannot Proceed!',
                 text: 'Product Not Found',
               });
-            }
-            else {
+            } else {
+              // If not a success response, trigger razorpayPayment
               razorpayPayment(response.order);
             }
           },
@@ -565,6 +605,7 @@
             console.error(error);
           }
         });
+
       }
     }
 
@@ -597,31 +638,37 @@
     }
 
     function verifyPayment(payment, order) {
-      console.log('verifyPAyment::', payment, order);
-      $.ajax({
+    console.log('verifyPAyment::', payment, order);
+
+    // Show the loading modal before making the AJAX request
+   
+
+    $.ajax({
         url: '/verify-payment',
         method: 'post',
         data: {
-          payment,
-          order
+            payment,
+            order
         },
         success: (response) => {
-          if (response.success == true) {
-            const param = response.params
-            console.log('iamparam' + param);
-            const url = '/orderPlaced/' + param
-            window.location.href = url;
-          } else {
-            Swal.fire({
-              icon: 'error',
-              title: 'Payment has failed',
-              showConfirmButton: false,
-              timer: 1500
-            })
-          }
+            if (response.success == true) {
+              $('#loadingModal').modal('show');
+                const param = response.params;
+                setTimeout(() => {
+                    window.location.href = '/orderPlaced/' + param;
+                }, 3200);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Payment has failed',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
         }
-      })
-    }
+    });
+}
+
   </script>
 
 

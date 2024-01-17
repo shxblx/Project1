@@ -443,13 +443,12 @@
               cancelButtonColor: '#d33',
               confirmButtonText: 'Go to Cart',
               cancelButtonText: 'Continue Shopping',
-            }).then((result) => {
+            })
+            .then((result) => {
               if (result.isConfirmed) {
-                // Redirect to the cart page or navigate to the cart
                 window.location.href = '/cart';
               } else {
-                // Continue shopping
-                // You can add any additional action here if needed
+                location.reload()
               }
             });
           }
@@ -474,6 +473,7 @@
             });
           }
         })
+      
         .catch(error => {
           console.error('Error:', error);
           Swal.fire({

@@ -244,8 +244,31 @@
             
             <!-- Sale & Revenue End -->
 
+             <!-- Sales Chart Start -->
+             <div class="container-fluid pt-4 px-4">
+                <div class="row g-4">
+                    <div class="col-sm-12 col-xl-6">
+                        <div class="bg-secondary text-center rounded p-4">
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <h6 class="mb-0">Monthly Sales</h6>
+                                <a href="">Show All</a>
+                            </div>
+                            <canvas id="monthly-sales"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-xl-6">
+                        <div class="bg-secondary text-center rounded p-4">
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <h6 class="mb-0">Yearly Sales</h6>
+                                <a href="">Show All</a>
+                            </div>
+                            <canvas id="yearly-sales"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Sales Chart End -->
 
-            <!-- Sales Chart Start -->
             <div class="container-fluid pt-4 px-4">
                 <a href="/admin/salesReport"><button style="margin-left: 90%;" class="btn btn-primary mb-4">Sales Report</button></a>
                 <% if (messages.length > 0) { %>
@@ -255,7 +278,7 @@
                 <% } %>
                 
             </div>
-            <!-- Sales Chart End -->
+            
 
 
             <!-- Recent Sales Start -->
@@ -374,6 +397,57 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+
+    <script>
+     var ctx2 = $("#monthly-sales").get(0).getContext("2d");
+    var myChart2 = new Chart(ctx2, {
+        type: "line",
+        data: {
+            labels: ["January", "February", "March", "April", "May", "June", "July","August","September","October","November","December"],
+            datasets: [{
+                    label: "Sales",
+                    data: [15, 30, 55, 45, 70, 65, 85],
+                    backgroundColor: "rgba(235, 22, 22, .7)",
+                    fill: true
+                },
+                {
+                    label: "Revenue",
+                    data: [99, 135, 170, 130, 190, 180, 270],
+                    backgroundColor: "rgba(235, 22, 22, .5)",
+                    fill: true
+                }
+            ]
+            },
+        options: {
+            responsive: true
+        }
+    });
+
+    // Salse & Revenue Chart
+    var ctx2 = $("#yearly-sales").get(0).getContext("2d");
+    var myChart2 = new Chart(ctx2, {
+        type: "line",
+        data: {
+            labels: ["2016", "2017", "2018", "2019", "2020", "2021", "2022","2023","2024"],
+            datasets: [{
+                    label: "Sales",
+                    data: [15, 30, 55, 45, 70, 65, 85],
+                    backgroundColor: "rgba(235, 22, 22, .7)",
+                    fill: true
+                },
+                {
+                    label: "Revenue",
+                    data: [99, 135, 170, 130, 190, 180, 270],
+                    backgroundColor: "rgba(235, 22, 22, .5)",
+                    fill: true
+                }
+            ]
+            },
+        options: {
+            responsive: true
+        }
+    });
+    </script>
 </body>
 
 </html>

@@ -9,8 +9,8 @@ const { loadLogin } = require('./user_controller')
 const Razorpay = require('razorpay');
 
 var instance = new Razorpay({
-    key_id: 'rzp_test_CWNRPvTS2QujT5',
-    key_secret: 'HSTYr5vjQ4sBgoUmnlOEPEnn',
+    key_id: process.env.KEY_ID,
+    key_secret: process.env.KEY_SECRET,
 });
 
 const loadCart = async (req, res) => {
@@ -360,7 +360,7 @@ const verifyPayment = async (req, res) => {
         const details = req.body;
         console.log(req.body);
         const crypto = require("crypto");
-        const secretKey = "HSTYr5vjQ4sBgoUmnlOEPEnn";
+        const secretKey = process.env.KEY_SECRET;
 
         const hmac = crypto.createHmac("sha256", secretKey);
 
@@ -404,7 +404,6 @@ const verifyPayment = async (req, res) => {
             res.json({ success: false });
         }
     } catch (error) {
-        console.log("error aayi muthe nee mooonji");
         res.redirect("/500");
     }
 };

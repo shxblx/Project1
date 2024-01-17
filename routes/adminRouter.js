@@ -46,6 +46,7 @@ adminRouter.post('/updateOrderStatus', adminController.updateOrderStatus);
 adminRouter.get('/viewOrders',adminController.viewOrders)
 adminRouter.get('/salesReport',adminController.salesReport)
 adminRouter.post("/salesReport", adminController.datePicker);
+adminRouter.get('/404',adminController.load404)
 
 
 
