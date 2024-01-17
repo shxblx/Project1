@@ -28,7 +28,6 @@ const isLogout = async (req, res, next) => {
 
 const checkBlocked = async (req, res, next) => {
     const userId = req.session.user_id;
-    console.log(userId);
 
     if (userId) {
         try {

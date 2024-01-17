@@ -22,7 +22,7 @@ const verifyAdminLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
         const admin = await User.findOne({ email: email });
-        if (!admin || admin.isAdmin !== 1) {
+        if (!admin || admin.isAdmin !== true) {
             req.flash('message', 'You are not an admin')
             return res.redirect('/admin/adminSignin')
         }

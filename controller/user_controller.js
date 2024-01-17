@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt')
 const User = require('../model/userModel')
 const Category = require('../model/categModel')
 const product = require('../model/productmodel')
-const cart=require('../model/cartModel')
+const cart = require('../model/cartModel')
 const Order = require('../model/orderModel')
 const nodemailer = require('nodemailer');
 const userOTPverification = require('../model/userOTPverification');
@@ -22,7 +22,7 @@ const loadHome = async (req, res) => {
             },
             {
                 $project: {
-                    itemCount: { $size: '$items' }, 
+                    itemCount: { $size: '$items' },
                 },
             },
         ]);
@@ -39,27 +39,15 @@ const loadHome = async (req, res) => {
 
 
 
-const ITEMS_PER_PAGE = 6; 
+const ITEMS_PER_PAGE = 6;
 
 const loadShop = async (req, res) => {
     try {
         const user = req.session.user_id ? await User.findOne({ _id: req.session.user_id }) : null;
 
-        const cartData = user ? await cart.aggregate([
-            {
-                $match: {
-                    user_id: user._id,
-                },
-            },
-            {
-                $group: {
-                    _id: null,
-                    totalItems: { $sum: { $sum: '$items.quantity' } },
-                },
-            },
-        ]) : [];
+        const cartData = user ? await cart.findOne({ user_id: user._id }) : null;
 
-        const totalItems = cartData.length > 0 ? cartData[0].totalItems : 0;
+        const totalItems = cartData ? cartData.items.length : 0;
 
         const category = await Category.find({ isListed: true });
 
@@ -93,6 +81,7 @@ const loadShop = async (req, res) => {
 
 
 
+
 const loadAbout = async (req, res) => {
     try {
         res.render('about')
@@ -105,7 +94,7 @@ const loadContact = async (req, res) => {
     try {
         res.render('contact')
     } catch (error) {
-        console.log();
+        console.log(error);
     }
 }
 
@@ -113,13 +102,21 @@ const loadContact = async (req, res) => {
 const loadSingleshop = async (req, res) => {
     try {
         const user = await User.findOne({ _id: req.session.user_id });
-        const products = req.query.id
-        const productsId = await product.find({ _id: products })
-        res.render('shop-single', { productsId, user })
+
+        const cartData = user ? await cart.findOne({ user_id: user._id }) : null;
+
+        const totalItems = cartData ? cartData.items.length : 0;
+
+        const products = req.query.id;
+        const productsId = await product.find({ _id: products });
+
+        res.render('shop-single', { productsId, user, totalItems });
     } catch (error) {
-        console.log(error);
+        console.error('Error loading single shop:', error);
+        res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
-}
+};
+
 const loadLogin = async (req, res) => {
     try {
         const messages = req.flash('message');
@@ -131,49 +128,45 @@ const loadLogin = async (req, res) => {
 
 const verifyLogin = async (req, res) => {
     try {
-        
         const { email, password } = req.body;
-        console.log(req.body+"body");
+        console.log("Email: ", email);
+        console.log("Password: ", password); 
         const userData = await User.findOne({ email: email });
+        console.log("UserData: ", userData);
 
         if (!userData) {
-            req.flash('message', 'User not found'); // Update the error message
-            return res.redirect('/login');
-
+            req.flash('message', 'User not found');
+            return res.status(401).json({ success: false, message: 'User not found' });
         }
 
         if (userData.isBlocked === true) {
             req.flash('message', 'You have been blocked');
-            return res.redirect('/login');
-
+            return res.status(401).json({ success: false, message: 'You have been blocked' });
         }
+
         if (userData.verified === false) {
             req.flash('message', 'You are not verified');
-            return res.redirect('/login');
-
+            return res.status(401).json({ success: false, message: 'You are not verified' });
         }
 
-        
         const passwordMatch = await bcrypt.compare(password, userData.password);
-        
+
         if (!passwordMatch) {
             req.flash('message', 'Wrong password');
-            return res.redirect('/login');
-
+            return res.status(401).json({ success: false, message: 'Wrong password' });
         }
 
         req.session.user_id = userData._id;
 
-        
-        return res.json({ success: true, message: 'Login successful' });   
-        
-        
+        return res.json({ success: true, message: 'Login successful' });
+
     } catch (error) {
         console.log(error);
         req.flash('message', 'An error occurred. Please try again.');
-        res.redirect('/login');
+        res.status(500).json({ success: false, message: 'An error occurred. Please try again.' });
     }
 };
+
 
 
 const loadSignup = async (req, res) => {
@@ -315,7 +308,6 @@ const verifyOTP = async (req, res) => {
         if (!user) {
             return res.render('otpVerify', { message: "User not found" });
         }
-        console.log(enteredOtp);
         const { otp: hashedOTP } = user;
         const validOtp = await bcrypt.compare(enteredOtp, hashedOTP);
 
@@ -468,7 +460,6 @@ const loadChangePass = async (req, res) => {
 const changePassword = async (req, res) => {
     try {
         const { oldPass, newPass, confirmPass } = req.body;
-        console.log(req.body);
         const userId = req.session.user_id
         const user = await User.findOne({ _id: userId })
         const passwordMatch = await bcrypt.compare(oldPass, user.password);
@@ -541,7 +532,6 @@ const returnOrderStatus = async (req, res) => {
         const { orderId, productId, actionReason, quantity } = req.body;
         const status = 'Requested return';
 
-        console.log("Order ID:", actionReason);
 
         const Product = await product.findById(productId);
         const decrementAmount = Product.price * quantity;
@@ -603,7 +593,6 @@ const addAddress = async (req, res) => {
     try {
         const { name, housename, city, state, phone, pincode } = req.body;
         const user = await User.findOne({ _id: req.session.user_id })
-        console.log(user);
         if (user) {
             await User.updateOne(
                 { _id: req.session.user_id },
@@ -637,13 +626,13 @@ const deleteAddress = async (req, res) => {
         const addressId = req.body.addressId;
         const userId = req.session.user_id;
 
-        await User.updateOne({_id:userId},
-            {$pull:{address:{_id:addressId}}});
+        await User.updateOne({ _id: userId },
+            { $pull: { address: { _id: addressId } } });
 
-            res.json({success:true,message:"addres deleted successfully"})
+        res.json({ success: true, message: "addres deleted successfully" })
 
     } catch (error) {
-        res.json({success:false,message:"error while deleting the address"})
+        res.json({ success: false, message: "error while deleting the address" })
     }
 }
 

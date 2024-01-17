@@ -26,22 +26,27 @@ const loadCart = async (req, res) => {
 
         const cartData = await cart.findOne({ user_id }).populate('items.product_id');
 
-        // Check if cartData is null or undefined
         if (!cartData || !cartData.items) {
-            // Handle the case where cartData is null or has no items
-            // For example, you might want to render an empty cart page
-            return res.render('cart', { cartData: { items: [] }, messages, user, productData });
+            return res.render('cart', { cartData: { items: [] }, messages, user, productData, totalItems: 0 });
         }
 
         const combinedData = cartData.items.map(cartItem => {
             const productInfo = productData.find(product => product._id.toString() === cartItem.product_id._id.toString());
             return { ...cartItem.toObject(), productInfo };
         });
-        res.render('cart', { cartData: { items: combinedData }, messages, user, productData });
+
+        // Get the size of the items array
+        const totalItems = cartData.items.length;
+
+        // Pass the total items in the cart to the client side
+        res.render('cart', { cartData: { items: combinedData }, messages, user, productData, totalItems });
     } catch (error) {
+        console.error('Error loading cart:', error);
         res.status(500).json({ success: false, error: 'Internal Server Error c' });
     }
 };
+
+
 
 
 

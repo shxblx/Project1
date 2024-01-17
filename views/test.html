@@ -1,5 +1,69 @@
+<style>
+    .carousel-inner img {
+      width: 100%;
+      /* Ensure the image takes 100% width of its container */
+      height: auto;
+      /* Maintain aspect ratio */
+    }
 
-isAdmin:{
-    type:Number,
-   default:0
-},
+    .zoom-in {
+      overflow: hidden;
+      /* Hide overflow content outside the image section */
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+      width: auto;
+      /* Adjust the width of carousel controls */
+    }
+  </style>
+
+  <style>
+    
+    :root {
+      --primary-color: #ee4266;
+      /* Define your custom primary color */
+    }
+
+    .btn-primary,
+    .btn-primary:hover,
+    .btn-primary:active,
+    .btn-primary:focus {
+      background-color: var(--primary-color);
+      /* Apply custom primary color to Bootstrap buttons */
+      border-color: var(--primary-color);
+    }
+
+    .btn-outline-primary,
+    .btn-outline-primary:hover,
+    .btn-outline-primary:active,
+    .btn-outline-primary:focus {
+      color: var(--primary-color);
+      /* Apply custom primary color to Bootstrap outline buttons */
+      border-color: var(--primary-color);
+    }
+
+    /* You can add more styles for other elements as needed */
+  </style>
+
+  <style>
+    .thumbnail-image {
+      width: 100px;
+      /* Set the desired width for the thumbnails */
+      height: auto;
+      /* Maintain the aspect ratio */
+      cursor: pointer;
+      /* Show pointer cursor on hover for interaction */
+      margin: 0;
+      /* Remove margin to minimize the spacing */
+      border: 1px solid #ddd;
+      /* Add a border for better visibility */
+      border-radius: 5px;
+      /* Optional: Add rounded corners */
+    }
+
+    .thumbnail-image:hover {
+      border-color: #333;
+      /* Change border color on hover for a highlight effect */
+    }
+  </style>
