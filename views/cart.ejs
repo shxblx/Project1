@@ -140,9 +140,10 @@
                             onclick="decreaseQuantity(this)">-</button>
                         </div>
                         <input class="quantityInput form-control text-center"
+                        style="background-color: white;"
                           data-quantity="<%= item.productInfo.quantity %>" type="text"
                           data-item-id="<%= item.product_id._id %>" value="<%= item.quantity %>" placeholder=""
-                          aria-label="Example text with button addon" aria-describedby="button-addon1">
+                          aria-label="Example text with button addon" aria-describedby="button-addon1" readonly >
                         <div class="input-group-append">
                           <button class="btn btn-outline-primary js-btn-plus" type="button"
                             onclick="increaseQuantity(this)">+</button>

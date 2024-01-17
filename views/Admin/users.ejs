@@ -66,12 +66,18 @@
         #myTable th {
             background-color: #191C24;
             color: #ff0000;
+            text-align: center;
         }
 
         #myTable td {
             background-color: #191C24;
             color: #495057;
-        }
+            border: 1px solid #3f3e3e;
+            text-align: center;
+}
+#myTable th {
+    border: 1px solid #9b3838;
+}
 
         /* Override DataTables default pagination styling */
         .dataTables_paginate {
@@ -103,6 +109,7 @@
             background-color: #191C24;
             color: #ffffff;
         }
+
         .dataTables_wrapper .dataTables_length,
         .dataTables_wrapper .dataTables_filter,
         .dataTables_wrapper .dataTables_info,
@@ -305,14 +312,14 @@
 
                                             <td>
                                                 <% if (user[i].isBlocked) { %>
-                                                    <button id="toggle-button"
+                                                    <button id="toggle-button-<%= user[i]._id %>"
                                                         data-is-blocked="<%= user[i].isBlocked %>"
-                                                        class="btn btn-success btn-sm" value="<%=user[i]._id%>"
+                                                        class="btn btn-success btn-sm" value="<%= user[i]._id %>"
                                                         onclick="blockUnblock(event)">Unblock</button>
                                                     <% } else { %>
-                                                        <button id="toggle-button"
+                                                        <button id="toggle-button-<%= user[i]._id %>"
                                                             data-is-blocked="<%= user[i].isBlocked %>"
-                                                            class="btn btn-danger btn-sm" value="<%=user[i]._id%>"
+                                                            class="btn btn-danger btn-sm" value="<%= user[i]._id %>"
                                                             onclick="blockUnblock(event)">Block</button>
                                                         <% } %>
                                             </td>
@@ -377,7 +384,7 @@
     <script>
         function blockUnblock(event) {
             const button = event.target;
-            const userId = document.getElementById('toggle-button').value;
+            const userId = button.value;
             const isBlockedString = button.dataset.isBlocked;
             const isBlocked = isBlockedString === 'true';
             const action = isBlocked ? 'unblock' : 'block';

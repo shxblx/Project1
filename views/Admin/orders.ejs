@@ -79,19 +79,26 @@
             background: transparent;
             box-shadow: none;
         }
-        #myTable td {
-    background-color: #191C24;
-    color: #ffffff;
-}
 
-    </style>
-     <style>
-        .form-control.status-dropdown {
-          background-color: #191C24;
-          border: 1px solid #ccc;
-          color: white;
+        #myTable td {
+            background-color: #191C24;
+            color: #ffffff;
+            border: 1px solid #3f3e3e;
+            text-align: center;
         }
-      </style>
+
+        #myTable th {
+            border: 1px solid #9b3838;
+            text-align: center;
+        }
+    </style>
+    <style>
+        .form-control.status-dropdown {
+            background-color: #191C24;
+            border: 1px solid #ccc;
+            color: white;
+        }
+    </style>
 </head>
 
 <body>
@@ -310,7 +317,7 @@
                                                                     <% } %>
                                                                         <td>
 
-                                                                            <select class="form-control status-dropdown" 
+                                                                            <select style="text-align: center;" class="form-control status-dropdown"
                                                                                 name="status"
                                                                                 data-product-id="<%=item.product_id._id%>"
                                                                                 data-order-id="<%= order.order_id %>"
@@ -321,7 +328,7 @@
                                                                                     ,'Returned', 'Requested cancellation'
                                                                                     , 'Cancelled' , 'pending'
                                                                                     ].forEach(status=> { %>
-                                                                                    <option value="<%= status %>"
+                                                                                    <option  value="<%= status %>"
                                                                                         <%=item.ordered_status===status
                                                                                         ? 'selected' : '' %>><%= status
                                                                                             %>
@@ -336,7 +343,7 @@
                                                                             <td rowspan="<%= order.items.length %>">
                                                                                 <a
                                                                                     href="/admin/viewOrders?orderId=<%= order.order_id %>"><button
-                                                                                      style="border-color: #ffffff;color: white;"  class="btn">View</button></a>
+                                                                                        class="btn btn-md btn-danger">View</button></a>
                                                                             </td>
                                                                             <% } %>
                                                     </tr>

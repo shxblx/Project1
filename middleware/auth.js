@@ -1,4 +1,4 @@
-const User=require('../model/userModel')
+const User = require('../model/userModel')
 
 const isLogin = async (req, res, next) => {
     try {
@@ -18,7 +18,7 @@ const isLogin = async (req, res, next) => {
 const isLogout = async (req, res, next) => {
     try {
         if (req.session.user_id) {
-           return res.redirect('/home')
+            return res.redirect('/home')
         }
         next()
     } catch (error) {
@@ -34,14 +34,14 @@ const checkBlocked = async (req, res, next) => {
         try {
             const user = await User.findOne({ _id: userId });
             if (user && user.isBlocked === true) {
-                req.session.user_id=null;
+                req.session.user_id = null;
                 return res.redirect('/login');
-            } 
+            }
         } catch (error) {
             console.log(error);
         }
     }
-    next();
+    next();
 };
 
 module.exports = {

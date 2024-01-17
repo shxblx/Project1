@@ -2,30 +2,65 @@ const bcrypt = require('bcrypt')
 const User = require('../model/userModel')
 const Category = require('../model/categModel')
 const product = require('../model/productmodel')
+const cart=require('../model/cartModel')
 const Order = require('../model/orderModel')
 const nodemailer = require('nodemailer');
 const userOTPverification = require('../model/userOTPverification');
 require('dotenv').config();
 const moment = require('moment')
-const Swal = require('sweetalert2'); 
 
 
 const loadHome = async (req, res) => {
     try {
-        const user = await User.findOne({ _id: req.session.user_id });
-        res.render('index', { user })
+        const user = req.session.user_id ? await User.findOne({ _id: req.session.user_id }) : null;
 
+        const cartData = await cart.aggregate([
+            {
+                $match: {
+                    user_id: user ? user._id : null,
+                },
+            },
+            {
+                $project: {
+                    itemCount: { $size: '$items' }, 
+                },
+            },
+        ]);
+
+        const itemCount = cartData.length > 0 ? cartData[0].itemCount : 0;
+
+        res.render('index', { user, itemCount });
     } catch (error) {
-        console.log(error);
-
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
     }
-}
+};
+
+
+
 
 const ITEMS_PER_PAGE = 6; 
 
 const loadShop = async (req, res) => {
     try {
-        const user = await User.findOne({ _id: req.session.user_id });
+        const user = req.session.user_id ? await User.findOne({ _id: req.session.user_id }) : null;
+
+        const cartData = user ? await cart.aggregate([
+            {
+                $match: {
+                    user_id: user._id,
+                },
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalItems: { $sum: { $sum: '$items.quantity' } },
+                },
+            },
+        ]) : [];
+
+        const totalItems = cartData.length > 0 ? cartData[0].totalItems : 0;
+
         const category = await Category.find({ isListed: true });
 
         if (category.length === 0) {
@@ -35,28 +70,27 @@ const loadShop = async (req, res) => {
         const listedCategoryIds = category.map(category => category._id);
         const currentPage = parseInt(req.query.page) || 1;
 
-        // Calculate the skip value based on the current page
         const skip = (currentPage - 1) * ITEMS_PER_PAGE;
 
-        // Fetch products for the current page
         const products = await product.find({
             category: { $in: listedCategoryIds },
             is_listed: true
         }).skip(skip).limit(ITEMS_PER_PAGE);
 
-        // Calculate total number of pages for pagination links
         const totalProducts = await product.countDocuments({
             category: { $in: listedCategoryIds },
             is_listed: true
         });
+
         const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
 
-        res.render('shop', { category, products, user, currentPage, totalPages });
+        res.render('shop', { category, products, user, currentPage, totalPages, totalItems });
     } catch (error) {
         console.error('Error loading shop:', error);
         res.status(500).render('error', { error: 'Internal Server Error' });
     }
 };
+
 
 
 const loadAbout = async (req, res) => {

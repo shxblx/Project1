@@ -187,90 +187,92 @@ const loadAdmin = async (req, res) => {
 
 const salesReport = async (req, res) => {
     try {
-      const moment = require("moment");
-  
-      const firstOrder = await order.find({}).sort({ createdAt: 1 });
-      const lastOreder = await order.find({}).sort({ createdAt: -1 });
-
+        const moment = require("moment");
       
-  
-      const salesReport = await order.find({
-        "items.ordered_status": "Delivered",
-      })
-        .populate("user_id")
-        .populate("items.product_id")
-        .sort({ createdAt: -1 });
-  
-      res.render("Admin/salesReport", {
-        firstOrder: moment(firstOrder[0].createdAt).format("YYYY-MM-DD"),
-        lastOrder: moment(lastOreder[0].createdAt).format("YYYY-MM-DD"),
-        salesReport,
-        moment,
-      });
+        const firstOrder = await order.find({}).sort({ createdAt: 1 });
+        const lastOrder = await order.find({}).sort({ createdAt: -1 });
+
+        const salesReport = await order.find({
+            "items.ordered_status": "Delivered",
+        })
+            .populate("user_id")
+            .populate("items.product_id")
+            .sort({ createdAt: -1 });
+
+        res.render("Admin/salesReport", {
+            firstOrder: moment(firstOrder[0].createdAt).format("YYYY-MM-DD"),
+            lastOrder: moment(lastOrder[0].createdAt).format("YYYY-MM-DD"),
+            salesReport,
+            moment,
+        });
     } catch (err) {
         console.log(err);
-      res.redirect("/500");
+        res.redirect("/500");
     }
-  };
+};
 
-  const datePicker = async (req, res) => {
+const datePicker = async (req, res) => {
     try {
-      const { startDate, endDate } = req.body;
-      const startDateObj = new Date(startDate);
-      startDateObj.setHours(0, 0, 0, 0);
-      const endDateObj = new Date(endDate);
-      endDateObj.setHours(23, 59, 59, 999);
-  
-      const selectedDate = await order.aggregate([
-        {
-          $match: {
-            createdAt: {
-              $gte: startDateObj,
-              $lte: endDateObj,
+        const { startDate, endDate } = req.body;
+        const startDateObj = new Date(startDate);
+        startDateObj.setHours(0, 0, 0, 0);
+        const endDateObj = new Date(endDate);
+        endDateObj.setHours(23, 59, 59, 999);
+
+        const selectedDate = await order.aggregate([
+            {
+                $match: {
+                    createdAt: {
+                        $gte: startDateObj,
+                        $lte: endDateObj,
+                    },
+                    "items.ordered_status": "delivered",
+                },
             },
-            "items.ordered_status": "delivered",
-          },
-        },
-        {
-          $lookup: {
-            from: "users",
-            localField: "user_id",
-            foreignField: "_id",
-            as: "user",
-          },
-        },
-        {
-          $unwind: "$items", 
-        },
-        {
-          $lookup: {
-            from: "products", // Use the correct name of your products collection
-            localField: "items.product_id",
-            foreignField: "_id",
-            as: "items.product",
-          },
-        },
-        {
-          $unwind: "$items.product", // Unwind the product array
-        },
-        {
-          $group: {
-            _id: "$_id", // Group by the order ID
-            user: { $first: "$user" }, // Preserve the user information
-            delivery_address: { $first: "$delivery_address" },
-            order_id: { $first: "$order_id" },
-            date: { $first: "$date" },
-            payment: { $first: "$payment" },
-            items: { $push: "$items" }, // Push items into an array
-          },
-        },
-      ]);
-      console.log(selectedDate);
-      res.status(200).json({ selectedDate: selectedDate });
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "user_id",
+                    foreignField: "_id",
+                    as: "user",
+                },
+            },
+            {
+                $unwind: "$items",
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "items.product_id",
+                    foreignField: "_id",
+                    as: "items.product",
+                },
+            },
+            {
+                $unwind: "$items.product",
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    user: { $first: "$user" },
+                    delivery_address: { $first: "$delivery_address" },
+                    order_id: { $first: "$order_id" },
+                    date: { $first: "$date" },
+                    payment: { $first: "$payment" },
+                    items: { $push: "$items" },
+                },
+            },
+        ]);
+
+        res.status(200).json({ selectedDate: selectedDate });
     } catch (err) {
-      
+        console.error(err);
+        res.status(500).json({ error: "Internal Server Error" });
     }
-  };
+};
+
+
+
 
 
 
@@ -370,6 +372,19 @@ const editCategory = async (req, res) => {
     try {
         const catId = req.query.categId;
         const { catName, catDes } = req.body;
+        const existingCategory = await Category.findOne({ name: catName.toUpperCase() });
+        console.log(existingCategory);
+        if (existingCategory) {
+            req.flash('message', 'Category already exists');
+            return res.redirect('/admin/categories/addcat');
+        }
+
+        if (!catName) {
+            req.flash('message', 'Please add category name');
+            return res.redirect('/admin/categories/addcat');
+        }
+
+
 
         const copyCat = await Category.findById(catId);
         console.log(copyCat);

@@ -39,7 +39,6 @@ const loadCart = async (req, res) => {
         });
         res.render('cart', { cartData: { items: combinedData }, messages, user, productData });
     } catch (error) {
-        console.error('Error:', error);
         res.status(500).json({ success: false, error: 'Internal Server Error c' });
     }
 };
