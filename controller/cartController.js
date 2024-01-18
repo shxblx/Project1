@@ -131,7 +131,6 @@ const updateQuantity = async (req, res) => {
         console.log("here" + productId + "here");
         const userId = req.session.user_id;
         
-        // Find the cart item that matches the user_id
         const cartItem = await cart.findOne({ user_id: userId });
 
         console.log(cartItem);
@@ -140,25 +139,20 @@ const updateQuantity = async (req, res) => {
             return res.status(404).json({ success: false, error: 'Cart not found for the user' });
         }
 
-        // Find the index of the item in the array
         const itemIndex = cartItem.items.findIndex(item => item.product_id.equals(productId));
 
         if (itemIndex === -1) {
             return res.status(404).json({ success: false, error: 'Product not found in cart' });
         }
 
-        // Access and log the current price of the item
         const currentPrice = cartItem.items[itemIndex].price;
         console.log('Current Item Price:', currentPrice);
 
-        // Update the quantity
         cartItem.items[itemIndex].quantity = newQuantity;
 
-        // Calculate and update the new total_price
         const newTotalPrice = currentPrice * newQuantity;
         cartItem.items[itemIndex].total_price = newTotalPrice;
 
-        // Save the updated cart
         await cartItem.save();
 
         return res.json({ success: true, message: 'Quantity and total_price updated successfully' });
@@ -358,7 +352,6 @@ const verifyPayment = async (req, res) => {
         const cartData = await cart.findOne({ user_id: req.session.user_id });
         const cartProducts = cartData.items;
         const details = req.body;
-        console.log(req.body);
         const crypto = require("crypto");
         const secretKey = process.env.KEY_SECRET;
 

@@ -168,6 +168,144 @@ const loadAdmin = async (req, res) => {
         const totalItemsCount = totalAmountAndQuantityResult.length > 0 ? totalAmountAndQuantityResult[0].totalItems : 0;
         const totalQuantityCount = totalAmountAndQuantityResult.length > 0 ? totalAmountAndQuantityResult[0].totalQuantity : 0;
 
+        const monthlyItemsQuantityResult = await order.aggregate([
+            {
+                $match: {
+                    'items.ordered_status': 'Delivered',
+                    'date': {
+                        $gte: new Date(currentDateTime.getFullYear(), currentDateTime.getMonth(), 1),
+                        $lt: new Date(currentDateTime.getFullYear(), currentDateTime.getMonth() + 1, 1)
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: { $month: '$date' },
+                    totalItems: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { _id: 1 }
+            }
+        ]);
+
+        const monthlyItemsQuantityArray = Array.from({ length: 12 }, (_, i) => {
+            const monthData = monthlyItemsQuantityResult.find(item => item._id === i + 1);
+            return monthData ? monthData.totalItems : 0;
+        });
+
+
+        const monthlyTotalAmountResult = await order.aggregate([
+            {
+                $match: {
+                    'items.ordered_status': 'Delivered',
+                    'date': {
+                        $gte: new Date(currentDateTime.getFullYear(), currentDateTime.getMonth(), 1),
+                        $lt: new Date(currentDateTime.getFullYear(), currentDateTime.getMonth() + 1, 1)
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: { $month: '$date' },
+                    totalAmount: { $sum: { $toDouble: '$total_amount' } }
+                }
+            },
+            {
+                $sort: { _id: 1 }
+            }
+        ]);
+        
+        const monthlyTotalAmountArray = Array.from({ length: 12 }, (_, i) => {
+            const monthData = monthlyTotalAmountResult.find(item => item._id === i + 1);
+            return monthData ? monthData.totalAmount : 0;
+        });
+
+        const monthlyUserCountResult = await User.aggregate([
+            {
+                $group: {
+                    _id: { $month: '$createdAt' },
+                    userCount: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { _id: 1 }
+            }
+        ]);
+
+        const monthlyUserCountArray = Array.from({ length: 12 }, (_, i) => {
+            const monthData = monthlyUserCountResult.find(item => item._id === i + 1);
+            return monthData ? monthData.userCount : 0;
+        });
+
+        const yearlyUserItemsAmountResult = await order.aggregate([
+            {
+                $match: {
+                    'items.ordered_status': 'Delivered',
+                    'date': {
+                        $gte: new Date(2016, 0, 1),
+                        $lt: new Date(2025, 0, 1)
+                    }
+                }
+            },
+            {
+                $unwind: '$items'
+            },
+            {
+                $group: {
+                    _id: {
+                        year: { $year: '$date' },
+                        month: { $month: '$date' }
+                    },
+                    userCount: { $sum: 1 },
+                    totalQuantityInOrder: { $sum: '$items.quantity' },
+                    totalAmountInOrder: { $sum: { $toDouble: '$total_amount' } }
+                }
+            },
+            {
+                $group: {
+                    _id: '$_id.year',
+                    totalUsers: { $sum: '$userCount' },
+                    totalQuantity: { $sum: '$totalQuantityInOrder' },
+                    totalAmount: { $sum: '$totalAmountInOrder' }
+                }
+            },
+            {
+                $sort: { _id: 1 }
+            }
+        ]);
+
+
+        const yearlyItemsQuantityArray = Array.from({ length: 9 }, (_, i) => {
+            const yearData = yearlyUserItemsAmountResult.find(item => item._id === 2016 + i);
+            return yearData ? yearData.totalQuantity : 0;
+        });
+
+        const yearlyTotalAmountArray = Array.from({ length: 9 }, (_, i) => {
+            const yearData = yearlyUserItemsAmountResult.find(item => item._id === 2016 + i);
+            return yearData ? yearData.totalAmount : 0;
+        });
+
+        const yearlyUserCountResult = await User.aggregate([
+            {
+                $group: {
+                    _id: { $year: '$createdAt' },
+                    userCount: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { _id: 1 }
+            }
+        ]);
+
+        const yearlyUserCountArray = Array.from({ length: 9 }, (_, i) => {
+            const yearData = yearlyUserCountResult.find(item => item._id === 2016 + i);
+            return yearData ? yearData.userCount : 0;
+        });
+
+        console.log(yearlyItemsQuantityArray,yearlyTotalAmountArray,yearlyUserCountArray);
+     
+
         res.render('Admin/index', {
             totalProductCount,
             totalQuantityCount,
@@ -175,6 +313,12 @@ const loadAdmin = async (req, res) => {
             totalMonthlySalesSum,
             totalWeeklySalesSum,
             totalYearlySalesSum,
+            monthlyItemsQuantityArray,
+            monthlyTotalAmountArray,
+            monthlyUserCountArray,
+            yearlyUserCountArray,
+            yearlyItemsQuantityArray,
+            yearlyTotalAmountArray,
             users,
             orders
         });
@@ -191,8 +335,8 @@ const salesReport = async (req, res) => {
         const moment = require("moment");
 
 
-        const firstOrder = await order.find({}).sort({ createdAt: 1 });
-        const lastOreder = await order.find({}).sort({ createdAt: -1 });
+        const firstOrder = await order.find({}).sort({ date: 1 });
+        const lastOreder = await order.find({}).sort({ date: -1 });
 
 
 
@@ -204,8 +348,8 @@ const salesReport = async (req, res) => {
             .sort({ createdAt: -1 });
 
         res.render("Admin/salesReport", {
-            firstOrder: moment(firstOrder[0].createdAt).format("YYYY-MM-DD"),
-            lastOrder: moment(lastOreder[0].createdAt).format("YYYY-MM-DD"),
+            firstOrder: moment(firstOrder[0].date).format("YYYY-MM-DD"),
+            lastOrder: moment(lastOreder[0].date).format("YYYY-MM-DD"),
             salesReport,
             moment,
         });
@@ -227,7 +371,7 @@ const datePicker = async (req, res) => {
         const selectedDate = await order.aggregate([
             {
                 $match: {
-                    createdAt: {
+                    date: {
                         $gte: startDateObj,
                         $lte: endDateObj,
                     },

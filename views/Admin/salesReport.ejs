@@ -43,25 +43,23 @@
             border-collapse: collapse;
             margin: 20px 0;
         }
-    
-        #reportTable th, #reportTable td {
+
+        #reportTable th,
+        #reportTable td {
             border: 1px solid #6C7293;
-            padding: 8px;
             color: white;
         }
-        #reportTable th{
+
+        #reportTable th {
             color: red;
         }
-    
+
         #reportTable th {
             background-color: #191C24;
         }
-    
-       
-    
     </style>
 
-   
+
 </head>
 
 <body>
@@ -258,8 +256,8 @@
                                         <div id="reportContainer">
                                             <div id="printThisDiv">
                                                 <% if (salesReport && salesReport.length> 0) { %>
-                                                    
-                                                    
+
+
                                                     <table id="reportTable">
                                                         <thead id="reportHeader">
                                                             <tr class="text-center">
@@ -269,43 +267,47 @@
                                                                 <th scope="col">Address</th>
                                                                 <th scope="col">Date</th>
                                                                 <th scope="col">Payment Method</th>
-                                                                <th scope="col">Total</th>
+                                                                <th scope="col"> GrandTotal</th>
                                                                 <th scope="col">Product name</th>
                                                                 <th scope="col">Qty</th>
                                                                 <th scope="col">Status</th>
-                                                                
-                                                                
+
+
                                                             </tr>
                                                         </thead>
                                                         <tbody id="reportBody">
-                                                            <% salesReport.forEach(order => { %>
-                                                                <% if (order.items.some(item => item.ordered_status === "Delivered")) { %>
-                                                                    <% order.items.forEach((item, index) => { %>
+                                                            <% salesReport.forEach(order=> { %>
+                                                                <% if (order.items.some(item=> item.ordered_status ===
+                                                                    "Delivered")) { %>
+                                                                    <% order.items.forEach((item, index)=> { %>
                                                                         <tr class="text-center">
-                                                                            <% if (index === 0) { %>
+                                                                            <% if (index===0) { %>
                                                                                 <td rowspan="<%= order.items.length %>">
                                                                                     <%= order.order_id %>
                                                                                 </td>
                                                                                 <td rowspan="<%= order.items.length %>">
-                                                                                    <% if (order.user_id && order.user_id.email) { %>
+                                                                                    <% if (order.user_id &&
+                                                                                        order.user_id.email) { %>
                                                                                         <%= order.user_id.email %>
-                                                                                    <% } else { %>
-                                                                                        User doesn't exist
-                                                                                    <% } %>
+                                                                                            <% } else { %>
+                                                                                                User doesn't exist
+                                                                                                <% } %>
                                                                                 </td>
                                                                                 <td rowspan="<%= order.items.length %>">
-                                                                                    <% if (order.user_id && order.user_id.phone) { %>
+                                                                                    <% if (order.user_id &&
+                                                                                        order.user_id.phone) { %>
                                                                                         <%= order.user_id.phone %>
-                                                                                    <% } else { %>
-                                                                                        User doesn't exist
-                                                                                    <% } %>
+                                                                                            <% } else { %>
+                                                                                                User doesn't exist
+                                                                                                <% } %>
                                                                                 </td>
-                                                                                
+
                                                                                 <td rowspan="<%= order.items.length %>">
                                                                                     <%= order.delivery_address %>
                                                                                 </td>
                                                                                 <td rowspan="<%= order.items.length %>">
-                                                                                    <%= moment(order.date).format('DD/MM/YYYY') %>
+                                                                                    <%= moment(order.date).format('DD/MM/YYYY')
+                                                                                        %>
                                                                                 </td>
                                                                                 <td rowspan="<%= order.items.length %>">
                                                                                     <%= order.payment %>
@@ -313,26 +315,28 @@
                                                                                 <td rowspan="<%= order.items.length %>">
                                                                                     <!-- Assuming total for the entire order -->
                                                                                     <!-- You may need to adjust this based on your logic -->
-                                                                                    <%= order.items.reduce((acc, item) => acc + item.price * item.quantity, 0) %>
+                                                                                    <%= order.items.reduce((acc, item)=>
+                                                                                        acc + item.price *
+                                                                                        item.quantity, 0) %>
                                                                                 </td>
-                                                                            <% } %>
-                                                                            <td>
-                                                                                <%= item.product_id.name %>
-                                                                            </td>
-                                                                            
-                                                                            <td>
-                                                                                <%= item.quantity %>
-                                                                            </td>
-                                                                            <td>
-                                                                                <%= item.ordered_status %>
-                                                                            </td>
+                                                                                <% } %>
+                                                                                    <td>
+                                                                                        <%= item.product_id.name %>
+                                                                                    </td>
+
+                                                                                    <td>
+                                                                                        <%= item.quantity %>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <%= item.ordered_status %>
+                                                                                    </td>
                                                                         </tr>
-                                                                    <% }) %>
-                                                                <% } %>
-                                                            <% }) %>
+                                                                        <% }) %>
+                                                                            <% } %>
+                                                                                <% }) %>
                                                         </tbody>
                                                     </table>
-                                                    
+
                                                     <% } else { %>
                                                         <p class="text-center">No sales</p>
                                                         <% } %>
@@ -402,8 +406,11 @@
         let startDate = document.getElementById("startDatePicker").value;
         let endDate = document.getElementById("endDatePicker").value;
 
+
         if (!startDate) {
+            // SweetAlert for empty dates
             showToast("Please select both start and end dates", "error");
+            console.log("haaai");
             return false;
         }
 
@@ -411,13 +418,16 @@
         let endDateObj = new Date(endDate);
 
         if (startDateObj > endDateObj) {
+            // SweetAlert for start date greater than end date
             showToast("Start date cannot be greater than end date", "error");
+            console.log('hi');
             return false;
         }
 
         const today = new Date();
 
         if (endDateObj > today) {
+            // SweetAlert for end date in the future
             showToast("End date cannot be in the future", "error");
             return false;
         }
@@ -437,7 +447,10 @@
             });
         }
 
-        const response = await axios.post("/admin/datePicker", {
+
+
+
+        const response = await axios.post("/admin/salesReport", {
             startDate,
             endDate,
         });
@@ -446,41 +459,94 @@
         const salesReport = response.data.selectedDate;
 
         const reportBody = document.getElementById("reportBody");
-        const tableHeader = `
-            <tr>
-                <th>Email</th>
-                <th>Mobile</th>
-                <th>Address</th>
-                <th>Order ID</th>
-                <th>Date</th>
-                <th>Payment Method</th>
-                <th>Grand Total</th>
-                <th>Status</th>
-                <th>Qty</th>
-                <th>Product name</th>
-            </tr>`;
-
-        reportBody.innerHTML = tableHeader + salesReport
+        reportBody.innerHTML = salesReport
             .map((order) => {
+                // Assuming order.items is an array
                 return order.items
                     .filter((item) => item.ordered_status === "delivered")
                     .map((item) => `
-                        <tr>
-                            <td>${order.user[0].email}</td>
-                            <td>${order.user[0].mobile}</td>
-                            <td>${order.delivery_address}</td>
-                            <td>${order.order_id}</td>
-                            <td>${moment(order.date).format('DD/MM/YYYY')}</td>
-                            <td>${order.payment}</td>
-                            <td>${(item.price * item.quantity) - item.couponDiscountTotal}</td>
-                            <td>${item.ordered_status}</td>
-                            <td>${item.quantity}</td>
-                            <td>${item.product.name}</td>
-                        </tr>
-                    `)
+      <tr>
+        <td>${order.user[0].email}</td>
+        <td>${order.user[0].mobile}</td>
+        <td>${order.delivery_address}</td>
+        <td>${order.order_id}</td>
+        <td>${moment(order.date).format('DD/MM/YYYY')}</td>
+        <td>${order.payment}</td>
+        <td>${(item.price * item.quantity) - item.couponDiscountTotal}</td>
+        <td>${item.ordered_status}</td>
+        <td>${item.quantity}</td>
+        <td>${item.product.name}</td>
+      </tr>
+    `)
                     .join("");
-            });
+            })
+            .join("");
+
+        const tableHeader = `
+<tr>
+  <th>Email</th>
+  <th>Mobile</th>
+  <th>Address</th>
+  <th>Order ID</th>
+  <th>Date</th>
+  <th>Payment Method</th>
+  <th>Grand Total</th>
+  <th>Status</th>
+  <th>Qty</th>
+  <th>Product name</th>
+</tr>`;
+        const reportHeader = document.getElementById("reportHeader");
+        reportHeader.innerHTML = tableHeader;
+
     };
+</script>
+
+
+
+<script>
+
+    function showDownloadOptions(divName) {
+        const choice = confirm("Do you want to download as PDF or Excel?");
+
+        if (choice) {
+            downloadPDF(divName);
+        } else {
+            downloadExcel(divName);
+        }
+    }
+    function downloadPDF(divName) {
+        const printContents = document.getElementById(divName).innerHTML;
+        const originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
+
+    function downloadExcel(divName) {
+        const table = document.getElementById(divName);
+        const rows = table.getElementsByTagName('tr');
+
+        let csvContent = "data:text/csv;charset=utf-8,";
+
+        for (const row of rows) {
+            const cells = row.getElementsByTagName('td');
+            const cellValues = [];
+            for (const cell of cells) {
+                cellValues.push(cell.textContent);
+            }
+            csvContent += cellValues.join(',') + '\n';
+        }
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement('a');
+        link.setAttribute('href', encodedUri);
+        link.setAttribute('download', 'data.csv');
+        document.body.appendChild(link);
+
+        link.click();
+        document.body.removeChild(link);
+    }
+
 </script>
 
 <script>
