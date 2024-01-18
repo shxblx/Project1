@@ -368,6 +368,8 @@ const datePicker = async (req, res) => {
         const endDateObj = new Date(endDate);
         endDateObj.setHours(23, 59, 59, 999);
 
+        console.log(startDateObj);
+
         const selectedDate = await order.aggregate([
             {
                 $match: {
@@ -375,7 +377,7 @@ const datePicker = async (req, res) => {
                         $gte: startDateObj,
                         $lte: endDateObj,
                     },
-                    "items.ordered_status": "delivered",
+                    "items.ordered_status": "Delivered",
                 },
             },
             {
@@ -412,6 +414,8 @@ const datePicker = async (req, res) => {
                 },
             },
         ]);
+
+       
 
         res.status(200).json({ selectedDate: selectedDate });
     } catch (err) {

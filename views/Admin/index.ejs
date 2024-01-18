@@ -195,9 +195,10 @@
                     <!-- Existing Revenue Section -->
                     <div class="col-sm-6 col-xl-3">
                         <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
+                            
                             <i class="fa fa-chart-line fa-3x text-primary"></i>
                             <div class="ms-3">
-                                <p class="mb-2">Revenue</p>
+                                <a href="/admin/salesReport"><p class="mb-2">Revenue</p></a>
                                 <h6 class="mb-0">₹<%=totalAmount%>
                                 </h6>
                             </div>
@@ -208,7 +209,7 @@
                         <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
                             <i class="fa fa-chart-area fa-3x text-primary"></i>
                             <div class="ms-3">
-                                <p class="mb-2">Total Orders</p>
+                                <a href="/admin/orders"><p class="mb-2">Total Orders</p></a>
                                 <input type="" id="totalOrders" value="<%=totalQuantityCount%>" hidden>
                                 <h6 class="mb-0">
                                     <%=totalQuantityCount%>
@@ -221,7 +222,7 @@
                         <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
                             <i class="fa fa-chart-bar fa-3x text-primary"></i>
                             <div class="ms-3">
-                                <p class="mb-2">Products</p>
+                            <a href="/admin/product"><p class="mb-2">Products</p></a>
                                 <h6 class="mb-0">
                                     <%=totalProductCount%>
                                 </h6>
@@ -233,7 +234,7 @@
                         <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
                             <i class="fa fa-chart-pie fa-3x text-primary"></i>
                             <div class="ms-3">
-                                <p class="mb-2">This Months's Sales</p>
+                                <a href="/admin/salesReport"><p class="mb-2">This Months's Sales</p></a>
                                 <h6 class="mb-0">₹<%=totalMonthlySalesSum%>
                                 </h6>
                             </div>
@@ -245,7 +246,7 @@
                         <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
                             <i class="fa fa-calendar fa-3x text-primary"></i>
                             <div class="ms-3">
-                                <p class="mb-2">This Week's Sales</p>
+                                <a href="/admin/salesReport"><p class="mb-2">This Week's Sales</p></a>
                                 <h6 class="mb-0">₹<%=totalWeeklySalesSum%>
                                 </h6>
                             </div>
@@ -256,7 +257,7 @@
                         <div class="bg-secondary rounded d-flex align-items-center justify-content-between p-4">
                             <i class="fa fa-calendar-alt fa-3x text-primary"></i>
                             <div class="ms-3">
-                                <p class="mb-2">This Year's Sale</p>
+                                <a href="/admin/salesReport"><p class="mb-2">This Year's Sale</p></a>
                                 <h6 class="mb-0">₹<%=totalYearlySalesSum%>
                                 </h6>
                             </div>

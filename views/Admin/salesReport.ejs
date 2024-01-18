@@ -267,7 +267,7 @@
                                                                 <th scope="col">Address</th>
                                                                 <th scope="col">Date</th>
                                                                 <th scope="col">Payment Method</th>
-                                                                <th scope="col"> GrandTotal</th>
+                                                                <th scope="col">Total</th>
                                                                 <th scope="col">Product name</th>
                                                                 <th scope="col">Qty</th>
                                                                 <th scope="col">Status</th>
@@ -463,19 +463,19 @@
             .map((order) => {
                 // Assuming order.items is an array
                 return order.items
-                    .filter((item) => item.ordered_status === "delivered")
+                    .filter((item) => item.ordered_status === "Delivered")
                     .map((item) => `
       <tr>
-        <td>${order.user[0].email}</td>
-        <td>${order.user[0].mobile}</td>
-        <td>${order.delivery_address}</td>
         <td>${order.order_id}</td>
+        <td>${order.user[0].email}</td>
+        <td>${order.delivery_address}</td>
+        <td>${order.user[0].phone}</td>
         <td>${moment(order.date).format('DD/MM/YYYY')}</td>
         <td>${order.payment}</td>
-        <td>${(item.price * item.quantity) - item.couponDiscountTotal}</td>
-        <td>${item.ordered_status}</td>
-        <td>${item.quantity}</td>
+        <td>${item.total_price}</td>
         <td>${item.product.name}</td>
+        <td>${item.quantity}</td>
+        <td>${item.ordered_status}</td>
       </tr>
     `)
                     .join("");
@@ -483,70 +483,22 @@
             .join("");
 
         const tableHeader = `
-<tr>
-  <th>Email</th>
-  <th>Mobile</th>
-  <th>Address</th>
-  <th>Order ID</th>
-  <th>Date</th>
-  <th>Payment Method</th>
-  <th>Grand Total</th>
-  <th>Status</th>
-  <th>Qty</th>
-  <th>Product name</th>
-</tr>`;
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Email</th>
+                                <th>Mobile</th>
+                                <th>Address</th>
+                                <th>Date</th>
+                                <th>Payment Method</th>
+                                <th>Total</th>
+                                <th>Product name</th>
+                                <th>Qty</th>
+                                <th>Status</th>
+                            </tr>`;
         const reportHeader = document.getElementById("reportHeader");
         reportHeader.innerHTML = tableHeader;
 
     };
-</script>
-
-
-
-<script>
-
-    function showDownloadOptions(divName) {
-        const choice = confirm("Do you want to download as PDF or Excel?");
-
-        if (choice) {
-            downloadPDF(divName);
-        } else {
-            downloadExcel(divName);
-        }
-    }
-    function downloadPDF(divName) {
-        const printContents = document.getElementById(divName).innerHTML;
-        const originalContents = document.body.innerHTML;
-        document.body.innerHTML = printContents;
-        window.print();
-        document.body.innerHTML = originalContents;
-    }
-
-    function downloadExcel(divName) {
-        const table = document.getElementById(divName);
-        const rows = table.getElementsByTagName('tr');
-
-        let csvContent = "data:text/csv;charset=utf-8,";
-
-        for (const row of rows) {
-            const cells = row.getElementsByTagName('td');
-            const cellValues = [];
-            for (const cell of cells) {
-                cellValues.push(cell.textContent);
-            }
-            csvContent += cellValues.join(',') + '\n';
-        }
-
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement('a');
-        link.setAttribute('href', encodedUri);
-        link.setAttribute('download', 'data.csv');
-        document.body.appendChild(link);
-
-        link.click();
-        document.body.removeChild(link);
-    }
-
 </script>
 
 <script>
