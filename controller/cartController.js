@@ -277,7 +277,7 @@ const placeOrder = async (req, res) => {
 
             if (cartItem.quantity > productQuantity) {
                 return res.json({ outOfStock: true, productId: currentProductId });
-            }
+            }    
 
         }
 

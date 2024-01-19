@@ -215,6 +215,7 @@
                             <div class="input-group col-xs-12">
                                 <div id="imagePreview" class="mt-2"></div>
                             </div>
+                            <button type="button" class="btn btn-danger mt-2" id="clearFilesBtn" onclick="clearFileInput()" style="display: none;">Delete</button>
                             <input id="productImage" type="file" name="image" class="file-upload-info" placeholder="Upload Image" multiple>
                             <% if (messages.length > 0) { %>
                                 <div style="color: red;">
@@ -331,30 +332,45 @@
         }
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Get the file input element
-            const fileInput = document.getElementById('productImage');
+       document.addEventListener('DOMContentLoaded', function () {
+        const fileInput = document.getElementById('productImage');
+        const imagePreviewContainer = document.getElementById('imagePreview');
+        const clearFilesBtn = document.getElementById('clearFilesBtn');
 
-            // Get the image preview container
-            const imagePreviewContainer = document.getElementById('imagePreview');
+        fileInput.addEventListener('change', function () {
+            // Remove existing preview images
+            imagePreviewContainer.innerHTML = '';
 
-            // Add an event listener to the file input
-            fileInput.addEventListener('change', function () {
-                // Remove existing preview images
-                imagePreviewContainer.innerHTML = '';
+            // Loop through selected files and create image previews
+            for (const file of fileInput.files) {
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.className = 'img-sm img-thumbnail mr-2';
+                img.alt = 'Image Preview';
+                img.style.width = '80px';
+                img.style.height = '80px';
+                imagePreviewContainer.appendChild(img);
+            }
 
-                // Loop through selected files and create image previews
-                for (const file of fileInput.files) {
-                    const img = document.createElement('img');
-                    img.src = URL.createObjectURL(file);
-                    img.className = 'img-sm img-thumbnail mr-2';
-                    img.alt = 'Image Preview';
-                    img.style.width = '80px';
-                    img.style.height = '80px';
-                    imagePreviewContainer.appendChild(img);
-                }
-            });
+            // Show or hide the "Clear Files" button based on whether files are selected
+            clearFilesBtn.style.display = fileInput.files.length > 0 ? 'block' : 'none';
         });
+    });
+
+    function clearFileInput() {
+        const fileInput = document.getElementById('productImage');
+        const imagePreviewContainer = document.getElementById('imagePreview');
+        const clearFilesBtn = document.getElementById('clearFilesBtn');
+
+        // Clear the file input
+        fileInput.value = '';
+
+        // Remove existing preview images
+        imagePreviewContainer.innerHTML = '';
+
+        // Hide the "Clear Files" button
+        clearFilesBtn.style.display = 'none';
+    }
        </script>
 
 
