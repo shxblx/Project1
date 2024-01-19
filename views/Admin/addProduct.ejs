@@ -71,8 +71,7 @@
                             class="fa-solid fa-layer-group me-2"></i>Categories</a>
                     <a href="/admin/product" class="nav-item nav-link active"><i
                             class="fa-solid fa-list me-2"></i></i>Products</a>
-                    <a href="/admin/orders" class="nav-item nav-link"><i
-                            class="fa-solid fa-list me-2"></i></i>Orders</a>
+                            <a href="/admin/orders" class="nav-item nav-link"><i class="fa-solid fa-list me-2"></i></i>Orders</a>
                     <!-- <a href="table.html" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>
                     <a href="chart.html" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Charts</a>
                     <div class="nav-item dropdown">
@@ -189,63 +188,59 @@
                 <div class="bg-secondary rounded h-100 p-4" style="margin-top: 100px; margin-left: 100px;">
                     <h6 class="mb-4">Add Product</h6>
 
-                    <form method="post" onsubmit="return validateProductForm(event)" enctype="multipart/form-data">
+                    <form  method="post" onsubmit="return validateProductForm(event)"
+                        enctype="multipart/form-data">
                         <div class="form-group">
                             <label for="exampleInputName1">Product Name</label>
-                            <input type="text" class="form-control" name="productName" id="productName" placeholder="Product Name">
-                            <span id="productNameError" style="color: red;" hidden>Product Name is required.</span>
+                            <input type="text" class="form-control" name="productName" id="productName"
+                                placeholder="Product Name" required>
                         </div>
-                    
                         <div class="form-group">
                             <label for="exampleInputEmail3">Description</label>
-                            <input type="text" class="form-control" name="description" id="description" placeholder="Description">
-                            <span id="descriptionError" style="color: red;" hidden>Description is required.</span>
+                            <input type="text" class="form-control" name="description" id="description"
+                                placeholder="Description" required>
                         </div>
-                    
                         <div class="form-group">
                             <label for="exampleInputPassword4">Quantity</label>
-                            <input type="number" class="form-control" name="quantity" id="quantity" placeholder="Quantity">
-                            <span id="quantityError" style="color: red;" hidden>Quantity must be a positive number.</span>
+                            <input type="number" class="form-control" name="quantity" id="quantity"
+                                placeholder="Quantity" required>
                         </div>
-                    
                         <div class="form-group">
                             <label for="exampleSelectGender">Price</label>
-                            <input type="number" class="form-control" name="price" id="price" placeholder="Price">
-                            <span id="priceError" style="color: red;" hidden>Price must be a positive number.</span>
+                            <input type="number" class="form-control" name="price" id="price"
+                                placeholder="Price" required>
                         </div>
-                    
                         <div class="form-group">
                             <label>File upload</label>
                             <div class="input-group col-xs-12">
                                 <div id="imagePreview" class="mt-2"></div>
                             </div>
                             <input id="productImage" type="file" name="image" class="file-upload-info" placeholder="Upload Image" multiple>
-                            <button type="button" class="btn btn-danger btn-sm mt-2" id="removeAllButton" style="display:none" onclick="removeAllFiles()">Remove All</button>
-                            <!-- Add any error handling for file upload if needed -->
+                            <% if (messages.length > 0) { %>
+                                <div style="color: red;">
+                                    <%= messages[0] %>
+                                </div>
+                            <% } %>
                         </div>
-                    
+                        
                         <div class="form-group">
                             <label for="exampleInputCity1">Category</label>
-                            <select class="form-control" name="category" id="category">
-                                <!-- Replace this with your actual category options -->
-                                <option>Category 1</option>
-                                <option>Category 2</option>
-                                <!-- Add more options as needed -->
+                            <select class="form-control" name="category" id="category" required>
+                                <% category.forEach(category=>{ %>
+                                    <option>
+                                        <%= category.name %>
+                                    </option>
+                                    <% }) %>
                             </select>
-                            <span id="categoryError" style="color: red;" hidden>Category is required.</span>
                         </div>
-                    
                         <div class="form-group">
                             <label for="exampleTextarea1">Brand</label>
-                            <input type="text" class="form-control" name="brand" id="brand" placeholder="Brand">
-                            <span id="brandError" style="color: red;" hidden>Brand is required.</span>
+                            <input type="text" class="form-control" name="brand" id="brand"
+                                placeholder="Brand" required>
                         </div>
-                    
                         <button type="submit" class="btn btn-primary mr-2">Submit</button>
                         <button class="btn btn-dark">Cancel</button>
                     </form>
-                    
-
 
 
                     <div class="table-responsive">
@@ -299,128 +294,68 @@
             const productName = document.getElementById('productName').value;
             const description = document.getElementById('description').value;
             const quantity = document.getElementById('quantity').value;
-            const price = document.getElementById('price').value;
-            const category = document.getElementById('category').value;
-            const brand = document.getElementById('brand').value;
-
-            // Hide all error messages
-            document.getElementById('productNameError').hidden = true;
-            document.getElementById('descriptionError').hidden = true;
-            document.getElementById('quantityError').hidden = true;
-            document.getElementById('priceError').hidden = true;
-            document.getElementById('categoryError').hidden = true;
-            document.getElementById('brandError').hidden = true;
-
+            const price = document.getElementById('price').value; 
+            const category = document.getElementById('category').value; 
+            const brand = document.getElementById('brand').value; 
+    
             if (productName.trim() === '') {
-                document.getElementById('productNameError').hidden = false;
+                alert('Product Name is required.');
                 return false;
             }
-
+    
             if (description.trim() === '') {
-                document.getElementById('descriptionError').hidden = false;
+                alert('Description is required.');
                 return false;
             }
-
             if (isNaN(quantity) || quantity <= 0) {
-                document.getElementById('quantityError').hidden = false;
+                alert('Quantity must be a positive number.');
                 return false;
             }
-
+    
             if (isNaN(price) || price <= 0) {
-                document.getElementById('priceError').hidden = false;
+                alert('Price must be a positive number.');
                 return false;
             }
-
+    
             if (category.trim() === '') {
-                document.getElementById('categoryError').hidden = false;
+                alert('Category is required.');
                 return false;
             }
-
+    
             if (brand.trim() === '') {
-                document.getElementById('brandError').hidden = false;
+                alert('Brand is required.');
                 return false;
             }
-
+    
             return true;
         }
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Get the file input element
             const fileInput = document.getElementById('productImage');
+
+            // Get the image preview container
             const imagePreviewContainer = document.getElementById('imagePreview');
-            const removeAllButton = document.getElementById('removeAllButton');
-            const uploadedFiles = []; // Keep track of uploaded files
-    
+
+            // Add an event listener to the file input
             fileInput.addEventListener('change', function () {
-                // Clear existing previews
+                // Remove existing preview images
                 imagePreviewContainer.innerHTML = '';
-    
+
                 // Loop through selected files and create image previews
                 for (const file of fileInput.files) {
-                    const fileId = Date.now(); // Generate a unique ID for each file
-                    uploadedFiles.push({ id: fileId, file });
-    
-                    const previewContainer = createPreviewContainer(fileId, file);
-                    imagePreviewContainer.appendChild(previewContainer);
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    img.className = 'img-sm img-thumbnail mr-2';
+                    img.alt = 'Image Preview';
+                    img.style.width = '80px';
+                    img.style.height = '80px';
+                    imagePreviewContainer.appendChild(img);
                 }
-    
-                // Show the "Remove All" button
-                removeAllButton.style.display = 'inline-block';
             });
-    
-            function createPreviewContainer(fileId, file) {
-                const previewContainer = document.createElement('div');
-                previewContainer.className = 'd-flex align-items-center';
-    
-                const img = document.createElement('img');
-                img.src = URL.createObjectURL(file);
-                img.className = 'img-sm img-thumbnail mr-2';
-                img.alt = 'Image Preview';
-                img.style.width = '80px';
-                img.style.height = '80px';
-    
-                previewContainer.appendChild(img);
-    
-                return previewContainer;
-            }
-    
-            function removeAllFiles() {
-                // Clear the uploadedFiles array and remove all previews
-                uploadedFiles.length = 0;
-                imagePreviewContainer.innerHTML = '';
-    
-                // Reset the file input
-                updateFileInput();
-    
-                // Hide the "Remove All" button again
-                removeAllButton.style.display = 'none';
-    
-                // Reset the file input value to allow selecting the same files again
-                fileInput.value = '';
-            }
-    
-            function updateFileInput() {
-                // Create a new file input element to replace the existing one
-                const newFileInput = document.createElement('input');
-                newFileInput.type = 'file';
-                newFileInput.name = 'image';
-                newFileInput.className = 'file-upload-info';
-                newFileInput.placeholder = 'Upload Image';
-                newFileInput.multiple = true;
-    
-                // Replace the old file input with the new one
-                fileInput.parentNode.replaceChild(newFileInput, fileInput);
-    
-                // Update the event listener for the new file input
-                newFileInput.addEventListener('change', function () {
-                    // Call the same change event handler for the new file input
-                    fileInput.dispatchEvent(new Event('change'));
-                });
-            }
         });
-    </script>
-    
-
+       </script>
 
 
 

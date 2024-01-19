@@ -577,7 +577,6 @@
               }).then((result) => {
                 if (result.isConfirmed || result.isDismissed) {
                   $('#loadingModal').modal('show');
-
                   const param = response.params;
                   setTimeout(() => {
                     window.location.href = '/orderPlaced/' + param;
@@ -622,7 +621,7 @@
           verifyPayment(response, order)
         },
         "prefill": {
-          "name": name, //your customer's name
+          "name": name, 
           "email": "groovestyle@example.com",
           "contact": "9000090000"
         },

@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="css/owl.carousel.min.css">
   <link rel="stylesheet" href="css/owl.theme.default.min.css">
 
-  
+
 
   <link rel="stylesheet" href="css/aos.css">
 
@@ -195,8 +195,8 @@
               oninput="moveToNextOrPrevious(this)">
           </div>
           <div id="countdown">Expires in: 60 seconds</div>
-          <button id="resendBtn" type="submit" disabled >Resend OTP</button>
-          <button id="validateBtn" >Validate</button>
+          <button id="resendBtn" type="submit" disabled>Resend OTP</button>
+          <button id="validateBtn">Validate</button>
 
 
           <% if (messages.length> 0) { %>
@@ -207,7 +207,7 @@
         </div>
       </div>
     </form>
-    
+
   </div>
 
 
@@ -303,60 +303,60 @@
 
   <script>
 
-document.getElementById('validateBtn').addEventListener('click', async (event) => {
-    try {
-      
+    document.getElementById('validateBtn').addEventListener('click', async (event) => {
+      try {
+
         const urlParams = new URLSearchParams(window.location.search);
         const email = urlParams.get('email');
         if (!email) {
-            console.error('Email not found in the query parameters');
-            return;
+          console.error('Email not found in the query parameters');
+          return;
         }
 
         const response = await fetch('/otpVerify', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email }),
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
         });
 
         if (response.ok) {
-            window.location.href = '/home';
+          window.location.href = '/home';
         } else {
-            console.error('Failed to initiate OTP verification');
+          console.error('Failed to initiate OTP verification');
         }
-    } catch (error) {
+      } catch (error) {
         console.error('Error during OTP verification:', error);
-    }
-});
+      }
+    });
 
-document.getElementById('resendBtn').addEventListener('click', async () => {
-    try {
+    document.getElementById('resendBtn').addEventListener('click', async () => {
+      try {
         const urlParams = new URLSearchParams(window.location.search);
         const email = urlParams.get('email');
         if (!email) {
-            console.error('Email not found in the query parameters');
-            return;
+          console.error('Email not found in the query parameters');
+          return;
         }
 
         const response = await fetch('/forgotPassword', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email }),
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
         });
 
         if (response.ok) {
-            window.location.reload()
+          window.location.reload()
         } else {
-            console.error('Failed to initiate OTP resend');
+          console.error('Failed to initiate OTP resend');
         }
-    } catch (error) {
+      } catch (error) {
         console.error('Error during OTP resend:', error);
-    }
-});
+      }
+    });
 
 
 
@@ -379,28 +379,32 @@ document.getElementById('resendBtn').addEventListener('click', async () => {
 
 
 
-    let countdownTime = 60;
+    localStorage.setItem('otpCountdown', 60);
 
-    function updateTimer() {
-      document.getElementById('countdown').innerText = "Expires in: " + countdownTime + ' seconds';
+    function updateCountdown() {
+      let countdown = parseInt(localStorage.getItem('otpCountdown'));
+      if (countdown > 0) {
+        countdown--;
+        localStorage.setItem('otpCountdown', countdown);
+        document.getElementById('countdown').textContent = `Expires in: ${countdown} seconds`;
+      } else {
+        clearInterval(countdownInterval);
+        document.getElementById('countdown').textContent = 'Expired';
+      }
     }
 
-    function startCountdown() {
-      updateTimer();
+    const countdownInterval = setInterval(updateCountdown, 1000);
 
-      const countdownInterval = setInterval(() => {
-        countdownTime--;
+    document.getElementById('validateBtn').addEventListener('click', () => {
 
-        updateTimer();
-        if (countdownTime === 0) {
-          clearInterval(countdownInterval);
-          document.getElementById('resendBtn').disabled = false;
-          document.getElementById('validateBtn').disabled=true;
-        }
-      }, 1000);
+      clearInterval(countdownInterval);
+    });
+
+    const storedCountdown = localStorage.getItem('otpCountdown');
+    if (storedCountdown) {
+      document.getElementById('countdown').textContent = `Expires in: ${storedCountdown} seconds`;
     }
 
-    window.onload = startCountdown;
   </script>
 
 

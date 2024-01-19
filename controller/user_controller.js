@@ -130,10 +130,7 @@ const loadLogin = async (req, res) => {
 const verifyLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
-        console.log("Email: ", email);
-        console.log("Password: ", password); 
         const userData = await User.findOne({ email: email });
-        console.log("UserData: ", userData);
 
         if (!userData) {
             req.flash('message', 'User not found');
@@ -226,8 +223,6 @@ const verifySignup = async (req, res) => {
         await sendOTPverificationEmail(newuser, res);
 
         req.flash('message', 'User created successfully. Please check your email for verification.');
-
-        res.redirect('/signup');
     } catch (error) {
         console.log(error);
         req.flash('message', 'An error occurred. Please try again.');
