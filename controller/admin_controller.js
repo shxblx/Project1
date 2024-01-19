@@ -6,6 +6,7 @@ const sharp = require('sharp')
 const bcrypt = require('bcrypt')
 const moment = require('moment')
 const order = require('../model/orderModel')
+const Offer=require('../model/offerModel')
 
 
 const loadAdminSignin = async (req, res) => {
@@ -527,10 +528,7 @@ const editCategory = async (req, res) => {
         const { catName, catDes } = req.body;
         const existingCategory = await Category.findOne({ name: catName.toUpperCase() });
         console.log(existingCategory);
-        if (existingCategory) {
-            req.flash('message', 'Category already exists');
-            return res.redirect('/admin/categories/addcat');
-        }
+        
 
         if (!catName) {
             req.flash('message', 'Please add category name');
@@ -813,6 +811,83 @@ const load404 = async (req, res) => {
     }
 }
 
+const loadOffers=async(req,res)=>{
+    try {
+        const offer=await Offer.find({})
+        res.render('Admin/offer',{offer})
+    } catch (error) {
+        
+    }
+}
+
+const loadAddOffer=async(req,res)=>{
+    try {
+        res.render('Admin/addOffer')
+    } catch (error) {
+        
+    }
+}
+
+const addOffer = async (req, res) => {
+    try {
+        const { offerName, offerPercentage, startingDate, EndingDate } = req.body;
+
+        const newOffer = new Offer({
+            name: offerName,
+            percentage: offerPercentage,
+            startingDate: startingDate,
+            expiryDate: EndingDate,
+            status: true, 
+        });
+
+        await newOffer.save();
+
+        res.redirect('/admin/offers')
+    } catch (error) {
+        console.error('Error adding offer:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+const loadEditOffer = async (req, res) => {
+    try {
+        const offerId = req.query.offerId;
+        const offer = await Offer.findById(offerId);
+
+        res.render('Admin/editOffer', { offer });
+    } catch (error) {
+        console.error('Error loading edit offer page:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+const editOffer = async (req, res) => {
+    try {
+        const offerId = req.query.offerId;
+        const { offerName, offerPercentage, startingDate, EndingDate } = req.body;
+
+     
+        const updatedOffer = await Offer.findByIdAndUpdate(
+            offerId,
+            {
+                name: offerName,
+                percentage: offerPercentage,
+                startingDate: startingDate,
+                expiryDate: EndingDate,
+            },
+            { new: true } 
+        );
+
+        
+
+        res.redirect('/admin/offers');
+    } catch (error) {
+        console.error('Error updating offer:', error);
+        res.redirect('/500')
+    }
+};
+
+
 module.exports = {
     loadAdmin,
     loadAdminSignin,
@@ -840,5 +915,10 @@ module.exports = {
     viewOrders,
     salesReport,
     datePicker,
-    load404
+    load404,
+    loadOffers,
+    loadAddOffer,
+    addOffer,
+    loadEditOffer,
+    editOffer
 }

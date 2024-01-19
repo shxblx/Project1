@@ -76,14 +76,14 @@ const userSchema = new mongoose.Schema({
         {
             productId: {
                 type: mongoose.Types.ObjectId,
-                ref: "product",
+                ref: "Product",
                 required: true,
             },
             date: {
                 type: Date,
             },
         },
-    ], // Added a missing bracket here
+    ], 
 }, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);

@@ -71,7 +71,8 @@
                             class="fa-solid fa-layer-group me-2"></i>Categories</a>
                     <a href="/admin/product" class="nav-item nav-link active"><i
                             class="fa-solid fa-list me-2"></i></i>Products</a>
-                            <a href="/admin/orders" class="nav-item nav-link"><i class="fa-solid fa-list me-2"></i></i>Orders</a>
+                    <a href="/admin/orders" class="nav-item nav-link"><i class="fa-solid fa-bag-shopping"></i></i>Orders</a>
+                    <a href="/admin/offers" class="nav-item nav-link "><i class="fa-solid fa-percent"></i></i>Offers</a>
                     <!-- <a href="table.html" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>
                     <a href="chart.html" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Charts</a>
                     <div class="nav-item dropdown">
@@ -188,8 +189,7 @@
                 <div class="bg-secondary rounded h-100 p-4" style="margin-top: 100px; margin-left: 100px;">
                     <h6 class="mb-4">Add Product</h6>
 
-                    <form  method="post" onsubmit="return validateProductForm(event)"
-                        enctype="multipart/form-data">
+                    <form method="post" onsubmit="return validateProductForm(event)" enctype="multipart/form-data">
                         <div class="form-group">
                             <label for="exampleInputName1">Product Name</label>
                             <input type="text" class="form-control" name="productName" id="productName"
@@ -207,23 +207,25 @@
                         </div>
                         <div class="form-group">
                             <label for="exampleSelectGender">Price</label>
-                            <input type="number" class="form-control" name="price" id="price"
-                                placeholder="Price" required>
+                            <input type="number" class="form-control" name="price" id="price" placeholder="Price"
+                                required>
                         </div>
                         <div class="form-group">
                             <label>File upload</label>
                             <div class="input-group col-xs-12">
                                 <div id="imagePreview" class="mt-2"></div>
                             </div>
-                            <button type="button" class="btn btn-danger mt-2" id="clearFilesBtn" onclick="clearFileInput()" style="display: none;">Delete</button>
-                            <input id="productImage" type="file" name="image" class="file-upload-info" placeholder="Upload Image" multiple>
-                            <% if (messages.length > 0) { %>
+                            <button type="button" class="btn btn-danger mt-2" id="clearFilesBtn"
+                                onclick="clearFileInput()" style="display: none;">Delete</button>
+                            <input id="productImage" type="file" name="image" class="file-upload-info"
+                                placeholder="Upload Image" multiple>
+                            <% if (messages.length> 0) { %>
                                 <div style="color: red;">
                                     <%= messages[0] %>
                                 </div>
-                            <% } %>
+                                <% } %>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="exampleInputCity1">Category</label>
                             <select class="form-control" name="category" id="category" required>
@@ -236,8 +238,8 @@
                         </div>
                         <div class="form-group">
                             <label for="exampleTextarea1">Brand</label>
-                            <input type="text" class="form-control" name="brand" id="brand"
-                                placeholder="Brand" required>
+                            <input type="text" class="form-control" name="brand" id="brand" placeholder="Brand"
+                                required>
                         </div>
                         <button type="submit" class="btn btn-primary mr-2">Submit</button>
                         <button class="btn btn-dark">Cancel</button>
@@ -295,15 +297,15 @@
             const productName = document.getElementById('productName').value;
             const description = document.getElementById('description').value;
             const quantity = document.getElementById('quantity').value;
-            const price = document.getElementById('price').value; 
-            const category = document.getElementById('category').value; 
-            const brand = document.getElementById('brand').value; 
-    
+            const price = document.getElementById('price').value;
+            const category = document.getElementById('category').value;
+            const brand = document.getElementById('brand').value;
+
             if (productName.trim() === '') {
                 alert('Product Name is required.');
                 return false;
             }
-    
+
             if (description.trim() === '') {
                 alert('Description is required.');
                 return false;
@@ -312,66 +314,66 @@
                 alert('Quantity must be a positive number.');
                 return false;
             }
-    
+
             if (isNaN(price) || price <= 0) {
                 alert('Price must be a positive number.');
                 return false;
             }
-    
+
             if (category.trim() === '') {
                 alert('Category is required.');
                 return false;
             }
-    
+
             if (brand.trim() === '') {
                 alert('Brand is required.');
                 return false;
             }
-    
+
             return true;
         }
     </script>
     <script>
-       document.addEventListener('DOMContentLoaded', function () {
-        const fileInput = document.getElementById('productImage');
-        const imagePreviewContainer = document.getElementById('imagePreview');
-        const clearFilesBtn = document.getElementById('clearFilesBtn');
+        document.addEventListener('DOMContentLoaded', function () {
+            const fileInput = document.getElementById('productImage');
+            const imagePreviewContainer = document.getElementById('imagePreview');
+            const clearFilesBtn = document.getElementById('clearFilesBtn');
 
-        fileInput.addEventListener('change', function () {
+            fileInput.addEventListener('change', function () {
+                // Remove existing preview images
+                imagePreviewContainer.innerHTML = '';
+
+                // Loop through selected files and create image previews
+                for (const file of fileInput.files) {
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    img.className = 'img-sm img-thumbnail mr-2';
+                    img.alt = 'Image Preview';
+                    img.style.width = '80px';
+                    img.style.height = '80px';
+                    imagePreviewContainer.appendChild(img);
+                }
+
+                // Show or hide the "Clear Files" button based on whether files are selected
+                clearFilesBtn.style.display = fileInput.files.length > 0 ? 'block' : 'none';
+            });
+        });
+
+        function clearFileInput() {
+            const fileInput = document.getElementById('productImage');
+            const imagePreviewContainer = document.getElementById('imagePreview');
+            const clearFilesBtn = document.getElementById('clearFilesBtn');
+
+            // Clear the file input
+            fileInput.value = '';
+
             // Remove existing preview images
             imagePreviewContainer.innerHTML = '';
 
-            // Loop through selected files and create image previews
-            for (const file of fileInput.files) {
-                const img = document.createElement('img');
-                img.src = URL.createObjectURL(file);
-                img.className = 'img-sm img-thumbnail mr-2';
-                img.alt = 'Image Preview';
-                img.style.width = '80px';
-                img.style.height = '80px';
-                imagePreviewContainer.appendChild(img);
-            }
-
-            // Show or hide the "Clear Files" button based on whether files are selected
-            clearFilesBtn.style.display = fileInput.files.length > 0 ? 'block' : 'none';
-        });
-    });
-
-    function clearFileInput() {
-        const fileInput = document.getElementById('productImage');
-        const imagePreviewContainer = document.getElementById('imagePreview');
-        const clearFilesBtn = document.getElementById('clearFilesBtn');
-
-        // Clear the file input
-        fileInput.value = '';
-
-        // Remove existing preview images
-        imagePreviewContainer.innerHTML = '';
-
-        // Hide the "Clear Files" button
-        clearFilesBtn.style.display = 'none';
-    }
-       </script>
+            // Hide the "Clear Files" button
+            clearFilesBtn.style.display = 'none';
+        }
+    </script>
 
 
 

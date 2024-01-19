@@ -86,11 +86,10 @@
             color: #495057;
             border: 1px solid #3f3e3e;
             text-align: center;
-        }
-
-        #myTable th {
-            border: 1px solid #9b3838;
-        }
+}
+#myTable th {
+    border: 1px solid #9b3838;
+}
 
         .paginate_button {
             /* Add your custom styles here */
@@ -115,7 +114,6 @@
             background-color: #191C24;
             color: #ffffff;
         }
-
         .dataTables_wrapper .dataTables_length,
         .dataTables_wrapper .dataTables_filter,
         .dataTables_wrapper .dataTables_info,
@@ -123,6 +121,8 @@
         .dataTables_wrapper .dataTables_paginate {
             color: #fff;
         }
+
+        
     </style>
 
 
@@ -161,12 +161,12 @@
                 <div class="navbar-nav w-100">
                     <a href="/admin" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
                     <a href="/admin/users" class="nav-item nav-link "><i class="fa-solid fa-user-alt me-2"></i>Users</a>
-                    <a href="/admin/categories" class="nav-item nav-link active"><i
+                    <a href="/admin/categories" class="nav-item nav-link "><i
                             class="fa-solid fa-layer-group me-2"></i>Categories</a>
                     <a href="/admin/product" class="nav-item nav-link"><i
                             class="fa-solid fa-list me-2"></i></i>Products</a>
                     <a href="/admin/orders" class="nav-item nav-link"><i class="fa-solid fa-bag-shopping"></i></i>Orders</a>
-                    <a href="/admin/offers" class="nav-item nav-link "><i class="fa-solid fa-percent"></i></i>Offers</a>
+                    <a href="/admin/offers" class="nav-item nav-link active"><i class="fa-solid fa-percent"></i></i>Offers</a>
                     <!-- <a href="table.html" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>
                     <a href="chart.html" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Charts</a>
                     <div class="nav-item dropdown">
@@ -281,7 +281,7 @@
 
             <div class="col-11">
                 <div class="bg-secondary rounded h-100 p-4" style="margin-top: 50px; margin-left: 100px;">
-                    <h6 class="mb-4">Category Management</h6>
+                    <h6 class="mb-4">Offer Management</h6>
 
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <!-- <div class="input-group" style="max-width: 20rem;">
@@ -309,7 +309,9 @@
                             <thead>
                                 <tr>
                                     <th scope="col">Name</th>
-                                    <th scope="col">Description</th>
+                                    <th scope="col">Percentage</th>
+                                    <th scope="col">Starting Date</th>
+                                    <th scope="col">Ending Date</th>
                                     <th scope="col">Status</th>
                                     <th scope="col">Edit</th>
                                     <th scope="col">Action</th>
@@ -317,64 +319,68 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <% if (categoryList.length> 0) { %>
-                                    <% for (let i=0; i < categoryList.length; i++) { %>
+                                <% if (offer.length > 0) { %>
+                                    <% for (let i = 0; i < offer.length; i++) { %>
                                         <tr>
                                             <td>
-                                                <%= categoryList[i].name %>
+                                                <%= offer[i].name %>
                                             </td>
                                             <td>
-                                                <%= categoryList[i].description %>
+                                                <%= offer[i].percentage %>%
                                             </td>
                                             <td>
-                                                <% if (categoryList[i].isListed) { %>
+                                                <% if (offer[i].startingDate) { %>
+                                                    <%= new Date(offer[i].startingDate).toLocaleDateString('en-GB') %>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <% if (offer[i].expiryDate) { %>
+                                                    <%= new Date(offer[i].expiryDate).toLocaleDateString('en-GB') %>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <% if (offer[i].status) { %>
                                                     <span class="badge bg-success">Listed</span>
-                                                    <% } else { %>
-                                                        <span class="badge bg-danger">Unlisted</span>
-                                                        <% } %>
+                                                <% } else { %>
+                                                    <span class="badge bg-danger">Unlisted</span>
+                                                <% } %>
                                             </td>
                                             <td>
-                                                <a href="categories/editcat/?categId=<%= categoryList[i]._id %>">
+                                                <a href="offers/editOffer?offerId=<%= offer[i]._id %>">
                                                     <button type="button" class="btn btn-outline-warning btn-sm">
                                                         <i class="fa-solid fa-pen"></i>
                                                     </button>
                                                 </a>
                                             </td>
-
                                             <td>
                                                 <form class="list-unlist-form">
-                                                    <input type="hidden" name="categoryId"
-                                                        value="<%= categoryList[i]._id %>">
-                                                    <% if (categoryList[i].isListed) { %>
-                                                        <button type="button"
-                                                            class="btn btn-danger btn-sm list-unlist-btn"
-                                                            data-category-id="<%= categoryList[i]._id %>">
+                                                    <% if (offer[i].status) { %>
+                                                        <button type="button" class="btn btn-danger btn-sm list-unlist-btn"
+                                                            data-category-id="<%= offer[i]._id %>">
                                                             Unlist
                                                         </button>
-                                                        <% } else { %>
-                                                            <button type="button"
-                                                                class="btn btn-success btn-sm list-unlist-btn"
-                                                                data-category-id="<%= categoryList[i]._id %>">
-                                                                List
-                                                            </button>
-                                                            <% } %>
+                                                    <% } else { %>
+                                                        <button type="button" class="btn btn-success btn-sm list-unlist-btn"
+                                                            data-category-id="<%= offer[i]._id %>">
+                                                            List
+                                                        </button>
+                                                    <% } %>
                                                 </form>
                                             </td>
                                             <td>
                                                 <button type="button" class="btn btn-outline-danger btn-sm delete-btn"
-                                                    data-category-id="<%= categoryList[i]._id %>">
+                                                    data-category-id="<%= offer[i]._id %>">
                                                     <i class="fa-solid fa-trash"></i>
                                                 </button>
                                             </td>
-
-
                                         </tr>
-                                        <% } %>
-                                            <% } %>
+                                    <% } %>
+                                <% } %>
                             </tbody>
-                        </table><a href="categories/addcat"><button type="button" class="btn btn-primary btn-sm"
+                            
+                        </table><a href="offers/addOffer"><button type="button" class="btn btn-primary btn-sm"
                                 style="margin-left: 10px; margin-bottom: 10px; margin-top: 50px;">
-                                Add Category
+                                Add Offer
                             </button></a>
 
                     </div>

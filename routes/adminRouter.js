@@ -48,7 +48,11 @@ adminRouter.get('/salesReport',adminController.salesReport)
 adminRouter.post("/salesReport", adminController.datePicker);
 adminRouter.get('/404',adminController.load404)
 adminRouter.post('/datePicker',adminController.datePicker)
-
+adminRouter.get('/offers',adminController.loadOffers)
+adminRouter.get('/offers/addOffer',adminController.loadAddOffer)
+adminRouter.post('/offers/addOffer',adminController.addOffer)
+adminRouter.get('/offers/editOffer',adminController.loadEditOffer)
+adminRouter.post('/offers/editOffer',adminController.editOffer)
 
 
 

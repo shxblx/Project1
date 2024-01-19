@@ -90,13 +90,12 @@
                   <li><a class="dropdown-item bg-light" href="/profile">
                       <%=locals.user.username%>
                     </a></li>
-                  <li><a href="/userLogout" class="dropdown-item bg-light" href="/logout">Logout</a></li>
-                  
+                  <li><a href="/Wishlist" class="dropdown-item bg-light" >Wishlist</a></li>
+                  <li><a href="/userLogout" class="dropdown-item bg-light" >Logout</a></li>
 
                   <% } else { %>
                     <li><a class="dropdown-item bg-light" href="/login">Login</a></li>
                     <li><a class="dropdown-item bg-light" href="/signup">SignUp</a></li>
-                    <li><a href="/admin" class="dropdown-item bg-light">Admin</a></li>
                     <% } %>
               </ul>
             </li>

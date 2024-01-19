@@ -97,8 +97,8 @@
                             class="fa-solid fa-layer-group me-2"></i>Categories</a>
                     <a href="/admin/product" class="nav-item nav-link active"><i
                             class="fa-solid fa-list me-2"></i></i>Products</a>
-                    <a href="/admin/orders" class="nav-item nav-link"><i
-                            class="fa-solid fa-list me-2"></i></i>Orders</a>
+                    <a href="/admin/orders" class="nav-item nav-link"><i class="fa-solid fa-bag-shopping"></i></i>Orders</a>
+                    <a href="/admin/offers" class="nav-item nav-link "><i class="fa-solid fa-percent"></i></i>Offers</a>
                     <!-- <a href="table.html" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>
                     <a href="chart.html" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Charts</a>
                     <div class="nav-item dropdown">
@@ -251,7 +251,7 @@
                                     placeholder="Price" value="<%= products[j].price %>" required>
                             </div>
                             <div class="form-group">
-                                <% for (let i = 0; i < products[j].image.length; i++) { %>
+                                <% for (let i=0; i < products[j].image.length; i++) { %>
                                     <div class="image-container">
                                         <img src="/myImages/<%= products[j].image[i] %>" class="img-sm img-thumbnail"
                                             alt="<%= products[j].name %>" width="50px" height="50px" />
@@ -259,22 +259,23 @@
                                             data-product-id="<%= products[j]._id %>"
                                             data-image="<%= products[j].image[i] %>">Delete</button>
                                     </div>
-                                <% } %>
+                                    <% } %>
                             </div>
                             <div class="form-group">
                                 <label>File upload</label>
                                 <div class="input-group col-xs-12">
-                                    <input type="file" name="image" class="file-upload-info" placeholder="Upload Image" multiple>
+                                    <input type="file" name="image" class="file-upload-info" placeholder="Upload Image"
+                                        multiple>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputCity1">Category</label>
                                 <select class="form-control" name="category" id="exampleInputCity1" required>
-                                    <% catId.forEach(catId => { %>
+                                    <% catId.forEach(catId=> { %>
                                         <option>
                                             <%= catId.name %>
                                         </option>
-                                    <% }) %>
+                                        <% }) %>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -284,8 +285,7 @@
                             </div>
                             <button type="submit" class="btn btn-primary mr-2">Submit</button>
                         </form>
-                    <% } %>
-                    
+                        <% } %>
 
 
 
@@ -293,20 +293,21 @@
 
 
 
-                    <!-- Button for Adding Category (if you prefer a button outside the form) -->
-                    <!--
+
+                            <!-- Button for Adding Category (if you prefer a button outside the form) -->
+                            <!--
                     <button type="button" class="btn btn-primary btn-sm mt-3">
                         Add Category
                     </button>
                     -->
 
-                    <div class="table-responsive">
-                        <!-- Your table or other content goes here -->
-                    </div>
+                            <div class="table-responsive">
+                                <!-- Your table or other content goes here -->
+                            </div>
+                </div>
             </div>
-        </div>
 
-    </div>
+        </div>
     </div>
     <!-- Table End -->
 

@@ -31,6 +31,8 @@ const userRouter = require('./routes/userRouter');
 app.use('/', userRouter);
 const adminRouter=require('./routes/adminRouter');
 app.use('/admin',adminRouter)
+const wishlistRoute=require('./routes/wishlistRouter');
+app.use('/',wishlistRoute);
   
 
 const PORT = process.env.PORT || 3030;

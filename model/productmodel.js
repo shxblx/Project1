@@ -37,7 +37,25 @@ const productSchema = new mongoose.Schema({
     is_listed: {
         type: Boolean,
         default: true
-    }
+    },
+    offer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "offer",
+      },
+      offerPrice: {
+        type: Number,
+      },
+      reviews: [
+        {
+          user_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+          },
+          rating: { type: Number },
+          description: { type: String },
+          createdAt: { type: Date },
+        },
+      ],
 })
 
 

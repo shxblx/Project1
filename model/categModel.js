@@ -13,10 +13,10 @@ const categSchema=new mongoose.Schema({
         type:Boolean,
         default:true,
     },
-    createdAt:{
-        type:Date,
-       default:Date.now()
-    }
+    offer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "offer",
+      },
 })
 
 const Category=mongoose.model('Category',categSchema)
