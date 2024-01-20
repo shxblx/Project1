@@ -40,7 +40,7 @@ const loadHome = async (req, res) => {
 
 
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 9;
 
 const loadShop = async (req, res) => {
     try {
@@ -52,22 +52,25 @@ const loadShop = async (req, res) => {
 
         const category = await Category.find({ isListed: true });
 
-        
-
         const listedCategoryIds = category.map(category => category._id);
         const currentPage = parseInt(req.query.page) || 1;
 
         const skip = (currentPage - 1) * ITEMS_PER_PAGE;
 
-        const products = await product.find({
-            category: { $in: listedCategoryIds },
-            is_listed: true
-        }).skip(skip).limit(ITEMS_PER_PAGE);
-
         const totalProducts = await product.countDocuments({
             category: { $in: listedCategoryIds },
             is_listed: true
         });
+
+        const randomSeed = Math.floor(Math.random() * 10000);
+
+        const products = await product.find({
+            category: { $in: listedCategoryIds },
+            is_listed: true
+        })
+        .skip(skip)
+        .limit(ITEMS_PER_PAGE)
+        .sort({ randomSeed: 1 }); 
 
         const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
 
@@ -77,6 +80,8 @@ const loadShop = async (req, res) => {
         res.status(500).render('error', { error: 'Internal Server Error' });
     }
 };
+
+
 
 
 

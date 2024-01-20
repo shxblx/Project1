@@ -648,7 +648,7 @@ const loadEditProduct = async (req, res) => {
     try {
         const productId = req.query.productId;
         const catId = await Category.find({})
-        const products = await product.find({ _id: productId });
+        const products = await product.find({ _id: productId }).populate('category');
         console.log(products);
         res.render('Admin/editproduct', { products, catId });
     } catch (error) {
@@ -661,9 +661,10 @@ const editProduct = async (req, res) => {
     try {
         const productId = req.query.productId;
         const { productName, description, quantity, price, category, brand } = req.body;
-
-        const existingProduct = await product.findOne({ name: productName });
-        const categoryId = await Category.findOne({ name: category });
+        console.log(req.body);
+        const existingProduct = await product.findOne({ _id: productId });
+        const categoryId = await Category.findOne({ _id: category });
+        console.log(categoryId);
 
         await product.findByIdAndUpdate(
             { _id: productId },
