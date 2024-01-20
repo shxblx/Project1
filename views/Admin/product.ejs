@@ -137,7 +137,8 @@
                             class="fa-solid fa-layer-group me-2"></i>Categories</a>
                     <a href="/admin/product" class="nav-item nav-link active"><i
                             class="fa-solid fa-list me-2"></i></i>Products</a>
-                    <a href="/admin/orders" class="nav-item nav-link"><i class="fa-solid fa-bag-shopping"></i></i>Orders</a>
+                    <a href="/admin/orders" class="nav-item nav-link"><i
+                            class="fa-solid fa-bag-shopping"></i></i>Orders</a>
                     <a href="/admin/offers" class="nav-item nav-link "><i class="fa-solid fa-percent"></i></i>Offers</a>
                     <!-- <a href="table.html" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>
                     <a href="chart.html" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Charts</a>
@@ -279,58 +280,72 @@
                             </thead>
                             <tbody>
                                 <% if (products.length> 0) { %>
-                                    <% for (let i=0; i < products.length; i++) { %>
+                                    <% products.forEach(product=> { %>
                                         <tr>
                                             <td>
-                                                <%= products[i].name %>
+                                                <%= product.name %>
                                             </td>
                                             <td>
-                                                <img src="/myImages/<%= products[i].image[0] %>"
-                                                    class="img-sm img-thumbnail" alt="<%= products[i].name %>"
-                                                    width="50px" height="50px"   />
-                                            </td>
-
-                                            <td>
-                                                <%= products[i].description %>
+                                                <img src="/myImages/<%= product.image[0] %>"
+                                                    class="img-sm img-thumbnail" alt="<%= product.name %>" width="50px"
+                                                    height="50px" />
                                             </td>
                                             <td>
-                                                ₹<%=products[i].price%>
+                                                <%= product.description %>
+                                            </td>
+                                            <td>₹<%= product.price %>
                                             </td>
                                             <td>
-                                                ₹<%=products[i].price%>
+                                                <% if (product.offer) { %>
+                                                    <p>
+                                                        <%= product.offer.name %>
+                                                    </p>
+                                                    <button type="button"
+                                                        class="btn btn-primary btn-sm remove-offer-btn"
+                                                        data-product-id="<%= product._id %>"
+                                                        data-offer-id="<%= product.offer._id %>"
+                                                        onclick="removeOffer()">
+                                                        Remove Offer
+                                                    </button>
+                                                    <% } else { %>
+                                                        <button type="button"
+                                                            class="btn btn-success btn-sm choose-offer-btn"
+                                                            data-toggle="modal" data-target="#offerModal"
+                                                            data-product-id="<%= product._id %>">
+                                                            Choose Offer
+                                                        </button>
+                                                        <% } %>
                                             </td>
                                             <td>
-                                                <% if (products[i].is_listed) { %>
+                                                <% if (product.is_listed) { %>
                                                     <span class="badge bg-success">Listed</span>
                                                     <% } else { %>
                                                         <span class="badge bg-danger">Unlisted</span>
                                                         <% } %>
                                             </td>
                                             <td style="text-align: center;">
-                                                <%=products[i].quantity%>
+                                                <%= product.quantity %>
                                             </td>
                                             <td>
-                                                <a href="product/editproduct/?productId=<%= products[i]._id %>">
+                                                <a href="product/editproduct/?productId=<%= product._id %>">
                                                     <button type="button" class="btn btn-outline-warning btn-sm">
                                                         <i class="fa-solid fa-pen"></i>
                                                     </button>
                                                 </a>
                                             </td>
-
                                             <td>
                                                 <form class="list-unlist-form">
-                                                    <input type="hidden" name="categoryId"
-                                                        value="<%= products[i]._id %>">
-                                                    <% if (products[i].is_listed) { %>
+                                                    <input type="hidden" name="categoryId" value="<%= product._id %>">
+                                                    <% if (product.is_listed) { %>
                                                         <button type="button"
                                                             class="btn btn-danger btn-sm list-unlist-btn"
-                                                            data-product-id="<%= products[i]._id %>">
+                                                            data-product-id="<%= product._id %>">
                                                             Unlist
                                                         </button>
                                                         <% } else { %>
                                                             <button type="button"
                                                                 class="btn btn-success btn-sm list-unlist-btn"
-                                                                data-product-id="<%= products[i]._id %>">
+                                                                data-product-id="<%= product._id %>">
                                                                 List
                                                             </button>
                                                             <% } %>
@@ -338,14 +353,12 @@
                                             </td>
                                             <td>
                                                 <button type="button" class="btn btn-outline-danger btn-sm delete-btn"
-                                                    data-product-id="<%= products[i]._id %>">
+                                                    data-product-id="<%= product._id %>">
                                                     <i class="fa-solid fa-trash"></i>
                                                 </button>
                                             </td>
-
-
                                         </tr>
-                                        <% } %>
+                                        <% }); %>
                                             <% } %>
                             </tbody>
                         </table><a href="/admin/product/addProduct"><button type="button" class="btn btn-primary btn-sm"
@@ -359,7 +372,48 @@
         </div>
     </div>
     <!-- Table End -->
+    <div class="modal fade" id="offerModal" tabindex="-1" role="dialog" aria-labelledby="offerModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content bg-secondary">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color: #EB1616;" id="offerModalLabel">Select an Offer</h5>
+                    <button type="button" style="background-color: #EB1616; color: white;" class="close"
+                        data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Display a list of available offers for all categories -->
+                    <ul class="list-group">
+                        <% if (offer.length> 0) { %>
+                            <% offer.forEach(function (singleOffer) { %>
+                                <li style="color: #000000;"
+                                    class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>Name:</strong>
+                                        <%= singleOffer.name %><br>
+                                            <strong>Percentage:</strong>
+                                            <%= singleOffer.percentage %>%<br>
+                                                <strong>Starting Date:</strong>
+                                                <%= new Date(singleOffer.startingDate).toLocaleDateString(undefined, {
+                                                    day: 'numeric' , month: 'short' , year: 'numeric' }) %>
+                                    </div>
+                                    <button type="button" class="btn btn-success btn-sm"
+                                        onclick="selectOffer('<%= singleOffer._id %>')">
+                                        Apply Offer
+                                    </button>
+                                </li>
+                                <% }); %>
+                                    <% } else { %>
+                                        <li class="list-group-item">No offers available</li>
+                                        <% } %>
+                    </ul>
 
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer Start -->
     <div class="container-fluid pt-4 px-4">
@@ -393,8 +447,8 @@
     <script src="lib/tempusdominus/js/moment.min.js"></script>
     <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
     <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
-
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
     <!-- Template Javascript -->
     <script>
@@ -473,7 +527,108 @@
 
 </script>
 
+<script>
+    $('#offerModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var productId = button.data('product-id');
+        $(this).data('product-id', productId);
+    });
 
+    function selectOffer(offerId) {
+        var productId = $('#offerModal').data('product-id');
+        const data = {
+            productId: productId,
+            offerId: offerId
+        };
+
+        console.log('Category ID:', productId);
+        console.log('Offer ID:', offerId);
+
+        fetch('/admin/productApplyOffer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Offer Applied!',
+                        text: 'The offer has been applied successfully.',
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Failed to apply the offer.',
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Failed to apply the offer.',
+                });
+            });
+    }
+</script>
+<script>
+    function removeOffer() {
+        var productId = document.querySelector('.remove-offer-btn').getAttribute('data-product-id');
+        var offerId = document.querySelector('.remove-offer-btn').getAttribute('data-offer-id');
+
+        // Use SweetAlert for confirmation
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You won\'t be able to revert this!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, remove it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // User confirmed, proceed with fetch
+                const data = {
+                    productId: productId,
+                    offerId: offerId
+                };
+
+                fetch('/admin/productRemoveOffer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                })
+                .then(response => response.json())
+                .then(result => {
+                    console.log('Server Response:', result);
+                    // Show success SweetAlert
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'The offer has been successfully removed.',
+                        icon: 'success',
+                        confirmButtonColor: '#3085d6',
+                    }).then(() => {
+                        // Reload the page
+                        location.reload();
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        });
+    }
+</script>
 
 
 </html>

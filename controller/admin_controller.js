@@ -588,9 +588,9 @@ const deleteCategory = async (req, res) => {
 
 const loadProducts = async (req, res) => {
     try {
-
-        const products = await product.find({});
-        res.render('Admin/product', { products });
+        const offer = await Offer.find({})
+        const products = await product.find({}).populate('offer')
+        res.render('Admin/product', { products,offer });
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
@@ -930,16 +930,18 @@ const deleteOffer = async (req, res) => {
 }
 
 
-const applyOffer = async (req, res) => {
+const categoryApplyOffer = async (req, res) => {
     try {
         const categoryId = req.body.categoryId;
         const offerId = req.body.offerId;
         console.log(categoryId, offerId);
-        const category = await Category.updateOne({_id:categoryId},
-            {$set:
+        const category = await Category.updateOne({ _id: categoryId },
             {
-                offer:offerId
-            }});
+                $set:
+                {
+                    offer: offerId
+                }
+            });
 
 
         res.status(200).json({ success: true, message: 'Offer applied to category successfully' });
@@ -950,6 +952,67 @@ const applyOffer = async (req, res) => {
 };
 
 
+const categoryRemoveOffer = async (req, res) => {
+    try {
+        const categoryId = req.body.categoryId;
+        const offerId = req.body.offerId;
+
+        const category = await Category.updateOne({ _id: categoryId },
+            {
+                $unset:
+                {
+                    offer: offerId
+                }
+            });
+
+
+        res.status(200).json({ success: true, message: 'Offer remove to category successfully' });
+    } catch (error) {
+
+    }
+}
+
+
+const productApplyOffer = async (req, res) => {
+    try {
+        const productId = req.body.productId;
+        const offerId = req.body.offerId;
+        console.log(productId, offerId);
+        const products = await product.updateOne({ _id: productId },
+            {
+                $set:
+                {
+                    offer: offerId
+                }
+            });
+
+
+        res.status(200).json({ success: true, message: 'Offer applied to category successfully' });
+    } catch (error) {
+
+    }
+}
+
+
+const productRemoveOffer=async(req,res)=>{
+    try {
+        const productId = req.body.productId;
+        const offerId = req.body.offerId;
+
+        const Product = await product.updateOne({ _id: productId },
+            {
+                $unset:
+                {
+                    offer: offerId
+                }
+            });
+
+
+        res.status(200).json({ success: true, message: 'Offer remove to category successfully' });
+    } catch (error) {
+        
+    }
+}
 
 module.exports = {
     loadAdmin,
@@ -986,5 +1049,8 @@ module.exports = {
     editOffer,
     activateInactivateOffer,
     deleteOffer,
-    applyOffer
+    categoryApplyOffer,
+    categoryRemoveOffer,
+    productApplyOffer,
+    productRemoveOffer
 }
