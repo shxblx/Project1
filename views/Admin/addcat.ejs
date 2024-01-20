@@ -32,6 +32,15 @@
 
     <!-- Template Stylesheet -->
     <link href="../css/style.css" rel="stylesheet">
+    <style>
+        button:not(:disabled),
+        [type="button"]:not(:disabled),
+        [type="reset"]:not(:disabled),
+        [type="submit"]:not(:disabled) {
+            cursor: pointer;
+            margin-top: 32px;
+        }
+    </style>
 </head>
 
 <body>
@@ -71,7 +80,8 @@
                             class="fa-solid fa-layer-group me-2"></i>Categories</a>
                     <a href="/admin/product" class="nav-item nav-link"><i
                             class="fa-solid fa-list me-2"></i></i>Products</a>
-                    <a href="/admin/orders" class="nav-item nav-link"><i class="fa-solid fa-bag-shopping"></i></i>Orders</a>
+                    <a href="/admin/orders" class="nav-item nav-link"><i
+                            class="fa-solid fa-bag-shopping"></i></i>Orders</a>
                     <a href="/admin/offers" class="nav-item nav-link "><i class="fa-solid fa-percent"></i></i>Offers</a>
                     <!-- <a href="table.html" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>
                     <a href="chart.html" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Charts</a>

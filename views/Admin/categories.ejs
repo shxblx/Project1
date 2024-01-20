@@ -165,7 +165,8 @@
                             class="fa-solid fa-layer-group me-2"></i>Categories</a>
                     <a href="/admin/product" class="nav-item nav-link"><i
                             class="fa-solid fa-list me-2"></i></i>Products</a>
-                    <a href="/admin/orders" class="nav-item nav-link"><i class="fa-solid fa-bag-shopping"></i></i>Orders</a>
+                    <a href="/admin/orders" class="nav-item nav-link"><i
+                            class="fa-solid fa-bag-shopping"></i></i>Orders</a>
                     <a href="/admin/offers" class="nav-item nav-link "><i class="fa-solid fa-percent"></i></i>Offers</a>
                     <!-- <a href="table.html" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>
                     <a href="chart.html" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Charts</a>
@@ -310,68 +311,78 @@
                                 <tr>
                                     <th scope="col">Name</th>
                                     <th scope="col">Description</th>
+                                    <th scope="col">Offer</th>
                                     <th scope="col">Status</th>
                                     <th scope="col">Edit</th>
                                     <th scope="col">Action</th>
                                     <th scope="col"></th>
+
                                 </tr>
                             </thead>
                             <tbody>
-                                <% if (categoryList.length> 0) { %>
-                                    <% for (let i=0; i < categoryList.length; i++) { %>
+                                <% if (categoryList.length > 0) { %>
+                                    <% categoryList.forEach((category) => { %>
                                         <tr>
+                                            <td><%= category.name %></td>
+                                            <td><%= category.description %></td>
                                             <td>
-                                                <%= categoryList[i].name %>
+                                                <% if (category.offer) { %>
+                                                    <p><%= category.offer.name %></p>
+                                                    <button type="button" class="btn btn-primary btn-sm remove-offer-btn"
+                                                        data-toggle="modal" data-target="#offerModal"
+                                                        data-category-id="<%= category._id %>">
+                                                        Remove Offer
+                                                    </button>
+                                                <% } else { %>
+                                                    <button type="button" class="btn btn-success btn-sm choose-offer-btn"
+                                                        data-toggle="modal" data-target="#offerModal"
+                                                        data-category-id="<%= category._id %>">
+                                                        Choose Offer
+                                                    </button>
+                                                <% } %>
                                             </td>
                                             <td>
-                                                <%= categoryList[i].description %>
-                                            </td>
-                                            <td>
-                                                <% if (categoryList[i].isListed) { %>
+                                                <% if (category.isListed) { %>
                                                     <span class="badge bg-success">Listed</span>
-                                                    <% } else { %>
-                                                        <span class="badge bg-danger">Unlisted</span>
-                                                        <% } %>
+                                                <% } else { %>
+                                                    <span class="badge bg-danger">Unlisted</span>
+                                                <% } %>
                                             </td>
                                             <td>
-                                                <a href="categories/editcat/?categId=<%= categoryList[i]._id %>">
+                                                <a href="categories/editcat/?categId=<%= category._id %>">
                                                     <button type="button" class="btn btn-outline-warning btn-sm">
                                                         <i class="fa-solid fa-pen"></i>
                                                     </button>
                                                 </a>
                                             </td>
-
                                             <td>
                                                 <form class="list-unlist-form">
-                                                    <input type="hidden" name="categoryId"
-                                                        value="<%= categoryList[i]._id %>">
-                                                    <% if (categoryList[i].isListed) { %>
-                                                        <button type="button"
-                                                            class="btn btn-danger btn-sm list-unlist-btn"
-                                                            data-category-id="<%= categoryList[i]._id %>">
+                                                    <input type="hidden" name="categoryId" value="<%= category._id %>">
+                                                    <% if (category.isListed) { %>
+                                                        <button type="button" class="btn btn-danger btn-sm list-unlist-btn"
+                                                            data-category-id="<%= category._id %>">
                                                             Unlist
                                                         </button>
-                                                        <% } else { %>
-                                                            <button type="button"
-                                                                class="btn btn-success btn-sm list-unlist-btn"
-                                                                data-category-id="<%= categoryList[i]._id %>">
-                                                                List
-                                                            </button>
-                                                            <% } %>
+                                                    <% } else { %>
+                                                        <button type="button" class="btn btn-success btn-sm list-unlist-btn"
+                                                            data-category-id="<%= category._id %>">
+                                                            List
+                                                        </button>
+                                                    <% } %>
                                                 </form>
                                             </td>
                                             <td>
                                                 <button type="button" class="btn btn-outline-danger btn-sm delete-btn"
-                                                    data-category-id="<%= categoryList[i]._id %>">
+                                                    data-category-id="<%= category._id %>">
                                                     <i class="fa-solid fa-trash"></i>
                                                 </button>
                                             </td>
-
-
                                         </tr>
-                                        <% } %>
-                                            <% } %>
+                                    <% }); %>
+                                <% } %>
                             </tbody>
+                            
+                            
                         </table><a href="categories/addcat"><button type="button" class="btn btn-primary btn-sm"
                                 style="margin-left: 10px; margin-bottom: 10px; margin-top: 50px;">
                                 Add Category
@@ -403,6 +414,49 @@
     <!-- Footer End -->
     </div>
     <!-- Content End -->
+    <div class="modal fade" id="offerModal" tabindex="-1" role="dialog" aria-labelledby="offerModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content bg-secondary">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color: #EB1616;" id="offerModalLabel">Select an Offer</h5>
+                    <button type="button" style="background-color: #EB1616; color: white;" class="close"
+                        data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Display a list of available offers for all categories -->
+                    <ul class="list-group">
+                        <% if (offer.length> 0) { %>
+                            <% offer.forEach(function (singleOffer) { %>
+                                <li style="color: #000000;"
+                                    class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>Name:</strong>
+                                        <%= singleOffer.name %><br>
+                                            <strong>Percentage:</strong>
+                                            <%= singleOffer.percentage %>%<br>
+                                                <strong>Starting Date:</strong>
+                                                <%= new Date(singleOffer.startingDate).toLocaleDateString(undefined, {
+                                                    day: 'numeric' , month: 'short' , year: 'numeric' }) %>
+                                    </div>
+                                    <button type="button" class="btn btn-success btn-sm"
+                                        onclick="selectOffer('<%= singleOffer._id %>')">
+                                        Apply Offer
+                                    </button>
+                                </li>
+                                <% }); %>
+                                    <% } else { %>
+                                        <li class="list-group-item">No offers available</li>
+                                        <% } %>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
     <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
@@ -420,6 +474,13 @@
 
 
     <!-- Template Javascript -->
+    <!-- Bootstrap CSS -->
+
+    <!-- jQuery --><script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 
 
@@ -488,8 +549,67 @@
 </script>
 
 
+<script>
+    $('#offerModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); 
+        var categoryId = button.data('category-id'); 
+        $(this).data('category-id', categoryId);
+    });
+
+    function selectOffer(offerId) {
+        var categoryId = $('#offerModal').data('category-id');
+        const data = {
+            categoryId: categoryId,
+            offerId: offerId
+        };
+
+        console.log('Category ID:', categoryId);
+        console.log('Offer ID:', offerId);
+
+        fetch('/admin/applyOffer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Offer Applied!',
+                    text: 'The offer has been applied successfully.',
+                }).then(() => {
+                    window.location.reload();
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Failed to apply the offer.',
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Failed to apply the offer.',
+            });
+        });
+    }
+</script>
 
 
+<script>
+    function formatDate(dateString) {
+        const options = { day: 'numeric', month: 'short', year: 'numeric' };
+        const formattedDate = new Date(dateString).toLocaleDateString(undefined, options);
+        return formattedDate;
+    }
+</script>
 
 
 </html>

@@ -6,7 +6,7 @@ const sharp = require('sharp')
 const bcrypt = require('bcrypt')
 const moment = require('moment')
 const order = require('../model/orderModel')
-const Offer=require('../model/offerModel')
+const Offer = require('../model/offerModel')
 
 
 const loadAdminSignin = async (req, res) => {
@@ -216,7 +216,7 @@ const loadAdmin = async (req, res) => {
                 $sort: { _id: 1 }
             }
         ]);
-        
+
         const monthlyTotalAmountArray = Array.from({ length: 12 }, (_, i) => {
             const monthData = monthlyTotalAmountResult.find(item => item._id === i + 1);
             return monthData ? monthData.totalAmount : 0;
@@ -304,8 +304,8 @@ const loadAdmin = async (req, res) => {
             return yearData ? yearData.userCount : 0;
         });
 
-        console.log(yearlyItemsQuantityArray,yearlyTotalAmountArray,yearlyUserCountArray);
-     
+        console.log(yearlyItemsQuantityArray, yearlyTotalAmountArray, yearlyUserCountArray);
+
 
         res.render('Admin/index', {
             totalProductCount,
@@ -416,7 +416,7 @@ const datePicker = async (req, res) => {
             },
         ]);
 
-       
+
 
         res.status(200).json({ selectedDate: selectedDate });
     } catch (err) {
@@ -462,8 +462,11 @@ const blockUnblockUser = async (req, res) => {
 
 const Categories = async (req, res) => {
     try {
-        const categoryList = await Category.find({})
-        res.render("Admin/categories", { categoryList })
+        const categoryList = await Category.find({}).populate("offer")
+        const offer = await Offer.find({})
+
+        console.log(categoryList);
+        res.render("Admin/categories", { categoryList, offer })
     } catch (error) {
         console.log(error);
     }
@@ -528,15 +531,11 @@ const editCategory = async (req, res) => {
         const { catName, catDes } = req.body;
         const existingCategory = await Category.findOne({ name: catName.toUpperCase() });
         console.log(existingCategory);
-        
 
         if (!catName) {
             req.flash('message', 'Please add category name');
             return res.redirect('/admin/categories/addcat');
         }
-
-
-
         const copyCat = await Category.findById(catId);
         console.log(copyCat);
 
@@ -811,20 +810,21 @@ const load404 = async (req, res) => {
     }
 }
 
-const loadOffers=async(req,res)=>{
+const loadOffers = async (req, res) => {
     try {
-        const offer=await Offer.find({})
-        res.render('Admin/offer',{offer})
+        const offer = await Offer.find({})
+        res.render('Admin/offer', { offer })
     } catch (error) {
-        
+
     }
 }
 
-const loadAddOffer=async(req,res)=>{
+const loadAddOffer = async (req, res) => {
     try {
-        res.render('Admin/addOffer')
+        const messages = req.flash('message');
+        res.render('Admin/addOffer', { messages })
     } catch (error) {
-        
+
     }
 }
 
@@ -832,12 +832,19 @@ const addOffer = async (req, res) => {
     try {
         const { offerName, offerPercentage, startingDate, EndingDate } = req.body;
 
+        const existingOffer = await Offer.findOne({ name: offerName.toUpperCase() });
+
+        if (existingOffer) {
+            req.flash('message', 'Offer already exists');
+            return res.redirect('/admin/offers/addOffer');
+        }
+
         const newOffer = new Offer({
-            name: offerName,
+            name: offerName.toUpperCase(),
             percentage: offerPercentage,
             startingDate: startingDate,
             expiryDate: EndingDate,
-            status: true, 
+            status: true,
         });
 
         await newOffer.save();
@@ -849,10 +856,12 @@ const addOffer = async (req, res) => {
     }
 };
 
+
 const loadEditOffer = async (req, res) => {
     try {
         const offerId = req.query.offerId;
         const offer = await Offer.findById(offerId);
+
 
         res.render('Admin/editOffer', { offer });
     } catch (error) {
@@ -866,26 +875,80 @@ const editOffer = async (req, res) => {
         const offerId = req.query.offerId;
         const { offerName, offerPercentage, startingDate, EndingDate } = req.body;
 
-     
+
+
         const updatedOffer = await Offer.findByIdAndUpdate(
             offerId,
             {
-                name: offerName,
+                name: offerName.toUpperCase(),
                 percentage: offerPercentage,
                 startingDate: startingDate,
                 expiryDate: EndingDate,
             },
-            { new: true } 
+            { new: true }
         );
 
-        
+        // You can set a success flash message if needed
+        req.flash('message', 'Offer updated successfully');
 
         res.redirect('/admin/offers');
     } catch (error) {
         console.error('Error updating offer:', error);
-        res.redirect('/500')
+        req.flash('message', 'Error updating offer');
+        res.redirect('/500');
     }
 };
+
+const activateInactivateOffer = async (req, res) => {
+    try {
+        const offerId = req.body.offerId;
+        const offer = await Offer.findById(offerId);
+        if (!offer) {
+            return res.status(404).json({ success: false, message: 'offer not found' });
+        }
+        offer.status = !offer.status;
+        await offer.save();
+        res.json({ success: true, message: 'offer status updated successfully' });
+    } catch (error) {
+        res.redirect('/500')
+    }
+}
+
+const deleteOffer = async (req, res) => {
+    try {
+        const offerId = req.body.offerId;
+        console.log(offerId);
+        const offer = await Offer.findById(offerId);
+        if (!offer) {
+            return res.status(404).json({ success: false, message: 'Offer not found' });
+        }
+        await Offer.deleteOne({ _id: offerId })
+        res.json({ success: true })
+    } catch (error) {
+
+    }
+}
+
+
+const applyOffer = async (req, res) => {
+    try {
+        const categoryId = req.body.categoryId;
+        const offerId = req.body.offerId;
+        console.log(categoryId, offerId);
+        const category = await Category.updateOne({_id:categoryId},
+            {$set:
+            {
+                offer:offerId
+            }});
+
+
+        res.status(200).json({ success: true, message: 'Offer applied to category successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+};
+
 
 
 module.exports = {
@@ -920,5 +983,8 @@ module.exports = {
     loadAddOffer,
     addOffer,
     loadEditOffer,
-    editOffer
+    editOffer,
+    activateInactivateOffer,
+    deleteOffer,
+    applyOffer
 }

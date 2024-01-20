@@ -52,9 +52,7 @@ const loadShop = async (req, res) => {
 
         const category = await Category.find({ isListed: true });
 
-        if (category.length === 0) {
-            return res.render('Admin/product', { products: [] });
-        }
+        
 
         const listedCategoryIds = category.map(category => category._id);
         const currentPage = parseInt(req.query.page) || 1;

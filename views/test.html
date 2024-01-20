@@ -1,69 +1,118 @@
-<style>
-    .carousel-inner img {
-      width: 100%;
-      /* Ensure the image takes 100% width of its container */
-      height: auto;
-      /* Maintain aspect ratio */
-    }
+const loadOffers = async (req, res) => {
+  try {
+      const offer = await Offer.find({})
+      res.render('Admin/offer', { offer })
+  } catch (error) {
 
-    .zoom-in {
-      overflow: hidden;
-      /* Hide overflow content outside the image section */
-    }
+  }
+}
 
-    .carousel-control-prev,
-    .carousel-control-next {
-      width: auto;
-      /* Adjust the width of carousel controls */
-    }
-  </style>
+const loadAddOffer = async (req, res) => {
+  try {
+      const messages = req.flash('message');
+      res.render('Admin/addOffer', { messages })
+  } catch (error) {
 
-  <style>
-    
-    :root {
-      --primary-color: #ee4266;
-      /* Define your custom primary color */
-    }
+  }
+}
 
-    .btn-primary,
-    .btn-primary:hover,
-    .btn-primary:active,
-    .btn-primary:focus {
-      background-color: var(--primary-color);
-      /* Apply custom primary color to Bootstrap buttons */
-      border-color: var(--primary-color);
-    }
+const addOffer = async (req, res) => {
+  try {
+      const { offerName, offerPercentage, startingDate, EndingDate } = req.body;
 
-    .btn-outline-primary,
-    .btn-outline-primary:hover,
-    .btn-outline-primary:active,
-    .btn-outline-primary:focus {
-      color: var(--primary-color);
-      /* Apply custom primary color to Bootstrap outline buttons */
-      border-color: var(--primary-color);
-    }
+      const existingOffer = await Offer.findOne({ name: offerName.toUpperCase() });
 
-    /* You can add more styles for other elements as needed */
-  </style>
+      if (existingOffer) {
+          req.flash('message', 'Offer already exists');
+          return res.redirect('/admin/offers/addOffer');
+      }
 
-  <style>
-    .thumbnail-image {
-      width: 100px;
-      /* Set the desired width for the thumbnails */
-      height: auto;
-      /* Maintain the aspect ratio */
-      cursor: pointer;
-      /* Show pointer cursor on hover for interaction */
-      margin: 0;
-      /* Remove margin to minimize the spacing */
-      border: 1px solid #ddd;
-      /* Add a border for better visibility */
-      border-radius: 5px;
-      /* Optional: Add rounded corners */
-    }
+      const newOffer = new Offer({
+          name: offerName.toUpperCase(),
+          percentage: offerPercentage,
+          startingDate: startingDate,
+          expiryDate: EndingDate,
+          status: true,
+      });
 
-    .thumbnail-image:hover {
-      border-color: #333;
-      /* Change border color on hover for a highlight effect */
-    }
-  </style>
+      await newOffer.save();
+
+      res.redirect('/admin/offers')
+  } catch (error) {
+      console.error('Error adding offer:', error);
+      res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+
+const loadEditOffer = async (req, res) => {
+  try {
+      const offerId = req.query.offerId;
+      const offer = await Offer.findById(offerId);
+
+
+      res.render('Admin/editOffer', { offer });
+  } catch (error) {
+      console.error('Error loading edit offer page:', error);
+      res.status(500).send('Internal Server Error');
+  }
+};
+
+const editOffer = async (req, res) => {
+  try {
+      const offerId = req.query.offerId;
+      const { offerName, offerPercentage, startingDate, EndingDate } = req.body;
+
+
+
+      const updatedOffer = await Offer.findByIdAndUpdate(
+          offerId,
+          {
+              name: offerName.toUpperCase(),
+              percentage: offerPercentage,
+              startingDate: startingDate,
+              expiryDate: EndingDate,
+          },
+          { new: true }
+      );
+
+      // You can set a success flash message if needed
+      req.flash('message', 'Offer updated successfully');
+
+      res.redirect('/admin/offers');
+  } catch (error) {
+      console.error('Error updating offer:', error);
+      req.flash('message', 'Error updating offer');
+      res.redirect('/500');
+  }
+};
+
+const activateInactivateOffer=async(req,res)=>{
+  try {
+      const offerId = req.body.offerId;
+      const offer = await Offer.findById(offerId);
+      if (!offer) {
+          return res.status(404).json({ success: false, message: 'offer not found' });
+      }
+      offer.status = !offer.status;
+      await offer.save();
+      res.json({ success: true, message: 'offer status updated successfully' });
+  } catch (error) {
+      res.redirect('/500')
+  }
+}
+
+const deleteOffer=async(req,res)=>{
+  try {
+      const offerId = req.body.offerId;
+      console.log(offerId);
+      const offer = await Offer.findById(offerId);
+      if (!offer) {
+          return res.status(404).json({ success: false, message: 'Offer not found' });
+      }
+      await Offer.deleteOne({ _id: offerId })
+      res.json({ success: true })
+  } catch (error) {
+      
+  }
+}

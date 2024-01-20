@@ -340,9 +340,9 @@
                                             </td>
                                             <td>
                                                 <% if (offer[i].status) { %>
-                                                    <span class="badge bg-success">Listed</span>
+                                                    <span class="badge bg-success">Active</span>
                                                 <% } else { %>
-                                                    <span class="badge bg-danger">Unlisted</span>
+                                                    <span class="badge bg-danger">Inactive</span>
                                                 <% } %>
                                             </td>
                                             <td>
@@ -355,21 +355,21 @@
                                             <td>
                                                 <form class="list-unlist-form">
                                                     <% if (offer[i].status) { %>
-                                                        <button type="button" class="btn btn-danger btn-sm list-unlist-btn"
-                                                            data-category-id="<%= offer[i]._id %>">
-                                                            Unlist
+                                                        <button type="button" class="btn btn-danger btn-sm Activate-Inactivate-btn"
+                                                            data-offer-id="<%= offer[i]._id %>">
+                                                            Inactivate
                                                         </button>
                                                     <% } else { %>
-                                                        <button type="button" class="btn btn-success btn-sm list-unlist-btn"
-                                                            data-category-id="<%= offer[i]._id %>">
-                                                            List
+                                                        <button type="button" class="btn btn-success btn-sm Activate-Inactivate-btn"
+                                                            data-offer-id="<%= offer[i]._id %>">
+                                                            Activate
                                                         </button>
                                                     <% } %>
                                                 </form>
                                             </td>
                                             <td>
                                                 <button type="button" class="btn btn-outline-danger btn-sm delete-btn"
-                                                    data-category-id="<%= offer[i]._id %>">
+                                                    data-offer-id="<%= offer[i]._id %>">
                                                     <i class="fa-solid fa-trash"></i>
                                                 </button>
                                             </td>
@@ -439,23 +439,25 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.list-unlist-btn').forEach(button => {
+        document.querySelectorAll('.Activate-Inactivate-btn').forEach(button => {
             button.addEventListener('click', function () {
-                const categoryId = this.dataset.categoryId;
+                const offerId = this.dataset.offerId;
 
-                fetch('/admin/list-unlist', {
+                console.log(offerId);
+
+                fetch('/admin//activate-Inactivate', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ categoryId }),
+                    body: JSON.stringify({ offerId }),
                 })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
                             location.reload();
                         } else {
-                            alert('Error updating category status.');
+                            alert('Error updating offer status.');
                         }
                     })
                     .catch(error => {
@@ -467,14 +469,14 @@
         // Category delete
         document.querySelectorAll('.delete-btn').forEach(button => {
             button.addEventListener('click', function () {
-                const categoryId = this.dataset.categoryId;
+                const offerId = this.dataset.offerId;
 
-                fetch('/admin/categories/deletecat', {
+                fetch('/admin/offers/deleteOffer', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ categoryId }),
+                    body: JSON.stringify({ offerId }),
                 })
                     .then(response => response.json())
                     .then(data => {
