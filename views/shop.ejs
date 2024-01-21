@@ -209,27 +209,43 @@
             </div>
 
             <div id="product-list-container" class="row mb-5">
-              <% if (products.length> 0) { %>
-                <% for (let i=0; i < products.length; i++) { %>
-                  <div class="col-lg-4 col-md-6 item-entry mb-4">
-                    <div class="img-container md-height">
-                      <a href="/item?id=<%=products[i]._id%>" class="d-block">
-                        <img src="/myImages/<%= products[i].image[0] %>" alt="Image" class="img-fluid img-zoom">
-                      </a>
-                    </div>
-                    <div class="item-details">
-                      <a href="/item" style="font-size: 20px;color: black;">
-                        <%=products[i].name%>
-                      </a>
-                      <h1 style="font-size: 15px;">
-                        <%=products[i].description%>
-                      </h1>
-                      <strong class="item-price">₹<%=products[i].price%></strong>
-                    </div>
-                  </div>
+              <% if (products.length > 0) { %>
+                  <% for (let i = 0; i < products.length; i++) { %>
+                      <div class="col-lg-4 col-md-6 item-entry mb-4">
+                          <div class="img-container md-height">
+                              <a href="/item?id=<%=products[i]._id%>" class="d-block">
+                                  <img src="/myImages/<%= products[i].image[0] %>" alt="Image" class="img-fluid img-zoom">
+                              </a>
+                          </div>
+                          <div class="item-details">
+                              <a href="/item" style="font-size: 20px; color: black;">
+                                  <%=products[i].name%>
+                              </a>
+                              <h1 style="font-size: 15px;">
+                                  <%=products[i].description%>
+                              </h1>
+                              <% if (products[i].offer) { %>
+                                  <strong class="item-price">
+                                    Price: ₹<%=calculateOfferPrice(products[i])%>
+                                  </strong>
+                                  <strong class="item-offer-price">
+                                     <span style="text-decoration: line-through;margin-left: 5px;" >₹<%=products[i].price%></span>
+                                  </strong>
+                              <% } else { %>
+                                  <strong class="item-price">₹<%=products[i].price%></strong>
+                              <% } %>
+                          </div>
+                      </div>
                   <% } %>
-                    <% } %>
-            </div>
+              <% } %>
+          </div>
+          
+          <% function calculateOfferPrice(product) {
+              const offerPercentage = product.offer.percentage;
+              const discountedPrice = product.price - (product.price * (offerPercentage / 100));
+              return discountedPrice.toFixed(2); // Display offer price with 2 decimal places
+          } %>
+          
 
 
             <div class="pagination-container">
@@ -250,17 +266,17 @@
             <div class="border p-4 rounded mb-4">
               <h3 class="mb-3 h6 text-uppercase text-black d-block">Categories</h3>
               <ul class="list-unstyled mb-0">
-                <% category.forEach(category=> { %>
+                <% category.forEach(category => { %>
                   <li class="mb-1">
-                    <a href="#" class="d-flex">
+                    <a href="/shop?category=<%= category._id %>" class="d-flex">
                       <span>
                         <%= category.name %>
                       </span>
-                      <!-- <span class="text-black ml-auto">(2,220)</span> -->
                     </a>
                   </li>
-                  <% }); %>
+                <% }); %>
               </ul>
+              
             </div>
 
 
