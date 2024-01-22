@@ -47,7 +47,6 @@ const loadAdmin = async (req, res) => {
         const orders = await order.find({}).sort({ date: -1 }).limit(5);
         const users = await User.find({}).sort({ createdAt: -1 }).limit(5);
 
-
         const currentDateTime = new Date();
 
         // Total Delivered Amount

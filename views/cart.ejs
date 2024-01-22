@@ -138,22 +138,20 @@
                             <td>
                               <% if (item.offerPrice !== item.product_id.price.toFixed(2)) { %>
                                 <p style="color: black; font-weight: bold; font-size: large;">
-                                    Offer Price: ₹<%= item.offerPrice %>
-                                    <br>
-                                    <del>Original Price: ₹<%= item.product_id.price %></del>
-                                    <br>
-                                    You Save: ₹<%= item.offerDiscount %>
-                                    <br>
-                                    Offer Name: <%= item.product_id.offer ? item.product_id.offer.name : 
-                                        (item.product_id.category ? item.product_id.category.offer.name : '' ) %>
+                                    ₹<%= item.offerPrice %>
+                                    <% if (item.product_id.offer) { %>
+                                        <del>₹<%= (item.product_id.price * item.quantity).toFixed(2) %></del>
+                                        <br>Offer Applied: <%= item.product_id.offer.name %>
+                                    <% } else if (item.product_id.category && item.product_id.category.offer) { %>
+                                        <del>₹<%= (item.product_id.price * item.quantity).toFixed(2) %></del>
+                                        <br>Offer Applied: <%= item.product_id.category.offer.name %>
+                                    <% } %>
                                 </p>
                             <% } else { %>
                                 <p style="color: black; font-weight: bold; font-size: large;">
                                     ₹<%= item.product_id.price %>
                                 </p>
                             <% } %>
-                            
-                            
                             </td>
                             <td>
                                 <div class="input-group mb-3" style="max-width: 120px;">
@@ -228,26 +226,35 @@
               </div>
               <div class="row mb-3">
                 <div class="col-md-6">
-                  <span class="text-black">Subtotal</span>
+                    <span class="text-black">Subtotal (Before Discounts)</span>
                 </div>
                 <div class="col-md-6 text-right">
-                  <strong class="text-black">
-                    ₹<%= cartData && cartData.items ? cartData.items.reduce((total, item)=> total + item.total_price,
-                      0).toFixed(2) : '0.00' %>
-                  </strong>
+                    <strong class="text-black">
+                        ₹<%= cartData && cartData.items ? cartData.items.reduce((total, item) => total + parseFloat(item.product_id.price), 0).toFixed(2) : '0.00' %>
+                    </strong>
                 </div>
-              </div>
-              <div class="row mb-5">
+            </div>
+            <div class="row mb-3">
                 <div class="col-md-6">
-                  <span class="text-black">Total</span>
+                    <span class="text-black">Total Amount Saved</span>
                 </div>
                 <div class="col-md-6 text-right">
-                  <strong class="text-black">
-                    ₹<%= cartData && cartData.items ? cartData.items.reduce((total, item)=> total + item.total_price,
-                      0).toFixed(2) : '0.00' %>
-                  </strong>
+                    <strong class="text-black">
+                        ₹<%= cartData && cartData.items ? cartData.items.reduce((total, item) => total + parseFloat(item.offerDiscount), 0).toFixed(2) : '0.00' %>
+                    </strong>
                 </div>
-              </div>
+            </div>
+            <div class="row mb-5">
+                <div class="col-md-6">
+                    <span class="text-black">Final Total</span>
+                </div>
+                <div class="col-md-6 text-right">
+                    <strong class="text-black">
+                        ₹<%= cartData && cartData.items ? cartData.items.reduce((total, item) => total + parseFloat(item.offerPrice), 0).toFixed(2) : '0.00' %>
+                    </strong>
+                </div>
+            </div>
+            
 
 
               <div class="row">

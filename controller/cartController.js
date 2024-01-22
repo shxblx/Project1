@@ -41,43 +41,35 @@ const loadCart = async (req, res) => {
 
         console.log(cartData);
 
-
         if (!cartData || !cartData.items) {
             return res.render('cart', { cartData: { items: [] }, messages, user, productData, totalItems: 0 });
         }
 
         const combinedData = cartData.items
-    .filter(cartItem => cartItem.product_id.is_listed)
-    .map(cartItem => {
-        const productInfo = productData.find(product => product._id.toString() === cartItem.product_id._id.toString());
+            .filter(cartItem => cartItem.product_id.is_listed)
+            .map(cartItem => {
+                const productInfo = productData.find(product => product._id.toString() === cartItem.product_id._id.toString());
 
-        const offer = cartItem.product_id.offer || (cartItem.product_id.category && cartItem.product_id.category.offer);
+                const offer = cartItem.product_id.offer || (cartItem.product_id.category && cartItem.product_id.category.offer);
 
-        // Create a new object with updated properties
-        const updatedCartItem = { ...cartItem.toObject(), productInfo };
+                const updatedCartItem = { ...cartItem.toObject(), productInfo };
 
-        if (offer) {
-            const offerPrice = cartItem.product_id.price - (cartItem.product_id.price * offer.percentage / 100);
-            const offerDiscount = cartItem.product_id.price - offerPrice;
+                if (offer) {
+                    const offerPrice = cartItem.quantity * (cartItem.product_id.price - (cartItem.product_id.price * offer.percentage / 100));
+                    const offerDiscount = cartItem.quantity * (cartItem.product_id.price - offerPrice);
 
-            // Update the new object with offerPrice and offerDiscount
-            updatedCartItem.offerPrice = offerPrice.toFixed(2);
-            updatedCartItem.offerDiscount = offerDiscount.toFixed(2);
-        } else {
-            // If there's no offer, set offerPrice and offerDiscount to the regular price
-            updatedCartItem.offerPrice = cartItem.product_id.price.toFixed(2);
-            updatedCartItem.offerDiscount = '0.00';
-        }
-
-        console.log('Updated Cart Item:', updatedCartItem); // Add this line for debugging
-
-        return updatedCartItem;
-    });
+                    updatedCartItem.offerPrice = offerPrice.toFixed(2);
+                    updatedCartItem.offerDiscount = offerDiscount.toFixed(2);
+                } else {
+                    updatedCartItem.offerPrice = cartItem.quantity * cartItem.product_id.price.toFixed(2);
+                    updatedCartItem.offerDiscount = '0.00';
+                }
 
 
+                return updatedCartItem;
+            });
 
         const totalItems = combinedData.length;
-
 
         res.render('cart', { cartData: { items: combinedData }, messages, user, productData, totalItems });
     } catch (error) {
@@ -85,6 +77,7 @@ const loadCart = async (req, res) => {
         res.status(500).json({ success: false, error: 'Internal Server Error c' });
     }
 };
+
 
 
 
@@ -239,7 +232,20 @@ const loadCheckout = async (req, res) => {
         }
 
         const userData = await User.findOne({ _id: user_id });
-        const cartData = await cart.findOne({ user_id }).populate('items.product_id');
+        const cartData = await cart.findOne({ user_id }).populate({
+            path: 'items.product_id',
+            populate: [
+                {
+                    path: 'category',
+                    populate: {
+                        path: 'offer',
+                    },
+                },
+                {
+                    path: 'offer',
+                },
+            ],
+        });
 
         if (!cartData || !cartData.items || cartData.items.length === 0) {
             req.flash('message', 'Your cart is empty');
@@ -253,12 +259,29 @@ const loadCheckout = async (req, res) => {
             return res.redirect('/cart');
         }
 
+        cartData.items.forEach(cartItem => {
+            const offer = cartItem.product_id.offer || (cartItem.product_id.category && cartItem.product_id.category.offer);
+
+            if (offer) {
+                const offerPrice = cartItem.quantity * (cartItem.product_id.price - (cartItem.product_id.price * offer.percentage / 100));
+                const offerDiscount = cartItem.quantity * (cartItem.product_id.price - offerPrice);
+
+                cartItem.offerPrice = offerPrice.toFixed(2);
+                cartItem.offerDiscount = offerDiscount.toFixed(2);
+            } else {
+                cartItem.offerPrice = cartItem.quantity * cartItem.product_id.price.toFixed(2);
+                cartItem.offerDiscount = '0.00';
+            }
+        });
+
         res.render('checkout', { cartData, userData });
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
 };
+
+
 
 
 const addAddress = async (req, res) => {
@@ -308,11 +331,38 @@ const placeOrder = async (req, res) => {
         const date = new Date();
         const user_id = req.session.user_id;
         const { address, paymentMethod, productIdArray } = req.body.orderData;
+        const cartData = await cart.findOne({ user_id }).populate({
+            path: 'items.product_id',
+            populate: [
+                {
+                    path: 'category',
+                    populate: {
+                        path: 'offer',
+                    },
+                },
+                {
+                    path: 'offer',
+                },
+            ],
+        });
+        cartData.items.forEach(cartItem => {
+            const offer = cartItem.product_id.offer || (cartItem.product_id.category && cartItem.product_id.category.offer);
 
+            if (offer) {
+                const offerPrice = cartItem.quantity * (cartItem.product_id.price - (cartItem.product_id.price * offer.percentage / 100));
+                const offerDiscount = cartItem.quantity * (cartItem.product_id.price - offerPrice);
 
+                cartItem.offerPrice = offerPrice.toFixed(2);
+                cartItem.offerDiscount = offerDiscount.toFixed(2);
+            } else {
+                cartItem.offerPrice = cartItem.quantity * cartItem.product_id.price;
+                cartItem.offerDiscount = 0.00;
+            }
+        });
 
-        const cartData = await cart.findOne({ user_id: user_id });
-        const totalPrice = cartData.items.reduce((total, item) => total + item.total_price, 0);
+        const totalPrice = cartData.items.reduce((total, item) => total + parseFloat(item.offerPrice), 0).toFixed(2);
+
+        console.log(totalPrice);
 
         const userData = await User.findById(user_id);
 
@@ -320,7 +370,8 @@ const placeOrder = async (req, res) => {
             const currentProductId = productIdArray[i];
 
             const productData = await product.findById(currentProductId);
-            const cartItem = cartData.items.find(item => item.product_id.toString() === currentProductId);
+            const cartItem = cartData.items.find(item => item.product_id._id.toString() === currentProductId);
+
 
             if (!productData || !cartItem) {
                 return res.status(400).json({ error: `Product with ID ${currentProductId} not found in cart or database.` });
@@ -335,10 +386,10 @@ const placeOrder = async (req, res) => {
         }
 
         const cartProducts = cartData.items;
-        const productIds = cartProducts.map(item => item.product_id.toString());
+        const productIds = cartProducts.map(item => item.product_id._id.toString());  
         const productQ = cartProducts.map(item => parseInt(item.quantity, 10));
-        console.log("this is productID " + productIds);
-        console.log("this is productQ " + productQ);
+
+
         const status = paymentMethod === 'COD' ? 'placed' : 'pending';
         const delivery = new Date(date.getTime() + 10 * 24 * 60 * 60 * 1000);
         const deliveryDate = delivery

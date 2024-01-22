@@ -22,7 +22,7 @@ const loadHome = async (req, res) => {
             },
             {
                 $lookup: {
-                    from: 'products', // Assuming your product collection is named 'products'
+                    from: 'products',
                     localField: 'items.product_id',
                     foreignField: '_id',
                     as: 'productDetails',
@@ -70,7 +70,7 @@ const loadShop = async (req, res) => {
             },
             {
                 $lookup: {
-                    from: 'products', // Assuming your product collection is named 'products'
+                    from: 'products', 
                     localField: 'items.product_id',
                     foreignField: '_id',
                     as: 'productDetails',

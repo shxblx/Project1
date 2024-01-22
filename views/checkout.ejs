@@ -288,28 +288,41 @@
                     <th>Total</th>
                   </thead>
                   <tbody>
-                    <% cartData.items.forEach(item=> { %>
-                      <tr>
-                        <td>
-                          <%= item.product_id.name %> <strong class="mx-2">x</strong> "<%= item.quantity %>"
-                              <input class="productId" hidden value="<%=item.product_id._id%>">
-                        </td>
-                        <td>₹<%= item.total_price %>
-                        </td>
-                      </tr>
-                      <% }); %>
+                    <% cartData.items.forEach(item => { %>
                         <tr>
-                          <td class="text-black font-weight-bold"><strong>Cart Subtotal</strong></td>
-                          <td class="text-black">₹<%= cartData.items.reduce((total, item)=> total + item.total_price,
-                              0).toFixed(2) %></td>
+                            <td>
+                                <%= item.product_id.name %> <strong class="mx-2">x</strong> "<%= item.quantity %>"
+                                <input class="productId" hidden value="<%= item.product_id._id %>">
+                            </td>
+                            <td>
+                                <% if (item.offerPrice && item.offerDiscount) { %>
+                                    <p style="color: black; font-weight: bold; font-size: large;">
+                                        ₹<%= item.offerPrice %>
+                                        <br>
+                                        <del>₹<%= (item.product_id.price * item.quantity).toFixed(2) %></del>
+                                        <br>
+                                    </p>
+                                <% } else { %>
+                                    <p style="color: black; font-weight: bold; font-size: large;">
+                                        ₹<%= item.total_price %>
+                                    </p>
+                                <% } %>
+                            </td>
                         </tr>
-                        <tr>
-                          <td class="text-black font-weight-bold"><strong>Order Total</strong></td>
-                          <td class="text-black font-weight-bold"><strong>₹<%= cartData.items.reduce((total, item)=>
-                                total + item.total_price, 0).toFixed(2) %></strong></td>
-                        </tr>
-
-                  </tbody>
+                    <% }); %>
+                    <tr>
+                        <td class="text-black font-weight-bold"><strong>Cart Subtotal</strong></td>
+                        <td class="text-black font-weight-bold"><del>₹<%= cartData.items.reduce((total, item) => total + parseFloat(item.total_price), 0).toFixed(2) %></del></td>
+                    </tr>
+                    <tr>
+                        <td class="text-black font-weight-bold"><strong>Order Total</strong></td>
+                        <td class="text-black font-weight-bold">
+                            <strong>₹<%= cartData.items.reduce((total, item) => total + parseFloat(item.offerPrice), 0).toFixed(2) %></strong>
+                        </td>
+                    </tr>
+                </tbody>
+                
+                
                 </table>
 
                 <div class="border p-3 mb-3">
