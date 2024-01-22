@@ -17,8 +17,8 @@
   <link rel="stylesheet" href="css/owl.carousel.min.css">
   <link rel="stylesheet" href="css/owl.theme.default.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-  integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-  crossorigin="anonymous" referrerpolicy="no-referrer" />
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <link rel="stylesheet" href="css/aos.css">
 
@@ -67,7 +67,9 @@
             <a href="#" class="icons-btn d-inline-block"><span class="icon-heart-o"></span></a>
             <a href="/cart" class="icons-btn d-inline-block bag">
               <span class="icon-shopping-bag"></span>
-              <span class="number"><%=totalItems%></span>
+              <span class="number">
+                <%=totalItems%>
+              </span>
             </a>
 
             <li class="icons-btn d-inline-block">
@@ -122,49 +124,68 @@
                 </tr>
               </thead>
               <tbody>
-                <% if (cartData && cartData.items && cartData.items.length> 0) {
-                  cartData.items.forEach(item => { %>
-                  <tr class="product-row">
-                    <td class="product-thumbnail">
-                      <img src="/myImages/<%= item.product_id.image[0] %>" alt="Product Image" class="img-fluid">
-                    </td>
-                    <td class="product-name">
-                      <h2 class="h5 text-black">
-                        <%= item.product_id.name %>
-                      </h2>
-                    </td>
-                    <td>₹<%= item.price %>
-                    </td>
-                    <td>
-                      <div class="input-group mb-3" style="max-width: 120px;">
-                        <div class="input-group-prepend">
-                          <button class="btn btn-outline-primary js-btn-minus" type="button"
-                            onclick="decreaseQuantity(this)">-</button>
-                        </div>
-                        <input class="quantityInput form-control text-center"
-                        style="background-color: white;"
-                          data-quantity="<%= item.productInfo.quantity %>" type="text"
-                          data-item-id="<%= item.product_id._id %>" value="<%= item.quantity %>" placeholder=""
-                          aria-label="Example text with button addon" aria-describedby="button-addon1" readonly >
-                        <div class="input-group-append">
-                          <button class="btn btn-outline-primary js-btn-plus" type="button"
-                            onclick="increaseQuantity(this)">+</button>
-                        </div>
-                      </div>
-                    </td>
-                    <td>₹<%= item.total_price %>
-                    </td>
-                    <td>
-                      <a data-item-id="<%= item.product_id._id %>"
-                        class="btn btn-primary height-auto btn-sm delete-btn" ><i style="color: white;" class="fa-solid fa-trash"></i></a>
-                    </td>
-                  </tr>
-                  <% }); } else { %>
-                    <tr>
-                      <td colspan="6">Your cart is empty.</td>
-                    </tr>
+                <% if (cartData && cartData.items && cartData.items.length > 0) { 
+                    cartData.items.forEach(item => { %>
+                        <tr class="product-row">
+                            <td class="product-thumbnail">
+                                <img src="/myImages/<%= item.product_id.image[0] %>" alt="Product Image" class="img-fluid">
+                            </td>
+                            <td class="product-name">
+                                <h2 class="h5 text-black">
+                                    <%= item.product_id.name %>
+                                </h2>
+                            </td>
+                            <td>
+                              <% if (item.offerPrice !== item.product_id.price.toFixed(2)) { %>
+                                <p style="color: black; font-weight: bold; font-size: large;">
+                                    Offer Price: ₹<%= item.offerPrice %>
+                                    <br>
+                                    <del>Original Price: ₹<%= item.product_id.price %></del>
+                                    <br>
+                                    You Save: ₹<%= item.offerDiscount %>
+                                    <br>
+                                    Offer Name: <%= item.product_id.offer ? item.product_id.offer.name : 
+                                        (item.product_id.category ? item.product_id.category.offer.name : '' ) %>
+                                </p>
+                            <% } else { %>
+                                <p style="color: black; font-weight: bold; font-size: large;">
+                                    ₹<%= item.product_id.price %>
+                                </p>
+                            <% } %>
+                            
+                            
+                            </td>
+                            <td>
+                                <div class="input-group mb-3" style="max-width: 120px;">
+                                    <div class="input-group-prepend">
+                                        <button class="btn btn-outline-primary js-btn-minus" type="button" onclick="decreaseQuantity(this)">-</button>
+                                    </div>
+                                    <input class="quantityInput form-control text-center" style="background-color: white;"
+                                        data-quantity="<%= item.productInfo.quantity %>" type="text"
+                                        data-item-id="<%= item.product_id._id %>" value="<%= item.quantity %>" placeholder=""
+                                        aria-label="Example text with button addon" aria-describedby="button-addon1" readonly>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-primary js-btn-plus" type="button" onclick="increaseQuantity(this)">+</button>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>₹<%= item.offerPrice %></td>
+                            <td>
+                                <a data-item-id="<%= item.product_id._id %>"
+                                    class="btn btn-primary height-auto btn-sm delete-btn">
+                                    <i style="color: white;" class="fa-solid fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    <% }); } else { %>
+                        <tr>
+                            <td colspan="6">Your cart is empty.</td>
+                        </tr>
                     <% } %>
-              </tbody>
+            </tbody>
+            
+            
+            
 
             </table>
 
@@ -348,13 +369,13 @@
         let currentQuantity = parseInt(quantityInput.value, 10);
         let maxQuantity = parseInt(quantityInput.getAttribute('data-quantity'), 10);
 
-  
+
         if (currentQuantity <= 1) {
           decreaseButton.disabled = true;
         } else {
           decreaseButton.disabled = false;
         }
-  
+
         if (currentQuantity >= maxQuantity) {
           increaseButton.disabled = true;
         } else {
@@ -362,7 +383,7 @@
         }
       });
     });
-  
+
   </script>
 
   <script>
@@ -437,16 +458,16 @@
       updateQuantityOnServer(productId, currentQuantity);
       enableAddToCartButton();
 
-      if (currentQuantity  === maxQuantity) {
+      if (currentQuantity === maxQuantity) {
         const increaseButton = parentContainer.querySelector('.js-btn-plus');
         increaseButton.disabled = true;
       }
-      if (currentQuantity  > maxQuantity) {
+      if (currentQuantity > maxQuantity) {
         const addToCartButton = document.getElementById('proceed-btn');
         addToCartButton.disabled = true;
       }
 
-      
+
     }
 
     function enableAddToCartButton() {
@@ -482,7 +503,7 @@
     }
   </script>
 
- 
+
 
 
 

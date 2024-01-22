@@ -24,29 +24,68 @@ const loadCart = async (req, res) => {
             return res.redirect('/login');
         }
 
-        const cartData = await cart.findOne({ user_id }).populate('items.product_id');
+        const cartData = await cart.findOne({ user_id: user_id }).populate({
+            path: "items.product_id",
+            populate: [
+                {
+                    path: "offer",
+                },
+                {
+                    path: "category",
+                    populate: {
+                        path: "offer",
+                    },
+                },
+            ],
+        });
+
+        console.log(cartData);
+
 
         if (!cartData || !cartData.items) {
             return res.render('cart', { cartData: { items: [] }, messages, user, productData, totalItems: 0 });
         }
 
         const combinedData = cartData.items
-            .filter(cartItem => cartItem.product_id.is_listed) // Filter out non-listed products
-            .map(cartItem => {
-                const productInfo = productData.find(product => product._id.toString() === cartItem.product_id._id.toString());
-                return { ...cartItem.toObject(), productInfo };
-            });
+    .filter(cartItem => cartItem.product_id.is_listed)
+    .map(cartItem => {
+        const productInfo = productData.find(product => product._id.toString() === cartItem.product_id._id.toString());
 
-        // Get the size of the items array
+        const offer = cartItem.product_id.offer || (cartItem.product_id.category && cartItem.product_id.category.offer);
+
+        // Create a new object with updated properties
+        const updatedCartItem = { ...cartItem.toObject(), productInfo };
+
+        if (offer) {
+            const offerPrice = cartItem.product_id.price - (cartItem.product_id.price * offer.percentage / 100);
+            const offerDiscount = cartItem.product_id.price - offerPrice;
+
+            // Update the new object with offerPrice and offerDiscount
+            updatedCartItem.offerPrice = offerPrice.toFixed(2);
+            updatedCartItem.offerDiscount = offerDiscount.toFixed(2);
+        } else {
+            // If there's no offer, set offerPrice and offerDiscount to the regular price
+            updatedCartItem.offerPrice = cartItem.product_id.price.toFixed(2);
+            updatedCartItem.offerDiscount = '0.00';
+        }
+
+        console.log('Updated Cart Item:', updatedCartItem); // Add this line for debugging
+
+        return updatedCartItem;
+    });
+
+
+
         const totalItems = combinedData.length;
 
-        // Pass the total items in the cart to the client side
+
         res.render('cart', { cartData: { items: combinedData }, messages, user, productData, totalItems });
     } catch (error) {
         console.error('Error loading cart:', error);
         res.status(500).json({ success: false, error: 'Internal Server Error c' });
     }
 };
+
 
 
 
@@ -133,7 +172,7 @@ const updateQuantity = async (req, res) => {
         const { productId, newQuantity } = req.body;
         console.log("here" + productId + "here");
         const userId = req.session.user_id;
-        
+
         const cartItem = await cart.findOne({ user_id: userId });
 
         console.log(cartItem);
@@ -291,7 +330,7 @@ const placeOrder = async (req, res) => {
 
             if (cartItem.quantity > productQuantity) {
                 return res.json({ outOfStock: true, productId: currentProductId });
-            }    
+            }
 
         }
 
