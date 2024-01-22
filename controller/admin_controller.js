@@ -1005,6 +1005,24 @@ const productRemoveOffer=async(req,res)=>{
     }
 }
 
+const loadCoupon=async(req,res)=>{
+    try {
+        res.render('Admin/coupon')
+    } catch (error) {
+        
+    }
+}
+
+const loadAddCoupon=async(req,res)=>{
+    try {
+        res.render('Admin/addCoupon')
+    } catch (error) {
+        
+    }
+}
+
+
+
 module.exports = {
     loadAdmin,
     loadAdminSignin,
@@ -1042,5 +1060,8 @@ module.exports = {
     categoryApplyOffer,
     categoryRemoveOffer,
     productApplyOffer,
-    productRemoveOffer
+    productRemoveOffer,
+    loadCoupon,
+    loadAddCoupon,
+    addCoupon
 }

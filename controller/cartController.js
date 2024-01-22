@@ -352,6 +352,7 @@ const placeOrder = async (req, res) => {
                 const offerPrice = cartItem.quantity * (cartItem.product_id.price - (cartItem.product_id.price * offer.percentage / 100));
                 const offerDiscount = cartItem.quantity * (cartItem.product_id.price - offerPrice);
 
+                cartItem.product_id.price = offerPrice.toFixed(2);
                 cartItem.offerPrice = offerPrice.toFixed(2);
                 cartItem.offerDiscount = offerDiscount.toFixed(2);
             } else {
@@ -362,8 +363,6 @@ const placeOrder = async (req, res) => {
 
         const totalPrice = cartData.items.reduce((total, item) => total + parseFloat(item.offerPrice), 0).toFixed(2);
 
-        console.log(totalPrice);
-
         const userData = await User.findById(user_id);
 
         for (let i = 0; i < productIdArray.length; i++) {
@@ -371,7 +370,6 @@ const placeOrder = async (req, res) => {
 
             const productData = await product.findById(currentProductId);
             const cartItem = cartData.items.find(item => item.product_id._id.toString() === currentProductId);
-
 
             if (!productData || !cartItem) {
                 return res.status(400).json({ error: `Product with ID ${currentProductId} not found in cart or database.` });
@@ -382,13 +380,11 @@ const placeOrder = async (req, res) => {
             if (cartItem.quantity > productQuantity) {
                 return res.json({ outOfStock: true, productId: currentProductId });
             }
-
         }
 
         const cartProducts = cartData.items;
         const productIds = cartProducts.map(item => item.product_id._id.toString());  
         const productQ = cartProducts.map(item => parseInt(item.quantity, 10));
-
 
         const status = paymentMethod === 'COD' ? 'placed' : 'pending';
         const delivery = new Date(date.getTime() + 10 * 24 * 60 * 60 * 1000);
@@ -400,6 +396,12 @@ const placeOrder = async (req, res) => {
             })
             .replace(/\//g, '-');
 
+        const orderItems = cartData.items.map(cartItem => ({
+            ...cartItem.toObject(),
+            totalPrice: cartItem.offerPrice,
+            price: cartItem.product_id.price, 
+        }));
+
         const orderData = new Order({
             user_id: user_id,
             order_id: generateRandomOrderId(),
@@ -409,7 +411,7 @@ const placeOrder = async (req, res) => {
             date: Date.now(),
             expected_delivery: deliveryDate,
             payment: paymentMethod,
-            items: cartProducts.map(item => ({ ...item, ordered_status: status })),
+            items: orderItems.map(item => ({ ...item, ordered_status: status })),
         });
 
         let orders = await orderData.save();
@@ -431,7 +433,7 @@ const placeOrder = async (req, res) => {
             return res.json({ success: true, params: orderId });
         } else {
             const orderId = orders.order_id;
-            const totalAmount = orders.total_amount
+            const totalAmount = orders.total_amount;
 
             var options = {
                 amount: totalAmount * 100,
@@ -442,13 +444,13 @@ const placeOrder = async (req, res) => {
             instance.orders.create(options, function (err, orderData) {
                 return res.json({ success: false, order: orderData });
             });
-
         }
     } catch (error) {
         console.log(error);
         return res.status(500).json({ success: false, message: 'Internal server error.' });
     }
 };
+
 
 
 const verifyPayment = async (req, res) => {

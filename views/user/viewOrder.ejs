@@ -193,7 +193,7 @@
                                     <div class="card-body bg-light">
                                         <img src="/myImages/<%= item.product_id.image[0] %>"
                                             class="img-sm img-thumbnail mb-2" alt="" width="60px" height="50px"><br>
-                                        <span>Price : ₹<%= item.product_id.price %></span><br><br>
+                                        <span>Price : ₹<%= item.price %></span><br><br>
                                         <span>Order Date : <%= moment(order.date).format('dddd, MMMM Do YYYY') %>
                                         </span><br><br>
                                         <span> Delivery Address: <%= order.delivery_address %></span><br><br>

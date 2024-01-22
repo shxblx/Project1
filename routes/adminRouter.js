@@ -58,6 +58,9 @@ adminRouter.post('/categoryApplyOffer',adminController.categoryApplyOffer)
 adminRouter.post('/categoryRemoveOffer',adminController.categoryRemoveOffer)
 adminRouter.post('/productApplyOffer',adminController.productApplyOffer)
 adminRouter.post('/productRemoveOffer',adminController.productRemoveOffer)
+adminRouter.get('/coupons',adminController.loadCoupon)
+adminRouter.get('/coupons/addCoupon',adminController.loadAddCoupon)
+adminRouter.post('/coupons/addCoupon',adminController.addCoupon)
 
 
 

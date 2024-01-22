@@ -28,10 +28,10 @@
     <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Template Stylesheet -->
-    <link href="css/style.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
 </head>
 
 <body>
@@ -67,13 +67,24 @@
                 <div class="navbar-nav w-100">
                     <a href="/admin" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
                     <a href="/admin/users" class="nav-item nav-link "><i class="fa-solid fa-user-alt me-2"></i>Users</a>
-                    <a href="/admin/categories" class="nav-item nav-link"><i
+                    <a href="/admin/categories" class="nav-item nav-link "><i
                             class="fa-solid fa-layer-group me-2"></i>Categories</a>
                     <a href="/admin/product" class="nav-item nav-link"><i
                             class="fa-solid fa-list me-2"></i></i>Products</a>
-                    <a href="/admin/orders" class="nav-item nav-link active"><i class="fa-solid fa-bag-shopping"></i></i>Orders</a>
-                    <a href="/admin/offers" class="nav-item nav-link "><i class="fa-solid fa-percent"></i></i>Offers</a>
-
+                    <a href="/admin/orders" class="nav-item nav-link"><i class="fa-solid fa-bag-shopping"></i></i>Orders</a>
+                    <a href="/admin/offers" class="nav-item nav-link active "><i class="fa-solid fa-percent "></i></i>Offers</a>
+                    <!-- <a href="table.html" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>
+                    <a href="chart.html" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Charts</a>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="far fa-file-alt me-2"></i>Pages</a>
+                        <div class="dropdown-menu bg-transparent border-0">
+                            <a href="signin.html" class="dropdown-item">Sign In</a>
+                            <a href="signup.html" class="dropdown-item">Sign Up</a>
+                            <a href="404.html" class="dropdown-item">404 Error</a>
+                            <a href="blank.html" class="dropdown-item">Blank Page</a>
+                        </div>
+                    </div>
+                </div> -->
             </nav>
         </div>
         <!-- Sidebar End -->
@@ -176,61 +187,83 @@
 
             <div class="col-11">
                 <div class="bg-secondary rounded h-100 p-4" style="margin-top: 100px; margin-left: 100px;">
-                    <% orders.forEach(order=> { %>
-                        <% if(order.items && order.items.length> 0) {%>
-                            <% order.items.forEach(item=> { %>
-                                <div class="card bg-secondary">
-                                    <div class="card-header bg-secondary">
-                                        <h4 class="card-title ">
-                                            #Order ID : <%= order.order_id %>
-                                        </h4>
-                                        <hr>
+                    <h6 class="mb-4">Add Category</h6>
 
-                                        <div class="card-body">
-                                            <img src="/myImages/<%= item.product_id.image[0] %>"
-                                                class="img-sm img-thumbnail mb-2" alt="" width="60px" height="50px"><br>
-                                            <span>Price : ₹<%= item.price %></span><br><br>
-                                            <span>Order Date : <%= moment(order.date).format('dddd, MMMM Do YYYY') %>
-                                            </span><br><br>
-                                            <span>Delivery Address: <%= order.delivery_address %></span><br><br>
-                                            <span>Payment Method : <%= order.payment %></span><br><br>
-                                            <span>Expected Delivery : <%= order.expected_delivery %></span><br><br>
-                                            <span>Quantity : <%= item.quantity %></span><br><br>
-                                            <span>Status :
-                                                <span style="color: red;">
-                                                    <%= item.ordered_status %>
-                                                </span>
-                                            </span><br><br>
+                    <!-- <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="input-group" style="max-width: 20rem;">
+                            <input type="text" class="form-control" placeholder="Search">
+                            <button class="btn btn-primary" type="button">Search</button>
+                        </div>
+                    </div> -->
 
-                                            <% if (item.ordered_status==='Cancelled' || item.ordered_status==='Returned'
-                                                ||item.ordered_status==='Requested cancellation'
-                                                ||item.ordered_status==='Requested return' ) { %>
-                                                <span>Reason: <%= item.cancellationReason %></span><br><br>
-                                                <% } %>
-                                        </div>
-
-
-
-                                    </div>
+                    <!-- Form for Adding Category -->
+                    <form method="post" >
+                        <div class="mb-3">
+                            <label for="" class="form-label">Coupon Name</label>
+                            <input type="text" class="form-control" name="couponName" id="offerName"
+                                placeholder="Enter Coupon name" >
+                            <% if (messages.length> 0) { %>
+                                <div style="color: red;">
+                                    <%= messages[0] %>
                                 </div>
+                                <% } %>
+                        </div>
 
+                        <div class="mb-3">
+                            <label for="" class="form-label">Coupon Code</label>
+                            <input type="text" class="form-control" name="couponCode" id="offerPercentage"
+                                placeholder="Enter Coupon Code" >
+                        </div>
+                        <div class="mb-3">
+                            <label for="" class="form-label">Description</label>
+                            <input type="text" class="form-control" name="description" id="startingDate"
+                                placeholder="Enter Coupon Description" >
+                        </div>
+                        <div class="mb-3">
+                            <label for="" class="form-label">Availabilty</label>
+                            <input type="text" class="form-control" name="availability" id="EndingDate"
+                                placeholder="Enter Availabilty" value="">
+                        </div>
+                        <div class="mb-3">
+                            <label for="" class="form-label">Minimum Amount</label>
+                            <input type="text" class="form-control" name="minAmount" id="EndingDate"
+                                placeholder="Enter Minimum Amount" value="">
+                        </div>
+                        <div class="mb-3">
+                            <label for="" class="form-label">Discount Amount</label>
+                            <input type="text" class="form-control" name="dicountAmount" id="EndingDate"
+                                placeholder="Enter Discount Amount" value="">
+                        </div>
+                        <div class="mb-3">
+                            <label for="" class="form-label">Expiry Date</label>
+                            <input type="date" class="form-control" name="expiryDate" id="EndingDate"
+                                placeholder="" value="Enter Offer Percentage">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Coupon</button>
+                    </form>
 
-                                <% }) %>
-                                    <% }%>
-                                        <% }) %>
                 </div>
 
 
+                <!-- Button for Adding Category (if you prefer a button outside the form) -->
+                <!--
+                    <button type="button" class="btn btn-primary btn-sm mt-3">
+                        Add Category
+                    </button>
+                    -->
 
-
-
+                <div class="table-responsive">
+                    <!-- Your table or other content goes here -->
+                </div>
             </div>
         </div>
 
     </div>
     </div>
+    <!-- Table End -->
 
 
+    <!-- Footer Start -->
     <div class="container-fluid pt-4 px-4">
         <div class="bg-secondary rounded-top p-4">
             <div class="row">
