@@ -49,7 +49,7 @@ const loadShop = async (req, res) => {
   
       const totalItems = cartData ? cartData.items.length : 0;
   
-      const categoryId = req.query.category; // Get the selected category ID from the query parameter
+      const categoryId = req.query.category; 
   
       const category = await Category.find({ isListed: true }).populate('offer');
   
@@ -59,15 +59,19 @@ const loadShop = async (req, res) => {
       const skip = (currentPage - 1) * ITEMS_PER_PAGE;
   
       const totalProducts = await product.countDocuments({
-        category: categoryId ? categoryId : { $in: listedCategoryIds }, // Filter by the selected category if available
+        category: categoryId ? categoryId : { $in: listedCategoryIds }, 
         is_listed: true
       });
-  
+      const selectedCategoryName = req.query.category ? await Category.findById(req.query.category) : null;
+
+      const selectedCategory = req.query.category || null;
+
+      console.log(selectedCategory);
+
       const randomSeed = Math.floor(Math.random() * 10000);
   
       const products = await product.find({
-        category: categoryId ? categoryId : { $in: listedCategoryIds }, // Filter by the selected category if available
-        is_listed: true
+        category: categoryId ? categoryId : { $in: listedCategoryIds }, 
       })
         .skip(skip)
         .limit(ITEMS_PER_PAGE)
@@ -76,7 +80,8 @@ const loadShop = async (req, res) => {
   
       const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
   
-      res.render('shop', { category, products, user, currentPage, totalPages, totalItems });
+      res.render('shop', { category, products, user, currentPage, totalPages, totalItems, selectedCategory,selectedCategoryName });
+
     } catch (error) {
       console.error('Error loading shop:', error);
       res.status(500).render('error', { error: 'Internal Server Error' });

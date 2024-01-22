@@ -74,6 +74,10 @@
     .item-entry:hover .img-zoom {
       transform: scale(1.1);
     }
+    .selected-category {
+    font-weight: bold; /* or any other style you want to apply */
+    color: #ff0000; /* or any other color you prefer */
+}
   </style>
 </head>
 
@@ -178,9 +182,12 @@
             <div class="row align">
               <div class="col-md-12 mb-5">
                 <div class="float-md-left">
-                  <h2 class="text-black h5">Shop All</h2>
-                </div>
-                <div class="d-flex">
+                  <h2 class="text-black h5">
+                      <%= selectedCategory ? `Category: ${selectedCategoryName.name}` : 'Shop All' %>
+                  </h2>
+              </div>
+              
+                <!-- <div class="d-flex">
                   <div class="dropdown mr-1 ml-md-auto">
                     <button type="button" class="btn btn-white btn-sm dropdown-toggle px-4" id="dropdownMenuOffset"
                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -204,7 +211,7 @@
                       <a class="dropdown-item" href="#">Price, high to low</a>
                     </div>
                   </div>
-                </div>
+                </div> -->
               </div>
             </div>
 
@@ -266,59 +273,28 @@
             <div class="border p-4 rounded mb-4">
               <h3 class="mb-3 h6 text-uppercase text-black d-block">Categories</h3>
               <ul class="list-unstyled mb-0">
+              
                 <% category.forEach(category => { %>
-                  <li class="mb-1">
-                    <a href="/shop?category=<%= category._id %>" class="d-flex">
-                      <span>
-                        <%= category.name %>
-                      </span>
-                    </a>
-                  </li>
+                    <li class="mb-1">
+                        <a href="/shop?category=<%= category._id %>" class="d-flex <%= category._id.toString() === selectedCategory ? 'selected-category' : '' %>">
+                            <span>
+                                <%= category.name %>
+                            </span>
+                        </a>
+                    </li>
                 <% }); %>
-              </ul>
+            </ul>
+            
+            
               
             </div>
 
 
-            <div class="border p-4 rounded mb-4">
-              <div class="mb-4">
-                <h3 class="mb-3 h6 text-uppercase text-black d-block">Filter by Price</h3>
-                <div id="slider-range" class="border-primary"></div>
-                <input type="text" name="text" id="amount" class="form-control border-0 pl-0 bg-white" disabled="" />
-              </div>
+              
 
-              <div class="mb-4">
-                <h3 class="mb-3 h6 text-uppercase text-black d-block">Size</h3>
-                <label for="s_sm" class="d-flex">
-                  <input type="checkbox" id="s_sm" class="mr-2 mt-1"> <span class="text-black">Small (2,319)</span>
-                </label>
-                <label for="s_md" class="d-flex">
-                  <input type="checkbox" id="s_md" class="mr-2 mt-1"> <span class="text-black">Medium (1,282)</span>
-                </label>
-                <label for="s_lg" class="d-flex">
-                  <input type="checkbox" id="s_lg" class="mr-2 mt-1"> <span class="text-black">Large (1,392)</span>
-                </label>
-              </div>
+              
 
-              <div class="mb-4">
-                <h3 class="mb-3 h6 text-uppercase text-black d-block">Color</h3>
-                <a href="#" class="d-flex color-item align-items-center">
-                  <span class="bg-danger color d-inline-block rounded-circle mr-2"></span> <span class="text-black">Red
-                    (2,429)</span>
-                </a>
-                <a href="#" class="d-flex color-item align-items-center">
-                  <span class="bg-success color d-inline-block rounded-circle mr-2"></span> <span
-                    class="text-black">Green (2,298)</span>
-                </a>
-                <a href="#" class="d-flex color-item align-items-center">
-                  <span class="bg-info color d-inline-block rounded-circle mr-2"></span> <span class="text-black">Blue
-                    (1,075)</span>
-                </a>
-                <a href="#" class="d-flex color-item align-items-center">
-                  <span class="bg-primary color d-inline-block rounded-circle mr-2"></span> <span
-                    class="text-black">Purple (1,075)</span>
-                </a>
-              </div>
+              
 
             </div>
           </div>
@@ -497,7 +473,34 @@
       fetchAndDisplayProducts(1);
     });
   </script>
+<script>
+  // Assume products is an array of objects with 'price' property
+  const products = [
+    { price: 10 },
+    { price: 20 },
+    { price: 30 },
+    // ... add more products
+  ];
 
+  // Calculate the minimum and maximum prices
+  const minPrice = Math.min(...products.map(product => product.price));
+  const maxPrice = Math.max(...products.map(product => product.price));
+
+  // Initialize the slider
+  $(function () {
+    $("#slider-range").slider({
+      range: true,
+      min: minPrice,
+      max: maxPrice,
+      values: [minPrice, maxPrice],
+      slide: function (event, ui) {
+        $("#amount").val("$" + ui.values[0] + " - $" + ui.values[1]);
+      }
+    });
+    $("#amount").val("$" + $("#slider-range").slider("values", 0) +
+      " - $" + $("#slider-range").slider("values", 1));
+  });
+</script>
 
 
 </body>
