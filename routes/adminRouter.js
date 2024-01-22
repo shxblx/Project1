@@ -61,6 +61,9 @@ adminRouter.post('/productRemoveOffer',adminController.productRemoveOffer)
 adminRouter.get('/coupons',adminController.loadCoupon)
 adminRouter.get('/coupons/addCoupon',adminController.loadAddCoupon)
 adminRouter.post('/coupons/addCoupon',adminController.addCoupon)
+adminRouter.get('/coupons/editCoupon',adminController.loadEditCoupon)
+adminRouter.post('/coupons/editCoupon',adminController.editCoupon)
+adminRouter.post('/coupons/deleteCoupon', adminController.deleteCoupon);
 
 
 

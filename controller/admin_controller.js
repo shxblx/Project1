@@ -7,7 +7,8 @@ const bcrypt = require('bcrypt')
 const moment = require('moment')
 const order = require('../model/orderModel')
 const Offer = require('../model/offerModel')
-const cart=require('../model/cartModel')
+const cart = require('../model/cartModel')
+const coupon = require('../model/couponModel')
 
 
 const loadAdminSignin = async (req, res) => {
@@ -590,7 +591,7 @@ const loadProducts = async (req, res) => {
     try {
         const offer = await Offer.find({})
         const products = await product.find({}).populate('offer')
-        res.render('Admin/product', { products,offer });
+        res.render('Admin/product', { products, offer });
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
@@ -985,7 +986,7 @@ const productApplyOffer = async (req, res) => {
 }
 
 
-const productRemoveOffer=async(req,res)=>{
+const productRemoveOffer = async (req, res) => {
     try {
         const productId = req.body.productId;
         const offerId = req.body.offerId;
@@ -1001,27 +1002,121 @@ const productRemoveOffer=async(req,res)=>{
 
         res.status(200).json({ success: true, message: 'Offer remove to category successfully' });
     } catch (error) {
-        
+
     }
 }
 
-const loadCoupon=async(req,res)=>{
+const loadCoupon = async (req, res) => {
     try {
-        res.render('Admin/coupon')
+        const coupons = await coupon.find({})
+        res.render('Admin/coupon', { coupons })
     } catch (error) {
-        
+
     }
 }
 
-const loadAddCoupon=async(req,res)=>{
+const loadAddCoupon = async (req, res) => {
     try {
+        ;
         res.render('Admin/addCoupon')
     } catch (error) {
-        
+
     }
 }
 
+const addCoupon = async (req, res) => {
+    try {
+        const { couponName, couponCode, couponDescription, availability, minAmount, discountAmount, expiryDate } = req.body;
 
+        const existingCoupon = await coupon.findOne({ couponName: couponName.toUpperCase() });
+
+        if (existingCoupon) {
+            req.flash('message', 'Offer already exists');
+            return res.redirect('/admin/coupons/addCoupon');
+        }
+
+        const newCoupon = new coupon({
+            couponName: couponName.toUpperCase(),
+            couponCode,
+            discountAmount,
+            minAmount,
+            couponDescription,
+            Availability: availability,
+            expiryDate
+        });
+
+        await newCoupon.save();
+
+        res.redirect('/admin/coupons');
+    } catch (error) {
+        console.error('Error adding coupon:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+const loadEditCoupon = async (req, res) => {
+    try {
+        const couponId = req.query.id;
+        const couponData = await coupon.findOne({ _id: couponId });
+
+        if (!couponData) {
+            console.log('Coupon not found');
+            return res.status(404).send('Coupon not found');
+        }
+
+        console.log(couponData);
+        res.render('Admin/editCoupon', { coupons: couponData });
+    } catch (error) {
+        console.error('Error loading edit coupon:', error);
+        res.status(500).send('Internal server error');
+    }
+};
+
+const editCoupon = async (req, res) => {
+    try {
+        const couponId = req.query.id;
+        const { couponName, couponCode, couponDescription, availability, minAmount, discountAmount, expiryDate } = req.body;
+
+
+
+        const updatedCoupon = await coupon.findByIdAndUpdate(
+            couponId,
+            {
+                couponName: couponName.toUpperCase(),
+                couponCode,
+                discountAmount,
+                minAmount,
+                couponDescription,
+                Availability: availability,
+                expiryDate,
+            },
+            { new: true }
+        );
+
+        req.flash('message', 'Offer updated successfully');
+
+        res.redirect('/admin/coupons');
+    } catch (error) {
+        console.error('Error updating offer:', error);
+        req.flash('message', 'Error updating offer');
+        res.redirect('/500');
+    }
+};
+
+const deleteCoupon = async (req, res) => {
+    try {
+        const couponId = req.body.couponId;
+        console.log(couponId);
+        const Coupon = await coupon.findById(couponId);
+        if (!Coupon) {
+            return res.status(404).json({ success: false, message: 'Offer not found' });
+        }
+        await coupon.deleteOne({ _id: couponId })
+        res.json({ success: true })
+    } catch (error) {
+
+    }
+}
 
 module.exports = {
     loadAdmin,
@@ -1063,5 +1158,8 @@ module.exports = {
     productRemoveOffer,
     loadCoupon,
     loadAddCoupon,
-    addCoupon
+    addCoupon,
+    loadEditCoupon,
+    editCoupon,
+    deleteCoupon
 }
