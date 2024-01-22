@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt')
 const moment = require('moment')
 const order = require('../model/orderModel')
 const Offer = require('../model/offerModel')
+const cart=require('../model/cartModel')
 
 
 const loadAdminSignin = async (req, res) => {
@@ -697,17 +698,22 @@ const editProduct = async (req, res) => {
 const deleteProduct = async (req, res) => {
     try {
         const productId = req.body.productId;
-        console.log(productId);
+
         if (!productId) {
-            return res.status(404).json({ success: false, message: 'Category not found' });
+            return res.status(404).json({ success: false, message: 'Product not found' });
         }
-        await product.deleteOne({ _id: productId })
-        res.json({ success: true })
+
+        await product.deleteOne({ _id: productId });
+
+        await cart.updateMany({}, { $pull: { 'items': { 'product_id': productId } } });
+
+        res.json({ success: true });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
-}
+};
+
 
 const deleteImg = async (req, res) => {
     try {
@@ -900,21 +906,6 @@ const editOffer = async (req, res) => {
     }
 };
 
-const activateInactivateOffer = async (req, res) => {
-    try {
-        const offerId = req.body.offerId;
-        const offer = await Offer.findById(offerId);
-        if (!offer) {
-            return res.status(404).json({ success: false, message: 'offer not found' });
-        }
-        offer.status = !offer.status;
-        await offer.save();
-        res.json({ success: true, message: 'offer status updated successfully' });
-    } catch (error) {
-        res.redirect('/500')
-    }
-}
-
 const deleteOffer = async (req, res) => {
     try {
         const offerId = req.body.offerId;
@@ -1048,7 +1039,6 @@ module.exports = {
     addOffer,
     loadEditOffer,
     editOffer,
-    activateInactivateOffer,
     deleteOffer,
     categoryApplyOffer,
     categoryRemoveOffer,

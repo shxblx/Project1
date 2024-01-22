@@ -53,7 +53,6 @@ adminRouter.get('/offers/addOffer',adminController.loadAddOffer)
 adminRouter.post('/offers/addOffer',adminController.addOffer)
 adminRouter.get('/offers/editOffer',adminController.loadEditOffer)
 adminRouter.post('/offers/editOffer',adminController.editOffer)
-adminRouter.post('/activate-Inactivate', adminController.activateInactivateOffer);
 adminRouter.post('/offers/deleteOffer', adminController.deleteOffer);
 adminRouter.post('/categoryApplyOffer',adminController.categoryApplyOffer)
 adminRouter.post('/categoryRemoveOffer',adminController.categoryRemoveOffer)

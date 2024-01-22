@@ -312,10 +312,8 @@
                                     <th scope="col">Percentage</th>
                                     <th scope="col">Starting Date</th>
                                     <th scope="col">Ending Date</th>
-                                    <th scope="col">Status</th>
                                     <th scope="col">Edit</th>
                                     <th scope="col">Action</th>
-                                    <th scope="col"></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -339,34 +337,13 @@
                                                 <% } %>
                                             </td>
                                             <td>
-                                                <% if (offer[i].status) { %>
-                                                    <span class="badge bg-success">Active</span>
-                                                <% } else { %>
-                                                    <span class="badge bg-danger">Inactive</span>
-                                                <% } %>
-                                            </td>
-                                            <td>
                                                 <a href="offers/editOffer?offerId=<%= offer[i]._id %>">
                                                     <button type="button" class="btn btn-outline-warning btn-sm">
                                                         <i class="fa-solid fa-pen"></i>
                                                     </button>
                                                 </a>
                                             </td>
-                                            <td>
-                                                <form class="list-unlist-form">
-                                                    <% if (offer[i].status) { %>
-                                                        <button type="button" class="btn btn-danger btn-sm Activate-Inactivate-btn"
-                                                            data-offer-id="<%= offer[i]._id %>">
-                                                            Inactivate
-                                                        </button>
-                                                    <% } else { %>
-                                                        <button type="button" class="btn btn-success btn-sm Activate-Inactivate-btn"
-                                                            data-offer-id="<%= offer[i]._id %>">
-                                                            Activate
-                                                        </button>
-                                                    <% } %>
-                                                </form>
-                                            </td>
+                                            
                                             <td>
                                                 <button type="button" class="btn btn-outline-danger btn-sm delete-btn"
                                                     data-offer-id="<%= offer[i]._id %>">

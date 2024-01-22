@@ -15,7 +15,7 @@ var instance = new Razorpay({
 
 const loadCart = async (req, res) => {
     try {
-        const productData = await product.find();
+        const productData = await product.find({ is_listed: true });
         const user = await User.findOne({ _id: req.session.user_id });
         messages = req.flash('message');
         const { user_id } = req.session;
@@ -30,13 +30,15 @@ const loadCart = async (req, res) => {
             return res.render('cart', { cartData: { items: [] }, messages, user, productData, totalItems: 0 });
         }
 
-        const combinedData = cartData.items.map(cartItem => {
-            const productInfo = productData.find(product => product._id.toString() === cartItem.product_id._id.toString());
-            return { ...cartItem.toObject(), productInfo };
-        });
+        const combinedData = cartData.items
+            .filter(cartItem => cartItem.product_id.is_listed) // Filter out non-listed products
+            .map(cartItem => {
+                const productInfo = productData.find(product => product._id.toString() === cartItem.product_id._id.toString());
+                return { ...cartItem.toObject(), productInfo };
+            });
 
         // Get the size of the items array
-        const totalItems = cartData.items.length;
+        const totalItems = combinedData.length;
 
         // Pass the total items in the cart to the client side
         res.render('cart', { cartData: { items: combinedData }, messages, user, productData, totalItems });
@@ -45,6 +47,7 @@ const loadCart = async (req, res) => {
         res.status(500).json({ success: false, error: 'Internal Server Error c' });
     }
 };
+
 
 
 
@@ -190,23 +193,34 @@ const removeCart = async (req, res) => {
 
 const loadCheckout = async (req, res) => {
     try {
-        const user = await User.findOne({ _id: req.session.user_id });
         const { user_id } = req.session;
-        if (!user_id) {
-            res.redirect('login')
-        }
-        const userData = await User.findOne({ _id: user_id })
 
+        if (!user_id) {
+            return res.redirect('login');
+        }
+
+        const userData = await User.findOne({ _id: user_id });
         const cartData = await cart.findOne({ user_id }).populate('items.product_id');
+
         if (!cartData || !cartData.items || cartData.items.length === 0) {
             req.flash('message', 'Your cart is empty');
             return res.redirect('/cart');
         }
-        res.render('checkout', { cartData, userData, user })
+
+        const hasNonListedProducts = cartData.items.some(cartItem => !cartItem.product_id.is_listed);
+
+        if (hasNonListedProducts) {
+            req.flash('message', 'Some items in your cart are not listed.');
+            return res.redirect('/cart');
+        }
+
+        res.render('checkout', { cartData, userData });
     } catch (error) {
         console.log(error);
+        res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
-}
+};
+
 
 const addAddress = async (req, res) => {
     try {

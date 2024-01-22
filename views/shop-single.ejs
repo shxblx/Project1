@@ -16,7 +16,9 @@
   <link rel="stylesheet" href="css/jquery-ui.css">
   <link rel="stylesheet" href="css/owl.carousel.min.css">
   <link rel="stylesheet" href="css/owl.theme.default.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <link rel="stylesheet" href="css/aos.css">
 
@@ -43,7 +45,6 @@
   </style>
 
   <style>
-    
     :root {
       --primary-color: #ee4266;
       /* Define your custom primary color */
@@ -136,7 +137,9 @@
             <a href="#" class="icons-btn d-inline-block"><span class="icon-heart-o"></span></a>
             <a href="/cart" class="icons-btn d-inline-block bag">
               <span class="icon-shopping-bag"></span>
-              <span class="number"><%=totalItems%></span>
+              <span class="number">
+                <%=totalItems%>
+              </span>
             </a>
             <li class="icons-btn d-inline-block">
               <a href=""><span><i id="pro-icon" class="fa-solid fa-user"></i></span></a>
@@ -217,37 +220,59 @@
 
 
               <div class="col-md-3">
-                <!-- Your product details as you have them -->
                 <h2 class="text-black">
-                  <%= productsId[i].name %>
+                    <%= productsId[i].name %>
                 </h2>
                 <p>
-                  <%= productsId[i].description %>
+                    <%= productsId[i].description %>
                 </p>
-
-                <p style="color:black;"><strong class="text h4">₹<%= productsId[i].price %></strong></p>
+            
+                <% if (productsId[i].offer || (productsId[i].category && productsId[i].category.offer)) { %>
+                    <p style="color: black; font-weight: bold; font-size: large;">
+                        Offer Price: ₹<%= productsId[i].offer ? productsId[i].offerPrice : (productsId[i].category ?
+                            productsId[i].category.offerPrice : 0) %>
+                        <br>
+                        <del>Original Price: ₹<%= productsId[i].price %></del>
+                        <br>
+                        <span class="badge badge-success">Save ₹<%= (productsId[i].price - (productsId[i].offer ? productsId[i].offerPrice :
+                          (productsId[i].category ? productsId[i].category.offerPrice : 0))).toFixed(2) %></span> 
+                        <br>
+                    </p>
+                    Offer Applied: <%= productsId[i].offer ? productsId[i].offer.name : (productsId[i].category ?
+                            productsId[i].category.offer.name : '') %>
+                <% } else { %>
+                    <p style="color: black; font-weight: bold; font-size: large;">
+                        ₹<%= productsId[i].price %>
+                    </p>
+                <% } %>
+            
                 <div class="mb-5">
-                  <div class="input-group mb-3" style="max-width: 120px;">
-                      <div class="input-group-prepend">
-                          <button class="btn btn-outline-primary js-btn-minus" type="button" onclick="decreaseQuantity()">−</button>
-                      </div>
-                      <input id="quantityInput" data-quantity="<%= productsId[i].quantity %>" type="text"
-                          class="form-control text-center" value="1" placeholder="" aria-label="Example text with button addon"
-                          aria-describedby="button-addon1">
-                      <div class="input-group-append">
-                          <button class="btn btn-outline-primary js-btn-plus" type="button" onclick="increaseQuantity()">+</button>
-                      </div>
-                  </div>
-                  <p>Items Left: <%= productsId[i].quantity %></p>
-                  <p>
-                      <button class="buy-now btn btn-sm height-auto px-4 py-3 btn-primary" data-productId="<%= productsId[i]._id %>"
-                          id="addToCartBtn" onclick="addToCart(this)">
-                          Add To Cart
-                      </button>
-                      <a href="#" class="addToWishlist" data-productId="<%= productsId[i]._id %>" style="margin-left: 10px;"><i class="fa-regular fa-heart"></i>Add to Wishlist</a>
-                  </p>
-              </div>
-              </div>
+                    <div class="input-group mb-3" style="max-width: 120px;">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-primary js-btn-minus" type="button" onclick="decreaseQuantity()">−</button>
+                        </div>
+                        <input id="quantityInput" data-quantity="<%= productsId[i].quantity %>" type="text"
+                            class="form-control text-center" value="1" placeholder=""
+                            aria-label="Example text with button addon" aria-describedby="button-addon1">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-primary js-btn-plus" type="button" onclick="increaseQuantity()">+</button>
+                        </div>
+                    </div>
+                    <p>Items Left: <%= productsId[i].quantity %></p>
+                    <p>
+                        <button class="buy-now btn btn-sm height-auto px-4 py-3 btn-primary"
+                            data-productId="<%= productsId[i]._id %>" id="addToCartBtn" onclick="addToCart(this)">
+                            Add To Cart
+                        </button>
+                        <a href="#" class="addToWishlist" data-productId="<%= productsId[i]._id %>"
+                            style="margin-left: 10px;">
+                            <i class="fa-regular fa-heart"></i>Add to Wishlist
+                        </a>
+                    </p>
+                </div>
+            </div>
+            
+
 
             </div>
           </div>
@@ -367,51 +392,51 @@
 
   <script>
     function decreaseQuantity() {
-        const quantityInput = document.getElementById('quantityInput');
-        const addToCartButton = document.getElementById('addToCartBtn');
-        let currentQuantity = parseInt(quantityInput.value, 10);
+      const quantityInput = document.getElementById('quantityInput');
+      const addToCartButton = document.getElementById('addToCartBtn');
+      let currentQuantity = parseInt(quantityInput.value, 10);
 
-        
 
-        enableAddToCartButton();
 
-        enableIncreaseButton();
+      enableAddToCartButton();
+
+      enableIncreaseButton();
     }
 
     function increaseQuantity() {
-        const quantityInput = document.getElementById('quantityInput');
-        const addToCartButton = document.getElementById('addToCartBtn');
-        const increaseButton = document.querySelector('.js-btn-plus');
+      const quantityInput = document.getElementById('quantityInput');
+      const addToCartButton = document.getElementById('addToCartBtn');
+      const increaseButton = document.querySelector('.js-btn-plus');
 
-        let currentQuantity = parseInt(quantityInput.value, 10);
-        let maxQuantity = parseInt(quantityInput.getAttribute('data-quantity'), 10);
+      let currentQuantity = parseInt(quantityInput.value, 10);
+      let maxQuantity = parseInt(quantityInput.getAttribute('data-quantity'), 10);
 
-        if (currentQuantity < maxQuantity) {
-            enableAddToCartButton();
-        } else {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Item Limit Exceeded',
-                text: 'You cannot add more items than available',
-                confirmButtonText: 'OK',
-            });
+      if (currentQuantity < maxQuantity) {
+        enableAddToCartButton();
+      } else {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Item Limit Exceeded',
+          text: 'You cannot add more items than available',
+          confirmButtonText: 'OK',
+        });
 
-            addToCartButton.disabled = true;
-        }
+        addToCartButton.disabled = true;
+      }
 
-        if (currentQuantity === maxQuantity) {
-            increaseButton.disabled = true;
-        }
+      if (currentQuantity === maxQuantity) {
+        increaseButton.disabled = true;
+      }
     }
 
     function enableAddToCartButton() {
-        const addToCartButton = document.getElementById('addToCartBtn');
-        addToCartButton.disabled = false;
+      const addToCartButton = document.getElementById('addToCartBtn');
+      addToCartButton.disabled = false;
     }
 
     function enableIncreaseButton() {
-        const increaseButton = document.querySelector('.js-btn-plus');
-        increaseButton.disabled = false;
+      const increaseButton = document.querySelector('.js-btn-plus');
+      increaseButton.disabled = false;
     }
 
 
@@ -445,28 +470,28 @@
               confirmButtonText: 'Go to Cart',
               cancelButtonText: 'Continue Shopping',
             })
-            .then((result) => {
-              if (result.isConfirmed) {
-                window.location.href = '/cart';
-              } else {
-                location.reload()
-              }
-            });
+              .then((result) => {
+                if (result.isConfirmed) {
+                  window.location.href = '/cart';
+                } else {
+                  location.reload()
+                }
+              });
           }
-         else if(result.outOfStock){
-          Swal.fire({
+          else if (result.outOfStock) {
+            Swal.fire({
               icon: 'error',
               title: 'Cannot Add Product!',
               text: 'Product Out of Stock',
             });
 
-         } else if(result.zeroQuantity){
-          Swal.fire({
+          } else if (result.zeroQuantity) {
+            Swal.fire({
               icon: 'error',
               title: 'Cannot Add Product!',
               text: 'Give some Quantity',
             });
-         } else {
+          } else {
             Swal.fire({
               icon: 'error',
               title: 'Error!',
@@ -474,7 +499,7 @@
             });
           }
         })
-      
+
         .catch(error => {
           console.error('Error:', error);
           Swal.fire({
@@ -540,41 +565,41 @@
     </script>
     <% } %>
 
-    
 
-    <script>
-      const addToWishlistButtons = document.querySelectorAll('.addToWishlist');
-    
-      addToWishlistButtons.forEach(button => {
-        button.addEventListener('click', async function(event) {
-          event.preventDefault();
-    
-          const productId = button.getAttribute('data-productId');
-    
-          try {
-            const response = await fetch('/addWishlist', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                productId: productId,
-              }),
-            });
-    
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
+
+      <script>
+        const addToWishlistButtons = document.querySelectorAll('.addToWishlist');
+
+        addToWishlistButtons.forEach(button => {
+          button.addEventListener('click', async function (event) {
+            event.preventDefault();
+
+            const productId = button.getAttribute('data-productId');
+
+            try {
+              const response = await fetch('/addWishlist', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  productId: productId,
+                }),
+              });
+
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+
+              const responseData = await response.json();
+
+              console.log(responseData);
+            } catch (error) {
+              console.error('Error adding to wishlist:', error);
             }
-    
-            const responseData = await response.json();
-    
-            console.log(responseData);
-          } catch (error) {
-            console.error('Error adding to wishlist:', error);
-          }
+          });
         });
-      });
-    </script>
+      </script>
 
 
 </body>

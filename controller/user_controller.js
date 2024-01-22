@@ -14,7 +14,6 @@ const loadHome = async (req, res) => {
     try {
         const user = req.session.user_id ? await User.findOne({ _id: req.session.user_id }) : null;
 
-
         const cartData = await cart.aggregate([
             {
                 $match: {
@@ -22,8 +21,25 @@ const loadHome = async (req, res) => {
                 },
             },
             {
-                $project: {
-                    itemCount: { $size: '$items' },
+                $lookup: {
+                    from: 'products', // Assuming your product collection is named 'products'
+                    localField: 'items.product_id',
+                    foreignField: '_id',
+                    as: 'productDetails',
+                },
+            },
+            {
+                $unwind: '$productDetails',
+            },
+            {
+                $match: {
+                    'productDetails.is_listed': true,
+                },
+            },
+            {
+                $group: {
+                    _id: null,
+                    itemCount: { $sum: 1 },
                 },
             },
         ]);
@@ -33,9 +49,10 @@ const loadHome = async (req, res) => {
         res.render('index', { user, itemCount });
     } catch (error) {
         console.error('Error:', error);
-        res.redirect('/500')
+        res.redirect('/500');
     }
 };
+
 
 
 const ITEMS_PER_PAGE = 9;
@@ -43,51 +60,110 @@ const ITEMS_PER_PAGE = 9;
 
 const loadShop = async (req, res) => {
     try {
-      const user = req.session.user_id ? await User.findOne({ _id: req.session.user_id }) : null;
-  
-      const cartData = user ? await cart.findOne({ user_id: user._id }) : null;
-  
-      const totalItems = cartData ? cartData.items.length : 0;
-  
-      const categoryId = req.query.category; 
-  
-      const category = await Category.find({ isListed: true }).populate('offer');
-  
-      const listedCategoryIds = category.map(category => category._id);
-      const currentPage = parseInt(req.query.page) || 1;
-  
-      const skip = (currentPage - 1) * ITEMS_PER_PAGE;
-  
-      const totalProducts = await product.countDocuments({
-        category: categoryId ? categoryId : { $in: listedCategoryIds }, 
-        is_listed: true
-      });
-      const selectedCategoryName = req.query.category ? await Category.findById(req.query.category) : null;
+        const user = req.session.user_id ? await User.findOne({ _id: req.session.user_id }) : null;
 
-      const selectedCategory = req.query.category || null;
+        const cartData = await cart.aggregate([
+            {
+                $match: {
+                    user_id: user ? user._id : null,
+                },
+            },
+            {
+                $lookup: {
+                    from: 'products', // Assuming your product collection is named 'products'
+                    localField: 'items.product_id',
+                    foreignField: '_id',
+                    as: 'productDetails',
+                },
+            },
+            {
+                $unwind: '$productDetails',
+            },
+            {
+                $match: {
+                    'productDetails.is_listed': true,
+                },
+            },
+            {
+                $group: {
+                    _id: null,
+                    itemCount: { $sum: 1 },
+                },
+            },
+        ]);
 
-      console.log(selectedCategory);
+        const totalItems = cartData.length > 0 ? cartData[0].itemCount : 0;
 
-      const randomSeed = Math.floor(Math.random() * 10000);
-  
-      const products = await product.find({
-        category: categoryId ? categoryId : { $in: listedCategoryIds }, 
-      })
-        .skip(skip)
-        .limit(ITEMS_PER_PAGE)
-        .sort({ randomSeed: 1 })
-        .populate("offer");
-  
-      const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
-  
-      res.render('shop', { category, products, user, currentPage, totalPages, totalItems, selectedCategory,selectedCategoryName });
+        const categoryId = req.query.category;
+
+        const category = await Category.find({ isListed: true }).populate('offer');
+
+        const listedCategoryIds = category.map(category => category._id);
+        const currentPage = parseInt(req.query.page) || 1;
+
+        const skip = (currentPage - 1) * ITEMS_PER_PAGE;
+
+        const totalProducts = await product.countDocuments({
+            category: categoryId ? categoryId : { $in: listedCategoryIds },
+            is_listed: true
+        });
+
+        const selectedCategoryName = req.query.category ? await Category.findById(req.query.category) : null;
+
+        const selectedCategory = req.query.category || null;
+
+        const randomSeed = Math.floor(Math.random() * 10000);
+
+        const products = await product.find({
+            category: categoryId ? categoryId : { $in: listedCategoryIds },
+        })
+            .skip(skip)
+            .limit(ITEMS_PER_PAGE)
+            .sort({ randomSeed: 1 })
+            .populate({
+                path: "offer",
+                match: {
+                    startingDate: { $lte: new Date() },
+                    expiryDate: { $gte: new Date() },
+                },
+            })
+            .populate({
+                path: "category",
+                populate: {
+                    path: "offer",
+                    match: {
+                        startingDate: { $lte: new Date() },
+                        expiryDate: { $gte: new Date() },
+                    },
+                },
+            });
+
+        const updatedProducts = products.map((product) => {
+            let discount = 0;
+
+            if (product.offer && product.offer.percentage) {
+                discount = (product.price * product.offer.percentage) / 100;
+            } else if (product.category && product.category.offer && product.category.offer.percentage) {
+                discount = (product.price * product.category.offer.percentage) / 100;
+            }
+            return {
+                ...product.toObject(),
+                offerDiscount: discount,
+                discountedPrice: product.price - discount,
+            };
+        });
+
+        const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
+
+        res.render('shop', { category, products: updatedProducts, user, currentPage, totalPages, totalItems, selectedCategory, selectedCategoryName });
 
     } catch (error) {
-      console.error('Error loading shop:', error);
-      res.status(500).render('error', { error: 'Internal Server Error' });
+        console.error('Error loading shop:', error);
+        res.status(500).render('error', { error: 'Internal Server Error' });
     }
-  };
-  
+};
+
+
 
 
 
@@ -120,14 +196,48 @@ const loadSingleshop = async (req, res) => {
         const totalItems = cartData ? cartData.items.length : 0;
 
         const products = req.query.id;
-        const productsId = await product.find({ _id: products });
+        const productsId = await product
+            .find({ _id: products })
+            .populate({
+                path: "offer",
+                match: {
+                    startingDate: { $lte: new Date() },
+                    expiryDate: { $gte: new Date() },
+                },
+            })
+            .populate({
+                path: "category",
+                populate: {
+                    path: "offer",
+                    match: {
+                        startingDate: { $lte: new Date() },
+                        expiryDate: { $gte: new Date() },
+                    },
+                },
+            });
 
-        res.render('shop-single', { productsId, user, totalItems });
+        // Calculate offer details
+        productsId.forEach((product) => {
+            if (product.offer) {
+                product.offerPrice = product.price - product.price * (product.offer.percentage / 100);
+            }
+
+            if (product.category && product.category.offer) {
+                // Calculate category offer price
+                product.category.offerPrice = product.price - product.price * (product.category.offer.percentage / 100);
+            }
+        });
+
+        console.log(productsId);
+
+        res.render("shop-single", { productsId, user, totalItems });
     } catch (error) {
-        console.error('Error loading single shop:', error);
-        res.status(500).json({ success: false, error: 'Internal Server Error' });
+        console.error("Error loading single shop:", error);
+        res.status(500).json({ success: false, error: "Internal Server Error" });
     }
 };
+
+
 
 const loadLogin = async (req, res) => {
     try {
@@ -695,11 +805,11 @@ const editAddress = async (req, res) => {
     }
 };
 
-const load500=async(req,res)=>{
+const load500 = async (req, res) => {
     try {
         res.render('500')
     } catch (error) {
-        
+
     }
 }
 
