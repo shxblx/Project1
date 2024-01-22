@@ -421,7 +421,7 @@ const placeOrder = async (req, res) => {
             for (let i = 0; i < productIds.length; i++) {
                 const productId = productIds[i];
                 const quantityToDecrease = productQ[i];
-
+            
                 await product.updateOne(
                     { "_id": productId },
                     { $inc: { "quantity": -quantityToDecrease } }
