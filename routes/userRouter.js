@@ -43,6 +43,7 @@ userRouter.get('/editAddress',auth.checkBlocked,userController.loadEditAddress)
 userRouter.post('/editAddress',userController.editAddress)
 userRouter.post('/updateQuantity',cartController.updateQuantity)
 userRouter.get('/500',userController.load500)
+userRouter.post('/applyCoupon',cartController.applyCoupon)
 
 
 

@@ -258,115 +258,177 @@
           </div>
         </div>
         <div class="col-md-6">
-
           <div class="row mb-5">
             <div class="col-md-12">
-              <h2 class="h3 mb-3 text-black">Coupon Code</h2>
-              <div class="p-3 p-lg-5 border">
-
+                <h2 class="h3 mb-3 text-black">Coupon Code</h2>
                 <label for="c_code" class="text-black mb-3">Enter your coupon code if you have one</label>
-                <div class="input-group w-75">
-                  <input type="text" class="form-control" id="c_code" placeholder="Coupon Code" aria-label="Coupon Code"
-                    aria-describedby="button-addon2">
-                  <div class="input-group-append">
-                    <button class="btn btn-primary btn-sm px-4" type="button" id="button-addon2">Apply</button>
-
-                  </div>
+                <div class="input-group w-100">
+                    <input type="text" class="form-control" id="c_code" placeholder="Coupon Code" aria-label="Coupon Code" aria-describedby="button-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary btn-sm px-4" type="button" id="applyButton">Apply</button>
+                        <!-- Add a button to open the modal -->
+                        <button class="btn btn-primary btn-sm ml-2" data-toggle="modal" data-target="#couponModal">
+                            View Coupon Details
+                        </button>
+                    </div>
                 </div>
-
-              </div>
+                <% if (messages.length > 0) { %>
+                <div style="color: red; text-align: center;">
+                    <%= messages[0] %>
+                </div>
+                <% } %>
+        
+                <% if (appliedCoupon && !appliedCoupon.userUsed.used) { %>
+                <div style="color: green; text-align: center; margin-top: 10px;">
+                    Applied Coupon: <%= appliedCoupon.couponCode %>
+                </div>
+                <% } %>
             </div>
-          </div>
+        </div>
+        
 
-          <div class="row mb-5">
-            <div class="col-md-12">
+    
+
+        <!-- Your Order Section -->
+        <div class="row mb-5">
+          <div class="col-md-12">
               <h2 class="h3 mb-3 text-black">Your Order</h2>
               <div class="p-3 p-lg-5 border">
-                <table class="table site-block-order-table mb-5">
-                  <thead>
-                    <th>Product</th>
-                    <th>Total</th>
-                  </thead>
-                  <tbody>
-                    <% cartData.items.forEach(item => { %>
-                        <tr>
-                            <td>
-                                <%= item.product_id.name %> <strong class="mx-2">x</strong> "<%= item.quantity %>"
-                                <input class="productId" hidden value="<%= item.product_id._id %>">
-                            </td>
-                            <td>
-                                <% if (item.offerPrice && item.offerDiscount) { %>
-                                    <p style="color: black; font-weight: bold; font-size: large;">
-                                        ₹<%= item.offerPrice %>
-                                        <br>
-                                        <del>₹<%= (item.product_id.price * item.quantity).toFixed(2) %></del>
-                                        <br>
-                                    </p>
-                                <% } else { %>
-                                    <p style="color: black; font-weight: bold; font-size: large;">
-                                        ₹<%= item.total_price %>
-                                    </p>
-                                <% } %>
-                            </td>
-                        </tr>
+                  <table class="table site-block-order-table mb-5">
+                <thead>
+                  <th>Product</th>
+                  <th>Total</th>
+                </thead>
+                <tbody>
+                  <% cartData.items.forEach(item=> { %>
+                    <tr>
+                      <td>
+                        <%= item.product_id.name %> <strong class="mx-2">x</strong> "<%= item.quantity %>"
+                            <input class="productId" hidden value="<%= item.product_id._id %>">
+                      </td>
+                      <td>
+                        <% if (item.offerPrice && item.offerDiscount) { %>
+                          <p style="color: black; font-weight: bold; font-size: large;">
+                            ₹<%= item.offerPrice %>
+                              <br>
+                              <del>₹<%= (item.product_id.price * item.quantity).toFixed(2) %></del>
+                              <br>
+                          </p>
+                          <% } else { %>
+                            <p style="color: black; font-weight: bold; font-size: large;">
+                              ₹<%= item.total_price %>
+                            </p>
+                            <% } %>
+                      </td>
+                    </tr>
                     <% }); %>
-                    <tr>
+                      <tr>
                         <td class="text-black font-weight-bold"><strong>Cart Subtotal</strong></td>
-                        <td class="text-black font-weight-bold"><del>₹<%= cartData.items.reduce((total, item) => total + parseFloat(item.total_price), 0).toFixed(2) %></del></td>
-                    </tr>
-                    <tr>
+                        <td class="text-black font-weight-bold"><del>₹<%= cartData.items.reduce((total, item)=> total
+                              + parseFloat(item.total_price), 0).toFixed(2) %></del></td>
+                      </tr>
+                      <tr>
                         <td class="text-black font-weight-bold"><strong>Order Total</strong></td>
-                        <td class="text-black font-weight-bold">
-                            <strong>₹<%= cartData.items.reduce((total, item) => total + parseFloat(item.offerPrice), 0).toFixed(2) %></strong>
+                        <td class="text-black font-weight-bold" >
+                          <strong>₹<%= cartData.items.reduce((total, item)=> total + parseFloat(item.offerPrice),
+                              0).toFixed(2) %></strong>
+
+                              <input type="hidden" value="<%= cartData.items.reduce((total, item)=> total + parseFloat(item.offerPrice),
+                              0).toFixed(2) %>" id="totalAmount">
                         </td>
-                    </tr>
+                      </tr>
                 </tbody>
-                
-                
-                </table>
 
-                <div class="border p-3 mb-3">
-                  <h3 class="h6 mb-0">
-                    <a class="d-block" data-toggle="collapse" href="#collapsebank" role="button" aria-expanded="false"
-                      aria-controls="collapsebank">Payment Methods</a>
-                  </h3>
 
-                  <div class="collapse" id="collapsebank">
-                    <div class="py-2">
-                      <label>
-                        <input type="radio" name="paymentMethod" value="COD"> Cash on Delivery
-                      </label>
-                    </div>
+              </table>
 
-                    <div class="py-2">
-                      <label>
-                        <input type="radio" name="paymentMethod" value="RazorPay"> RazorPay
-                      </label>
-                    </div>
+              <div class="border p-3 mb-3">
+                <h3 class="h6 mb-0">
+                  <a class="d-block" data-toggle="collapse" href="#collapsebank" role="button" aria-expanded="false"
+                    aria-controls="collapsebank">Payment Methods</a>
+                </h3>
 
-                    <div class="py-2">
-                      <label>
-                        <input type="radio" name="paymentMethod" value="Wallet"> Wallet
-                      </label>
-                    </div>
+                <div class="collapse" id="collapsebank">
+                  <div class="py-2">
+                    <label>
+                      <input type="radio" name="paymentMethod" value="COD"> Cash on Delivery
+                    </label>
+                  </div>
+
+                  <div class="py-2">
+                    <label>
+                      <input type="radio" name="paymentMethod" value="RazorPay"> RazorPay
+                    </label>
+                  </div>
+
+                  <div class="py-2">
+                    <label>
+                      <input type="radio" name="paymentMethod" value="Wallet"> Wallet
+                    </label>
                   </div>
                 </div>
+              </div>
 
 
 
-                <div class="form-group">
-                  <button id="placeOrder" class="btn btn-primary btn-lg btn-block">Place Order</button>
+              <div class="form-group">
+                <button id="placeOrder" class="btn btn-primary btn-lg btn-block">Place Order</button>
 
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- </form> -->
+
+    <div class="modal fade" id="couponModal" tabindex="-1" role="dialog" aria-labelledby="offerModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content bg-light text-white">
+                <div class="modal-header">
+                  <h5 class="modal-title" style="color: #ee4866;" id="offerModalLabel">Select a Coupon</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
                 </div>
+                <div class="modal-body">
+                  <!-- Display a list of available offers for all categories -->
+                  <ul class="list-group">
+                    <% if (coupons.length> 0) { %>
+                      <% coupons.forEach(function (coupon) { %>
+                        <li style="color: #000000; background-color: #ffffff;"
+                          class="list-group-item d-flex justify-content-between align-items-center">
+                          <div>
+                            <strong>Name:</strong>
+                            <%= coupon.couponName %><br>
+                              <strong>couponCode:</strong>
+                              <%= coupon.couponCode %>%<br>
+                                <strong>Discount Amount:</strong>
+                                <%= coupon.discountAmount %><br>
+                                  <strong>Minimum Amount:</strong>
+                                  <%= coupon.minAmount %>
+                          </div>
+                          <button type="button" class="btn btn-success btn-sm applyOrderButton"
+                            data-coupon-name="<%= coupon.couponCode%>">
+                            Apply Offer
+                          </button>
 
+                        </li>
+                        <% }); %>
+                          <% } else { %>
+                            <li class="list-group-item">No offers available</li>
+                            <% } %>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
-
         </div>
-      </div>
-      <!-- </form> -->
-    </div>
+
+  </div>
   </div>
 
   <footer class="site-footer custom-border-top">
@@ -634,7 +696,7 @@
           verifyPayment(response, order)
         },
         "prefill": {
-          "name": name, 
+          "name": name,
           "email": "groovestyle@example.com",
           "contact": "9000090000"
         },
@@ -650,38 +712,99 @@
     }
 
     function verifyPayment(payment, order) {
-    console.log('verifyPAyment::', payment, order);
+      console.log('verifyPAyment::', payment, order);
 
-    // Show the loading modal before making the AJAX request
-   
+      // Show the loading modal before making the AJAX request
 
-    $.ajax({
+
+      $.ajax({
         url: '/verify-payment',
         method: 'post',
         data: {
-            payment,
-            order
+          payment,
+          order
         },
         success: (response) => {
-            if (response.success == true) {
-              $('#loadingModal').modal('show');
-                const param = response.params;
-                setTimeout(() => {
-                    window.location.href = '/orderPlaced/' + param;
-                }, 3200);
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Payment has failed',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            }
+          if (response.success == true) {
+            $('#loadingModal').modal('show');
+            const param = response.params;
+            setTimeout(() => {
+              window.location.href = '/orderPlaced/' + param;
+            }, 3200);
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Payment has failed',
+              showConfirmButton: false,
+              timer: 1500
+            });
+          }
         }
-    });
-}
+      });
+    }
 
   </script>
+
+<script>
+  document.getElementById('applyButton').addEventListener('click', applyCoupon);
+
+  const applyOrderButtons = document.querySelectorAll('.applyOrderButton');
+  applyOrderButtons.forEach(button => {
+      button.addEventListener('click', applyOrder);
+  });
+
+  function applyCoupon() {
+      const couponCode = document.getElementById('c_code').value;
+      const totalAmount=document.getElementById("totalAmount").value
+
+      console.log("here"+totalAmount);
+
+      fetch('/applyCoupon', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ couponCode,totalAmount }),
+      })
+          .then(response => response.json())
+          .then(data => {
+              console.log(data);
+              if (!data.success) {
+                  window.location.reload();
+              }else{
+                window.location.reload()
+              }
+          })
+          .catch(error => {
+              console.error('Error:', error);
+          });
+  }
+
+  function applyOrder() {
+      const couponCode = this.dataset.couponName;
+      console.log(couponCode);
+      fetch('/applyCoupon', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ couponCode }),
+      })
+          .then(response => response.json())
+          .then(data => {
+              console.log(data);
+              if (!data.success) {
+                  window.location.reload();
+              }else{
+                window.location.reload()
+              }
+          })
+          .catch(error => {
+              console.error('Error:', error);
+          });
+  }
+</script>
+
 
 
 

@@ -38,6 +38,10 @@ const couponSchema = new mongoose.Schema(
           type: mongoose.Types.ObjectId,
           ref: "User",
         },
+        used:{
+          type:Boolean,
+          default:false
+        }
       },
     ],
   },

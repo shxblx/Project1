@@ -4,6 +4,7 @@ const cart = require('../model/cartModel')
 const Order = require('../model/orderModel')
 const moment = require('moment')
 const { loadLogin } = require('./user_controller')
+const coupon = require("../model/couponModel")
 
 
 const Razorpay = require('razorpay');
@@ -17,7 +18,7 @@ const loadCart = async (req, res) => {
     try {
         const productData = await product.find({ is_listed: true });
         const user = await User.findOne({ _id: req.session.user_id });
-        messages = req.flash('message');
+        const messages = req.flash('message');
         const { user_id } = req.session;
 
         if (!user_id) {
@@ -226,10 +227,18 @@ const removeCart = async (req, res) => {
 const loadCheckout = async (req, res) => {
     try {
         const { user_id } = req.session;
+        const messages = req.flash('message');
 
         if (!user_id) {
             return res.redirect('login');
         }
+
+        const coupons = await coupon.find({
+            $and: [
+                { 'userUsed.user_id': { $ne: user_id } },
+                { 'userUsed.used': { $ne: true } },
+            ],
+        });
 
         const userData = await User.findOne({ _id: user_id });
         const cartData = await cart.findOne({ user_id }).populate({
@@ -269,17 +278,20 @@ const loadCheckout = async (req, res) => {
                 cartItem.offerPrice = offerPrice.toFixed(2);
                 cartItem.offerDiscount = offerDiscount.toFixed(2);
             } else {
-                cartItem.offerPrice = cartItem.quantity * cartItem.product_id.price.toFixed(2);
+                cartItem.offerPrice = (cartItem.quantity * cartItem.product_id.price).toFixed(2);
                 cartItem.offerDiscount = '0.00';
             }
         });
 
-        res.render('checkout', { cartData, userData });
+        const appliedCoupon = await coupon.findOne({ 'userUsed.user_id': user_id, 'userUsed.used': false });
+
+        res.render('checkout', { cartData, userData, coupons, messages, appliedCoupon });
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
 };
+
 
 
 
@@ -383,7 +395,7 @@ const placeOrder = async (req, res) => {
         }
 
         const cartProducts = cartData.items;
-        const productIds = cartProducts.map(item => item.product_id._id.toString());  
+        const productIds = cartProducts.map(item => item.product_id._id.toString());
         const productQ = cartProducts.map(item => parseInt(item.quantity, 10));
 
         const status = paymentMethod === 'COD' ? 'placed' : 'pending';
@@ -399,7 +411,7 @@ const placeOrder = async (req, res) => {
         const orderItems = cartData.items.map(cartItem => ({
             ...cartItem.toObject(),
             totalPrice: cartItem.offerPrice,
-            price: cartItem.product_id.price, 
+            price: cartItem.product_id.price,
         }));
 
         const orderData = new Order({
@@ -423,7 +435,7 @@ const placeOrder = async (req, res) => {
             for (let i = 0; i < productIds.length; i++) {
                 const productId = productIds[i];
                 const quantityToDecrease = productQ[i];
-            
+
                 await product.updateOne(
                     { "_id": productId },
                     { $inc: { "quantity": -quantityToDecrease } }
@@ -520,6 +532,71 @@ const orderPlaced = async (req, res) => {
     }
 }
 
+const applyCoupon = async (req, res) => {
+    try {
+        const couponCode = req.body.couponCode;
+        const userId = req.session.user_id;
+        const totalAmount = req.body.totalAmount;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.json({ success: false, message: 'User not found' });
+        }
+
+        const appliedCoupon = user.appliedCoupon;
+
+        if (appliedCoupon) {
+            req.flash('message', 'You have already applied a coupon. Remove it to apply a new one.');
+            return res.json({ success: false, message: 'You have already applied a coupon. Remove it to apply a new one.' });
+        }
+
+        const Coupon = await coupon.findOne({ couponCode });
+
+        if (!Coupon) {
+            req.flash('message', 'Coupon not found');
+            return res.json({ success: false, message: 'Coupon not found' });
+        }
+
+        if (Coupon.expiryDate && Coupon.expiryDate < Date.now()) {
+            req.flash('message', 'Coupon has expired');
+            return res.json({ success: false, message: 'Coupon has expired' });
+        }
+
+        if (totalAmount < Coupon.minAmount) {
+            req.flash('message', 'Total amount is lower than the minimum required for the coupon');
+            return res.json({ success: false, message: 'Total amount is lower than the minimum required for the coupon' });
+        }
+
+        if (Coupon.userUsed.some(used => used.user_id.equals(userId))) {
+            req.flash('message', 'Coupon already used by the user');
+            return res.json({ success: false, message: 'Coupon already applied' });
+        }
+
+        if (Coupon.Availability !== undefined && Coupon.Availability > 0) {
+            Coupon.Availability -= 1;
+        }
+
+        Coupon.userUsed.push({ user_id: userId });
+
+        user.appliedCoupon = Coupon;
+        await user.save();
+        await Coupon.save();
+
+        req.flash('message', 'Coupon applied successfully');
+        return res.json({ success: true, message: 'Coupon applied successfully' });
+    } catch (error) {
+        console.error('Error applying coupon:', error);
+        req.flash('error', 'Server error');
+        return res.json({ success: false, message: 'Server error' });
+    }
+};
+
+
+
+
+
+
+
 
 module.exports = {
     loadCart,
@@ -530,5 +607,6 @@ module.exports = {
     orderPlaced,
     removeCart,
     verifyPayment,
-    updateQuantity
+    updateQuantity,
+    applyCoupon
 }
