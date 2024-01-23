@@ -569,13 +569,14 @@
 
       <script>
         const addToWishlistButtons = document.querySelectorAll('.addToWishlist');
+        
 
         addToWishlistButtons.forEach(button => {
           button.addEventListener('click', async function (event) {
             event.preventDefault();
 
             const productId = button.getAttribute('data-productId');
-
+            console.log(productId);
             try {
               const response = await fetch('/addWishlist', {
                 method: 'POST',

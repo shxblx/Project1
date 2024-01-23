@@ -373,7 +373,19 @@ const placeOrder = async (req, res) => {
             }
         });
 
-        const totalPrice = cartData.items.reduce((total, item) => total + parseFloat(item.offerPrice), 0).toFixed(2);
+        let totalPrice = cartData.items.reduce((total, item) => total + parseFloat(item.offerPrice), 0).toFixed(2);
+
+        
+        if(req.session.coupon_applied){
+            const Coupon = req.session.coupon
+            const couponDiscount = Coupon.discountAmount
+            totalPrice=totalPrice-couponDiscount
+            await coupon.updateOne(
+                { "userUsed.user_id": user_id, "userUsed.used": false },
+                { $set: { "userUsed.$.used": true } }
+            );
+        }
+
 
         const userData = await User.findById(user_id);
 
@@ -419,7 +431,7 @@ const placeOrder = async (req, res) => {
             order_id: generateRandomOrderId(),
             delivery_address: address,
             user_name: userData.username,
-            total_amount: totalPrice,
+            total_amount: Math.round(totalPrice),
             date: Date.now(),
             expected_delivery: deliveryDate,
             payment: paymentMethod,
@@ -576,8 +588,11 @@ const applyCoupon = async (req, res) => {
             Coupon.Availability -= 1;
         }
 
-        Coupon.userUsed.push({ user_id: userId });
+        const CouponData=await coupon.find({})
 
+        Coupon.userUsed.push({ user_id: userId });
+        req.session.coupon_applied=true;
+        req.session.coupon=Coupon
         user.appliedCoupon = Coupon;
         await user.save();
         await Coupon.save();

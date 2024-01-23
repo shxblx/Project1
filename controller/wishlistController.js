@@ -72,7 +72,33 @@ const addWishlist = async (req, res) => {
     }
 };
 
+const removeWishlist = async (req, res) => {
+  try {
+    const userId = req.session.user_id;
+
+    console.log(userId);
+
+    const productIdToRemove = req.body.wishlistItemId;
+
+    console.log(productIdToRemove);
+
+    const updatedUser = await User.updateOne(
+      { _id: userId },
+      { $pull: { wishlist: { _id: productIdToRemove } } },
+      { new: true }
+    );
+
+    res.json({ message: 'Product removed from wishlist', updatedWishlist: updatedUser.wishlist });
+  } catch (error) {
+    console.error('Error removing product from wishlist:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+
+
 module.exports = {
     loadWishlist,
-    addWishlist
+    addWishlist,
+    removeWishlist
 };

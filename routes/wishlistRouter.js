@@ -10,4 +10,6 @@ wishlistRoute.get('/wishlist',auth.isLogin,wishlistController.loadWishlist);
 
 wishlistRoute.post('/addWishlist',auth.isLogin,wishlistController.addWishlist)
 
+wishlistRoute.post('/removeWishlist',auth.isLogin,wishlistController.removeWishlist)
+
 module.exports = wishlistRoute;

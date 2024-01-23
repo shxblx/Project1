@@ -531,16 +531,24 @@ const editCategory = async (req, res) => {
         const catId = req.query.categId;
         const { catName, catDes } = req.body;
         const existingCategory = await Category.findOne({ name: catName.toUpperCase() });
-        console.log(existingCategory);
+        const existingProduct = await product.findOne({ category: catId }); // Assuming there is a Product model associated with categories
 
         if (!catName) {
             req.flash('message', 'Please add category name');
             return res.redirect('/admin/categories/addcat');
         }
+
+        if (existingCategory && existingCategory._id.toString() !== catId) {
+            req.flash('message', 'Category name already exists');
+            return res.redirect('/admin/categories/addcat');
+        }
+
+        if (existingProduct) {
+            req.flash('message', 'Cannot edit category with existing products');
+            return res.redirect('/admin/categories');
+        }
+
         const copyCat = await Category.findById(catId);
-        console.log(copyCat);
-
-
 
         await Category.updateOne(
             { _id: catId },
@@ -551,8 +559,11 @@ const editCategory = async (req, res) => {
         res.redirect('/admin/categories');
     } catch (error) {
         console.log(error);
+        // Handle the error appropriately, e.g., redirect to an error page
+        res.status(500).send('Internal Server Error');
     }
 };
+
 
 
 const listUnlistCategory = async (req, res) => {
