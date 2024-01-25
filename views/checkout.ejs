@@ -40,6 +40,24 @@
         background-size: 100%
       }
     }
+
+    .small-wallet-balance-box {
+      border: 1px solid #ddd;
+      padding: 5px;
+      border-radius: 3px;
+      margin-left: 10px;
+    }
+
+    .wallet-balance {
+      font-size: 1em;
+      font-weight: bold;
+      color: #ee4866;
+      margin: 0;
+    }
+
+    .radioTxt {
+      color: #000;
+    }
   </style>
 
 </head>
@@ -301,54 +319,62 @@
                     <th>Total</th>
                   </thead>
                   <tbody>
-                    <% cartData.items.forEach(item => { %>
-                        <tr>
-                            <td>
-                                <%= item.product_id.name %> <strong class="mx-2">x</strong> "<%= item.quantity %>"
-                                <input class="productId" hidden value="<%= item.product_id._id %>">
-                            </td>
-                            <td>
-                                <% if (item.offerPrice !== item.product_id.price.toFixed(2)) { %>
-                                    <p style="color: black; font-weight: bold; font-size: large;">
-                                        ₹<%= item.offerPrice %>
-                                        <del>₹<%= (item.product_id.price * item.quantity).toFixed(2) %></del>
-                                    </p>
-                                <% } else { %>
-                                    <p style="color: black; font-weight: bold; font-size: large;">
-                                        ₹<%= item.product_id.price %>
-                                    </p>
-                                <% } %>
-                            </td>
-                        </tr>
-                    <% }); %>
-                    <tr>
-                        <td class="text-black font-weight-bold"><strong>Cart Subtotal</strong></td>
-                        <td class="text-black font-weight-bold">
-                            <% if (cartData && cartData.items && cartData.items.some(item => item.offerPrice !== item.product_id.price.toFixed(2))) { %>
-                                ₹<%= cartData.items.reduce((total, item) => total + parseFloat(item.offerPrice), 0).toFixed(2) %> <br>
-                                <del>₹<%= cartData.items.reduce((total, item) => total + parseFloat(item.total_price), 0).toFixed(2) %></del><br>
-                            <% } else { %>
-                                ₹<%= cartData.items.reduce((total, item) => total + parseFloat(item.total_price), 0).toFixed(2) %><br>
-                            <% } %>
+                    <% cartData.items.forEach(item=> { %>
+                      <tr>
+                        <td>
+                          <%= item.product_id.name %> <strong class="mx-2">x</strong> "<%= item.quantity %>"
+                              <input class="productId" hidden value="<%= item.product_id._id %>">
                         </td>
-                    </tr>
-                    <% if (appliedCoupon) { %>
+                        <td>
+                          <% if (item.offerPrice !==item.product_id.price.toFixed(2)) { %>
+                            <p style="color: black; font-weight: bold; font-size: large;">
+                              ₹<%= item.offerPrice %>
+                                <del>₹<%= (item.product_id.price * item.quantity).toFixed(2) %></del>
+                            </p>
+                            <% } else { %>
+                              <p style="color: black; font-weight: bold; font-size: large;">
+                                ₹<%= item.product_id.price %>
+                              </p>
+                              <% } %>
+                        </td>
+                      </tr>
+                      <% }); %>
                         <tr>
+                          <td class="text-black font-weight-bold"><strong>Cart Subtotal</strong></td>
+                          <td class="text-black font-weight-bold">
+                            <% if (cartData && cartData.items && cartData.items.some(item=> item.offerPrice !==
+                              item.product_id.price.toFixed(2))) { %>
+                              ₹<%= cartData.items.reduce((total, item)=> total + parseFloat(item.offerPrice),
+                                0).toFixed(2) %> <br>
+                                <del>₹<%= cartData.items.reduce((total, item)=> total + parseFloat(item.total_price),
+                                    0).toFixed(2) %></del><br>
+                                <% } else { %>
+                                  ₹<%= cartData.items.reduce((total, item)=> total + parseFloat(item.total_price),
+                                    0).toFixed(2) %><br>
+                                    <% } %>
+                          </td>
+                        </tr>
+                        <% if (appliedCoupon) { %>
+                          <tr>
                             <td class="text-black font-weight-bold"><strong>Coupon Discount</strong></td>
                             <td class="text-black font-weight-bold"> ₹<%= cartData && cartData.items ?
-                                cartData.items.reduce((total, item) => total + parseFloat(item.offerPrice), 0).toFixed(2) : '0.00' %><br>-₹<%= appliedCoupon.discountAmount.toFixed(2) %>
+                                cartData.items.reduce((total, item)=> total + parseFloat(item.offerPrice), 0).toFixed(2)
+                                : '0.00' %><br>-₹<%= appliedCoupon.discountAmount.toFixed(2) %>
                             </td>
-                        </tr>
-                    <% } %>
-                    <tr>
-                        <td class="text-black font-weight-bold"><strong>Order Total</strong></td>
-                        <td class="text-black font-weight-bold">
-                            <strong>₹<%= (cartData.items.reduce((total, item) => total + parseFloat(item.offerPrice), 0) - (appliedCoupon ? appliedCoupon.discountAmount : 0)).toFixed(2) %></strong>
-                            <input type="hidden" value="<%= (cartData.items.reduce((total, item) => total + parseFloat(item.offerPrice), 0) - (appliedCoupon ? appliedCoupon.discountAmount : 0)).toFixed(2) %>" id="totalAmount">
-                        </td>
-                    </tr>
-                </tbody>
-                
+                          </tr>
+                          <% } %>
+                            <tr>
+                              <td class="text-black font-weight-bold"><strong>Order Total</strong></td>
+                              <td class="text-black font-weight-bold">
+                                <strong>₹<%= (cartData.items.reduce((total, item)=> total + parseFloat(item.offerPrice),
+                                    0) - (appliedCoupon ? appliedCoupon.discountAmount : 0)).toFixed(2) %></strong>
+                                <input type="hidden"
+                                  value="<%= (cartData.items.reduce((total, item) => total + parseFloat(item.offerPrice), 0) - (appliedCoupon ? appliedCoupon.discountAmount : 0)).toFixed(2) %>"
+                                  id="totalAmount">
+                              </td>
+                            </tr>
+                  </tbody>
+
 
 
 
@@ -363,26 +389,28 @@
 
                   <div class="collapse" id="collapsebank">
                     <div class="py-2">
-                      <label>
+                      <label class="radioTxt">
                         <input type="radio" name="paymentMethod" value="COD"> Cash on Delivery
                       </label>
                     </div>
 
                     <div class="py-2">
-                      <label>
+                      <label class="radioTxt">
                         <input type="radio" name="paymentMethod" value="RazorPay"> RazorPay
                       </label>
                     </div>
 
-                    <div class="py-2">
-                      <label>
+                    <div class="py-2 d-flex align-items-center">
+                      <label class="radioTxt" class="mr-2">
                         <input type="radio" name="paymentMethod" value="Wallet"> Wallet
                       </label>
+                      <div class="small-wallet-balance-box">
+                        <p class="wallet-balance">₹<%= userData.wallet.toFixed(2) %>
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
-
-
 
                 <div class="form-group">
                   <button id="placeOrder" class="btn btn-primary btn-lg btn-block">Place Order</button>
@@ -683,8 +711,13 @@
                 title: 'Cannot Proceed!',
                 text: 'Product Not Found',
               });
+            } else if (response.walletFailed) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Cannot Proceed!',
+                text: 'Insufficient Wallet Balance',
+              });
             } else {
-              // If not a success response, trigger razorpayPayment
               razorpayPayment(response.order);
             }
           },

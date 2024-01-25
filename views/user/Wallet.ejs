@@ -77,19 +77,14 @@
 
         .history-date {
             font-size: 14px;
-            color: #6c757d; /* Adjust color as needed */
+            color: #000000; /* Adjust color as needed */
         }
 
         .history-description {
             font-size: 16px;
         }
 
-        .history-amount {
-            font-size: 18px;
-            color: #28a745; /* Adjust color as needed */
-            font-weight: bold;
-            margin-top: 5px;
-        }
+       
     </style>
 
  </head>
@@ -178,26 +173,34 @@
  
              <!-- wallet.ejs -->
 
-<div class="wallet-container">
-    <div class="balance-container">
-        <div class="balance-label">Wallet Balance</div>
-        <div class="balance-amount">₹<%= user.wallet.toFixed(2) %></div>
-    </div>
-
-    <div class="history-container">
-        <% if (user.wallet_history && user.wallet_history.length > 0) { %>
-            <% user.wallet_history.forEach(historyItem => { %>
-                <div class="history-item">
-                    <div class="history-date"><%= historyItem.date.toDateString() %></div>
-                    <div class="history-description"><%= historyItem.description %></div>
-                    <div class="history-amount">₹<%= historyItem.amount.toFixed(2) %></div>
+             <div class="wallet-container">
+                <div class="balance-container">
+                    <div class="balance-label">Wallet Balance</div>
+                    <div class="balance-amount">₹<%= user.wallet.toFixed(2) %></div>
                 </div>
-            <% }); %>
-        <% } else { %>
-            <p>No wallet history available.</p>
-        <% } %>
-    </div>
-</div>
+            
+                <div class="history-container">
+                    <% 
+                    const reversedHistory = user.wallet_history ? user.wallet_history.slice().reverse() : [];
+                    if (reversedHistory.length > 0) { 
+                    %>
+                        <% reversedHistory.forEach(historyItem => { %>
+                            <div class="history-item <%= historyItem.description === 'Debited' ? 'text-danger' : 'text-success' %> row">
+                                <div class="history-date col-4 text-muted"><%= historyItem.date.toDateString() %></div>
+                                <div class="history-description col-4"><%= historyItem.description %></div>
+                                <div class="history-amount col-4 <%= historyItem.description === 'Debited' ? 'text-danger' : '' %>">
+                                    <%= historyItem.description === 'Debited' ? '-' : '+' %>₹<%= Math.abs(historyItem.amount).toFixed(2) %>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <p>No wallet history available.</p>
+                    <% } %>
+                </div>
+            </div>
+            
+            
+            
 
  
  

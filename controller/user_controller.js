@@ -71,7 +71,7 @@ const loadShop = async (req, res) => {
             },
             {
                 $lookup: {
-                    from: 'products', 
+                    from: 'products',
                     localField: 'items.product_id',
                     foreignField: '_id',
                     as: 'productDetails',
@@ -546,7 +546,7 @@ const loadOrder = async (req, res) => {
             res.redirect('/login')
         }
         const user = await User.findOne({ _id: userId })
-        const orders = await Order.find({ user_id: userId }).populate('items.product_id');
+        const orders = await Order.find({ user_id: userId }).populate('items.product_id').sort({date:-1})
         res.render('user/orders', { orders, user, moment })
     } catch (error) {
         console.log(error);
@@ -614,15 +614,12 @@ const cancelOrderStatus = async (req, res) => {
         const { orderId, productId, actionReason, quantity } = req.body;
         const status = 'Requested cancellation';
 
-       
         const order = await Order.find({ order_id: orderId });
 
-   
         if (!order || order.length === 0) {
             return res.status(404).json({ success: false, message: 'Order not found' });
         }
 
-  
         const matchingItem = order[0].items.find(item => item.product_id.toString() === productId);
 
         if (!matchingItem) {
@@ -653,7 +650,18 @@ const cancelOrderStatus = async (req, res) => {
 
         const userUpdateResult = await User.updateOne(
             { _id: userId },
-            { $inc: { "wallet": decrementAmount } }
+            {
+                $inc: { "wallet": decrementAmount },
+                $push: {
+                    wallet_history: [
+                        {
+                            date: Date.now(),
+                            amount: decrementAmount,
+                            description: "Credited"
+                        }
+                    ]
+                }
+            }
         );
 
         if (orderUpdateResult.nModified > 0 && productUpdateResult.nModified > 0 && userUpdateResult.nModified > 0) {
@@ -676,9 +684,19 @@ const returnOrderStatus = async (req, res) => {
         const { orderId, productId, actionReason, quantity } = req.body;
         const status = 'Requested return';
 
+        const order = await Order.find({ "order_id": orderId, "items.product_id": productId });
 
-        const Product = await product.findById(productId);
-        const decrementAmount = Product.price * quantity;
+        if (!order || order.length === 0) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+
+        const matchingItem = order[0].items.find(item => item.product_id.toString() === productId);
+
+        if (!matchingItem) {
+            return res.status(404).json({ success: false, message: 'Item not found in the order' });
+        }
+
+        const decrementAmount = matchingItem.price * quantity;
 
         const result = await Order.updateOne(
             { "order_id": orderId, "items.product_id": productId },
@@ -688,16 +706,35 @@ const returnOrderStatus = async (req, res) => {
                     "items.$.cancellationReason": actionReason
                 },
                 $inc: {
-                    "total_amount": -decrementAmount
+                    "total_amount": Math.round(-decrementAmount)
                 }
             }
         );
+
         const updateQuantity = await product.updateOne(
             { _id: productId },
             { $inc: { "quantity": quantity } }
-        )
+        );
 
-        if (result.nModified > 0 && updateQuantity.nModified > 0) {
+        const userId = order[0].user_id;
+
+        const userUpdateResult = await User.updateOne(
+            { _id: userId },
+            {
+                $inc: { "wallet": decrementAmount },
+                $push: {
+                    wallet_history: [
+                        {
+                            date: Date.now(),
+                            amount: decrementAmount,
+                            description: "Credited"
+                        }
+                    ]
+                }
+            }
+        );
+
+        if (result.nModified > 0 && updateQuantity.nModified > 0 && userUpdateResult.nModified > 0) {
             res.status(200).json({ success: true, message: 'Order status updated successfully' });
         } else {
             res.status(200).json({ success: false, message: 'No changes were made to the order status' });
@@ -707,6 +744,7 @@ const returnOrderStatus = async (req, res) => {
         res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
 };
+
 
 const loadAddress = async (req, res) => {
     try {

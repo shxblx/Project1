@@ -102,7 +102,7 @@ const removeWishlist = async (req, res) => {
 const loadWallet = async (req, res) => {
   try {
       const userId = req.session.user_id;
-      const user = await User.findById(userId);
+      const user = await User.findById(userId).sort();
       res.render("user/wallet", { user });
   } catch (error) {
       console.error(error);

@@ -284,8 +284,8 @@ const loadCheckout = async (req, res) => {
         });
 
         const appliedCoupon = await coupon.findOne({ 'userUsed.user_id': user_id, 'userUsed.used': false });
-        if(appliedCoupon){
-            cartData.total-=appliedCoupon.discountAmount
+        if (appliedCoupon) {
+            cartData.total -= appliedCoupon.discountAmount
         }
 
         res.render('checkout', { cartData, userData, coupons, messages, appliedCoupon });
@@ -379,10 +379,10 @@ const placeOrder = async (req, res) => {
         let totalPrice = cartData.items.reduce((total, item) => total + parseFloat(item.offerPrice), 0).toFixed(2);
 
         const appliedCoupon = await coupon.findOne({ 'userUsed.user_id': user_id, 'userUsed.used': false });
-        
-        if(appliedCoupon){
+
+        if (appliedCoupon) {
             const couponDiscount = appliedCoupon.discountAmount
-            totalPrice=totalPrice-couponDiscount
+            totalPrice = totalPrice - couponDiscount
             await coupon.updateOne(
                 { "userUsed.user_id": user_id, "userUsed.used": false },
                 { $set: { "userUsed.$.used": true } }
@@ -458,7 +458,36 @@ const placeOrder = async (req, res) => {
             }
 
             return res.json({ success: true, params: orderId });
+        } else if (paymentMethod === 'Wallet') {
+            const user = await User.findById(user_id);
+            if (user.wallet >= totalPrice) {
+                await User.updateOne(
+                    { _id: user_id },
+                    {
+                        $inc: { "wallet": -totalPrice },
+                        $push: {
+                            wallet_history: [{
+                                date: Date.now(),
+                                amount: totalPrice,
+                                description: "Debited"
+                            }]
+                        }
+                    }
+                );
+                
+                await Order.updateMany(
+                    { order_id: orderId },
+                    { $set: { "items.$[].ordered_status": "placed" } }
+                );
+
+                await cart.deleteOne({ user_id: user_id });
+
+                return res.json({ success: true, params: orderId });
+            } else {
+                return res.json({ walletFailed: true });
+            }
         } else {
+
             const orderId = orders.order_id;
             const totalAmount = orders.total_amount;
 
@@ -493,7 +522,7 @@ const verifyPayment = async (req, res) => {
         console.log("Order ID:", details.payment.razorpay_order_id);
         console.log("Payment ID:", details.payment.razorpay_payment_id);
 
-       
+
         hmac.update(
             details.payment.razorpay_order_id +
             "|" +
@@ -591,11 +620,11 @@ const applyCoupon = async (req, res) => {
             Coupon.Availability -= 1;
         }
 
-        const CouponData=await coupon.find({})
+        const CouponData = await coupon.find({})
 
         Coupon.userUsed.push({ user_id: userId });
-        req.session.coupon_applied=true;
-        req.session.coupon=Coupon
+        req.session.coupon_applied = true;
+        req.session.coupon = Coupon
         user.appliedCoupon = Coupon;
         await user.save();
         await Coupon.save();
