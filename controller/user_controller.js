@@ -309,6 +309,12 @@ const loadOTP = async (req, res) => {
     }
 }
 
+const generateRandomReferralCode = () => {
+    const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const randomString = 'GVS' + Array.from({ length: 10 }, () => characters[Math.floor(Math.random() * characters.length)]).join('');
+    return randomString;
+};
+
 const verifySignup = async (req, res) => {
     try {
         const { username, email, phone, password, confirmpassword } = req.body;
@@ -334,6 +340,7 @@ const verifySignup = async (req, res) => {
             phone,
             email,
             password: hashedPassword,
+            referralCode:generateRandomReferralCode(),
             isAdmin: 0,
             verified: false
         });

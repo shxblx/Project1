@@ -33,6 +33,9 @@ const userSchema = new mongoose.Schema({
         required: false,
         default: false
     },
+    referralCode:{
+        type:String,
+    },
     address: [
         {
             name: {
