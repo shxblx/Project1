@@ -284,6 +284,9 @@ const loadCheckout = async (req, res) => {
         });
 
         const appliedCoupon = await coupon.findOne({ 'userUsed.user_id': user_id, 'userUsed.used': false });
+        if(appliedCoupon){
+            cartData.total-=appliedCoupon.discountAmount
+        }
 
         res.render('checkout', { cartData, userData, coupons, messages, appliedCoupon });
     } catch (error) {
@@ -375,10 +378,10 @@ const placeOrder = async (req, res) => {
 
         let totalPrice = cartData.items.reduce((total, item) => total + parseFloat(item.offerPrice), 0).toFixed(2);
 
+        const appliedCoupon = await coupon.findOne({ 'userUsed.user_id': user_id, 'userUsed.used': false });
         
-        if(req.session.coupon_applied){
-            const Coupon = req.session.coupon
-            const couponDiscount = Coupon.discountAmount
+        if(appliedCoupon){
+            const couponDiscount = appliedCoupon.discountAmount
             totalPrice=totalPrice-couponDiscount
             await coupon.updateOne(
                 { "userUsed.user_id": user_id, "userUsed.used": false },
@@ -490,7 +493,7 @@ const verifyPayment = async (req, res) => {
         console.log("Order ID:", details.payment.razorpay_order_id);
         console.log("Payment ID:", details.payment.razorpay_payment_id);
 
-        // Updating the HMAC with the data
+       
         hmac.update(
             details.payment.razorpay_order_id +
             "|" +

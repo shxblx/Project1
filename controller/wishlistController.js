@@ -32,13 +32,13 @@ const loadWishlist = async (req, res) => {
   };
 
 
-const addWishlist = async (req, res) => {
+  const addWishlist = async (req, res) => {
     try {
         const userId = req.session.user_id;
         const { productId } = req.body;
 
         if (!userId) {
-            res.redirect("/login");
+            return res.redirect("/login");
         }
 
         const date = new Date()
@@ -62,15 +62,18 @@ const addWishlist = async (req, res) => {
                 { new: true }
             );
             const count = userWishlist.wishlist.length;
-            res.status(200).json({ success: true });
+            return res.status(200).json({ success: true, count });
         } else {
-            res.status(200).json({ used: true });
+            const count = existingProduct.wishlist.length;
+            return res.status(200).json({ used: true, count });
         }
     } catch (error) {
-        res.redirect("/500");
-        res.status(500).json({ error: "Server error" });
+        console.error('Error adding to wishlist:', error);
+        return res.status(500).json({ error: "Server error" });
     }
 };
+
+
 
 const removeWishlist = async (req, res) => {
   try {
@@ -96,9 +99,22 @@ const removeWishlist = async (req, res) => {
 };
 
 
+const loadWallet = async (req, res) => {
+  try {
+      const userId = req.session.user_id;
+      const user = await User.findById(userId);
+      res.render("user/wallet", { user });
+  } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+  }
+}
+
+
 
 module.exports = {
     loadWishlist,
     addWishlist,
-    removeWishlist
+    removeWishlist,
+    loadWallet
 };

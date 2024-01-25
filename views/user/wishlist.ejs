@@ -63,52 +63,86 @@
     <style>
         .wishlist-container {
             padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         .wishlist-item {
-            border-bottom: 1px solid #dee2e6;
-            padding: 15px 0;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            background-color: #fff;
         }
 
         .wishlist-item img {
             max-width: 100px;
-            /* Adjust the max-width to make the image bigger */
-            max-height: 1000px;
-            border-radius: 8px;
-            /* Optional: Add border-radius for rounded corners */
+            height: auto;
+            border-radius: 8px 0 0 8px;
         }
 
-        .view-product-link {
-            color: #fff;
-            /* White text color */
-            text-decoration: none;
-            padding: 8px 12px;
-            background-color: #28a745;
-            /* Green color, you can change it */
-            border-radius: 4px;
+        .wishlist-details {
+            flex-grow: 1;
+            padding: 15px;
+        }
+
+        .wishlist-details h4 {
+            margin: 0 0 10px;
+            color: #333;
+        }
+
+        .wishlist-details p {
+            margin: 0 0 5px;
+            color: #666;
+        }
+
+        .price {
+            font-weight: bold;
+        }
+
+        .wishlist-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            padding: 15px;
         }
 
         .view-product-link,
-        .remove-wishlist-link {
+        .add-to-cart-button,
+        .remove-wishlist-button {
+            margin-bottom: 10px;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
             color: #fff;
-            /* White text color */
             text-decoration: none;
-            padding: 8px 12px;
-            margin-right: 10px;
-            border-radius: 4px;
+            transition: background-color 0.3s;
         }
 
-        .remove-wishlist-link {
-            background-color: #dc3545;
-            /* Red color for remove button, you can change it */
+        .view-product-link {
+            background-color: #eecc42;
+        }
+
+        .add-to-cart-button {
+            background-color: #44ff00;
+        }
+
+        .remove-wishlist-button {
+            background-color: #ff0000;
+        }
+
+        .view-product-link:hover,
+        .add-to-cart-button:hover,
+        .remove-wishlist-button:hover {
+            background-color: #5e5e5e;
         }
     </style>
+
     <div class="wrapper">
         <div class="sidebar">
             <!--
@@ -190,26 +224,35 @@
 
             <div class="container wishlist-container">
                 <h2>Your Wishlist</h2>
+
                 <% if (wishlist && wishlist.length> 0) { %>
                     <% wishlist.forEach(item=> { %>
                         <div class="wishlist-item">
                             <img src="/myImages/<%= item.productId.image[0] %>" alt="<%= item.productId.name %>">
-                            <div>
+                            <div class="wishlist-details">
                                 <h4>
                                     <%= item.productId.name %>
                                 </h4>
                                 <p>Category: <%= item.productId.category.name %>
                                 </p>
-                                <!-- Add more details as needed -->
+                                <p class="price">Price: ₹<%= item.productId.price %>
+                                </p>
                             </div>
-                            <p>Price: ₹<%= item.productId.price %>
-                            </p>
-                            <a href="/item?id=<%= item.productId._id %>" class="view-product-link">
-                                <i class="fa-solid fa-eye"></i>
-                            </a>
-                            <a href="#" class="remove-wishlist-link" onclick="removeFromWishlist('<%= item._id %>')">
-                                <i class="fa-solid fa-trash"></i>
-                            </a>
+                            <div class="wishlist-actions">
+                                <button onclick="removeFromWishlist('<%= item._id %>')" class="remove-wishlist-button">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                                <a href="/item?id=<%= item.productId._id %>"></a>
+                                <button class="view-product-link">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                                </a>
+                                <button class=" add-to-cart-button"
+                                    data-productId="<%= item.productId._id %>" id="addToCartBtn"
+                                    onclick="addToCart(this)">
+                                    <i class="fa-solid fa-cart-plus"></i>
+                                </button>
+                            </div>
                         </div>
                         <% }); %>
                             <% } else { %>
@@ -261,6 +304,7 @@
 <script src="../assets/js/demo.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+
 <script>
     function removeFromWishlist(wishlistItemId) {
         fetch('/removeWishlist', {
@@ -296,6 +340,73 @@
     }
 </script>
 
+<script>
+    function addToCart(button) {
+        const product_id = button.getAttribute('data-productId');
+        const quantity = 1; // Set default quantity to 1
 
+        const data = {
+            product_id,
+            quantity
+        };
+
+        fetch('/addToCart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Product added to cart successfully!',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Go to Cart',
+                        cancelButtonText: 'Continue Shopping',
+                    })
+                        .then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '/cart';
+                            } else {
+                                location.reload()
+                            }
+                        });
+                }
+                else if (result.outOfStock) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Cannot Add Product!',
+                        text: 'Product Out of Stock',
+                    });
+                } else if (result.zeroQuantity) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Cannot Add Product!',
+                        text: 'Give some Quantity',
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Failed to add product to cart. Please try again.',
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'You are not logged in.',
+                });
+            });
+    }
+</script>
 
 </html>

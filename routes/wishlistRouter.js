@@ -12,4 +12,7 @@ wishlistRoute.post('/addWishlist',auth.isLogin,wishlistController.addWishlist)
 
 wishlistRoute.post('/removeWishlist',auth.isLogin,wishlistController.removeWishlist)
 
+wishlistRoute.get('/wallet',auth.isLogin,wishlistController.loadWallet)
+
+
 module.exports = wishlistRoute;

@@ -244,10 +244,9 @@
 
                         <div class="mb-3">
                             <label for="" class="form-label">Expiry Date</label>
-                            <input type="date" class="form-control" name="expiryDate" id="EndingDate"
-                                placeholder="Enter Expiry Date" value="">
+                            <input type="date" class="form-control" name="expiryDate" id="EndingDate" placeholder="Enter Expiry Date" value="<%=coupons.expiryDate.toISOString().split('T')[0]%>">
                         </div>
-
+                        
                         <button type="submit" class="btn btn-primary">Update Coupon</button>
                     </form>
 

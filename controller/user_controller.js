@@ -8,6 +8,7 @@ const nodemailer = require('nodemailer');
 const userOTPverification = require('../model/userOTPverification');
 require('dotenv').config();
 const moment = require('moment')
+const order = require('../model/orderModel')
 
 
 const loadHome = async (req, res) => {
@@ -613,10 +614,24 @@ const cancelOrderStatus = async (req, res) => {
         const { orderId, productId, actionReason, quantity } = req.body;
         const status = 'Requested cancellation';
 
-        const Product = await product.findById(productId);
-        const decrementAmount = Product.price * quantity;
+       
+        const order = await Order.find({ order_id: orderId });
 
-        const result = await Order.updateOne(
+   
+        if (!order || order.length === 0) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+
+  
+        const matchingItem = order[0].items.find(item => item.product_id.toString() === productId);
+
+        if (!matchingItem) {
+            return res.status(404).json({ success: false, message: 'Item not found in the order' });
+        }
+
+        const decrementAmount = matchingItem.price * quantity;
+
+        const orderUpdateResult = await Order.updateOne(
             { "order_id": orderId, "items.product_id": productId },
             {
                 $set: {
@@ -624,15 +639,24 @@ const cancelOrderStatus = async (req, res) => {
                     "items.$.cancellationReason": actionReason
                 },
                 $inc: {
-                    "total_amount": -decrementAmount
+                    "total_amount": Math.round(-decrementAmount)
                 }
             }
         );
-        const updateQuantity = await product.updateOne(
+
+        const productUpdateResult = await product.updateOne(
             { _id: productId },
             { $inc: { "quantity": quantity } }
-        )
-        if (result.nModified > 0) {
+        );
+
+        const userId = order[0].user_id;
+
+        const userUpdateResult = await User.updateOne(
+            { _id: userId },
+            { $inc: { "wallet": decrementAmount } }
+        );
+
+        if (orderUpdateResult.nModified > 0 && productUpdateResult.nModified > 0 && userUpdateResult.nModified > 0) {
             res.status(200).json({ success: true, message: 'Order status updated successfully' });
         } else {
             res.status(200).json({ success: false, message: 'No changes were made to the order status' });
@@ -642,6 +666,9 @@ const cancelOrderStatus = async (req, res) => {
         res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
 };
+
+
+
 
 
 const returnOrderStatus = async (req, res) => {

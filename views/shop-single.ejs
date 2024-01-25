@@ -567,40 +567,58 @@
 
 
 
-      <script>
-        const addToWishlistButtons = document.querySelectorAll('.addToWishlist');
-        
-
-        addToWishlistButtons.forEach(button => {
+    <script>
+      const addToWishlistButtons = document.querySelectorAll('.addToWishlist');
+  
+      addToWishlistButtons.forEach(button => {
           button.addEventListener('click', async function (event) {
-            event.preventDefault();
-
-            const productId = button.getAttribute('data-productId');
-            console.log(productId);
-            try {
-              const response = await fetch('/addWishlist', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  productId: productId,
-                }),
-              });
-
-              if (!response.ok) {
-                throw new Error('Network response was not ok');
+              event.preventDefault();
+  
+              const productId = button.getAttribute('data-productId');
+              console.log(productId);
+              try {
+                  const response = await fetch('/addWishlist', {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                          productId: productId,
+                      }),
+                  });
+  
+                  if (!response.ok) {
+                      throw new Error('Network response was not ok');
+                  }
+  
+                  const responseData = await response.json();
+  
+                  console.log(responseData);
+  
+                  // Display SweetAlert based on response
+                  if (responseData.success) {
+                      Swal.fire({
+                          icon: 'success',
+                          title: 'Success!',
+                          text: 'Product added to wishlist successfully!',
+                          footer: `You have ${responseData.count} items in your wishlist.`,
+                      });
+                  } else if (responseData.used) {
+                      Swal.fire({
+                          icon: 'warning',
+                          title: 'Warning!',
+                          text: 'Product is already in your wishlist.',
+                          footer: `You have ${responseData.count} items in your wishlist.`,
+                      });
+                  }
+              } catch (error) {
+                  console.error('Error adding to wishlist:', error);
               }
-
-              const responseData = await response.json();
-
-              console.log(responseData);
-            } catch (error) {
-              console.error('Error adding to wishlist:', error);
-            }
           });
-        });
-      </script>
+      });
+  </script>
+  
+  
 
 
 </body>

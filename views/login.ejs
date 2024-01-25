@@ -275,10 +275,31 @@
     $(document).ready(function () {
       $('#loginForm').submit(function (event) {
         event.preventDefault();
-
-        const email = $('#username').val();
-        const password = $('#password').val();
-
+  
+        const email = $('#username').val().trim();
+        const password = $('#password').val().trim();
+  
+        let hasError = false;
+  
+        if (email === "") {
+          document.getElementById("emailValid").hidden = false;
+          hasError = true;
+        } else {
+          document.getElementById("emailValid").hidden = true;
+        }
+  
+        if (password === "") {
+          document.getElementById("passValid").hidden = false;
+          hasError = true;
+        } else {
+          document.getElementById("passValid").hidden = true;
+        }
+  
+        if (hasError) {
+          // Do not proceed with the fetch request if there are validation errors
+          return;
+        }
+  
         fetch('/login', {
           method: 'POST',
           headers: {
@@ -299,7 +320,7 @@
             } else {
               console.error(data.message);
               $('#errorMessage').text(data.message);
-
+  
               if (data.message.includes('User not found')) {
                 window.location.href = '/login';
               } else if (data.message.includes('You have been blocked')) {
@@ -319,30 +340,10 @@
       });
     });
   </script>
+  
 
 
-  <script>
-    document.getElementById("loginForm").addEventListener("submit", function (event) {
-      var email = document.getElementById("username").value.trim();
-      var password = document.getElementById("password").value.trim();
-
-      if (email === "") {
-        document.getElementById("emailValid").hidden = false;
-      } else {
-        document.getElementById("emailValid").hidden = true;
-      }
-
-      if (password === "") {
-        document.getElementById("passValid").hidden = false;
-      } else {
-        document.getElementById("passValid").hidden = true;
-      }
-
-      if (email === "" || password === "") {
-        event.preventDefault();
-      }
-    });
-  </script>
+  
 
 
 </body>
