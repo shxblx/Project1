@@ -174,7 +174,8 @@
                                                 href="profile/changePass">Change Password</a>
 
                                     </div>
-                                    <span id="errorMessage"  style="color: red;text-align: center;" hidden>Please fill in all required fields.</span>
+                                    <span id="errorMessage" style="color: red;text-align: center;" hidden>Please fill in
+                                        all required fields.</span>
                                     <button type="button" onclick="validateForm()"
                                         style="margin-top: 40px;background-color:#ee4266 ;border-color: #ee4266;"
                                         class="btn btn-info btn-fill pull-right">Update Profile</button>
@@ -182,6 +183,20 @@
                                     </form>
                                 </div>
                             </div>
+                            <div class="col-md-4">
+                                <div class="card" style="border: 2px solid #ee4266; border-radius: 15px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                                    <div class="card-header" style="background-color: #ee4266; color: #fff; border-radius: 12px 12px 0 0;">
+                                        <h4 class="card-title">Refer and Earn</h4>
+                                    </div>
+                                    <div class="card-body" style="padding: 20px;">
+                                        <p style="font-size: 16px; color: #333;">Get Bonus: Rupees 500 for each referral!</p>
+                                        <button onclick="copyReferralLink()" class="btn" style="background-color: #333; border-color: #333; font-weight: bold;color: #fff;">Copy Link</button><br>
+                                        <span style="display: block; margin-top: 10px; font-size: 14px; color: #777;">Your Referral Link:</span>
+                                        <span id="referralLink" style="display: block; font-size: 16px; color: #ee4266; font-weight: bold;">http://localhost:5000/signup?referral=<%=user.referralCode%></span>
+                                    </div>
+                                </div>
+                            </div>
+                            
                         </div>
 
                     </div>
@@ -316,5 +331,16 @@
         }
     }
 </script>
-
+<script>
+    function copyReferralLink() {
+        var referralLink = document.getElementById("referralLink");
+        var textArea = document.createElement("textarea");
+        textArea.value = referralLink.textContent;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        alert("Referral link copied to clipboard!");
+    }
+</script>
 </html>

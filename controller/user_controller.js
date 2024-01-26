@@ -291,8 +291,10 @@ const verifyLogin = async (req, res) => {
 
 const loadSignup = async (req, res) => {
     try {
+        const referral = req.query.referral || null
+        console.log(referral);
         const messages = req.flash('message');
-        res.render('signup', { messages });
+        res.render('signup', { messages, referral });
     } catch (error) {
         console.log(error);
     }
@@ -317,8 +319,9 @@ const generateRandomReferralCode = () => {
 
 const verifySignup = async (req, res) => {
     try {
-        const { username, email, phone, password, confirmpassword } = req.body;
+        const { username, email, phone, password, confirmpassword, referral } = req.body;
 
+        console.log("referral" + referral);
 
         emailExist = await User.findOne({ email: email })
 
@@ -335,12 +338,13 @@ const verifySignup = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
 
+
         const newuser = new User({
             username,
             phone,
             email,
             password: hashedPassword,
-            referralCode:generateRandomReferralCode(),
+            referralCode: generateRandomReferralCode(),
             isAdmin: 0,
             verified: false
         });
@@ -348,8 +352,8 @@ const verifySignup = async (req, res) => {
 
         await newuser.save();
 
+        await sendOTPverificationEmail({ email: newuser.email, referral }, res);
 
-        await sendOTPverificationEmail(newuser, res);
 
         req.flash('message', 'User created successfully. Please check your email for verification.');
     } catch (error) {
@@ -361,7 +365,7 @@ const verifySignup = async (req, res) => {
 
 
 
-const sendOTPverificationEmail = async ({ email }, res) => {
+const sendOTPverificationEmail = async ({ email, referral }, res) => {
     try {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -372,9 +376,20 @@ const sendOTPverificationEmail = async ({ email }, res) => {
                 user: process.env.EMAIL,
                 pass: process.env.PASS
             }
-        })
-        const otp = `${Math.floor(1000 + Math.random() * 9000)}`
+        });
 
+        const otp = `${Math.floor(1000 + Math.random() * 9000)}`;
+        console.log("here" + otp);
+
+        const hashedOTP = await bcrypt.hash(otp, 10);
+        const newOTPverification = await new userOTPverification({
+            email: email,
+            otp: hashedOTP,
+            createdAt: Date.now(),
+            expiresAt: Date.now() + 60000
+        });
+
+        await newOTPverification.save();
 
         const mailOption = {
             from: process.env.EMAIL,
@@ -397,44 +412,41 @@ const sendOTPverificationEmail = async ({ email }, res) => {
               </div>
             </div>
           </div>`
-        }
+        };
 
-        const hashedOTP = await bcrypt.hash(otp, 10);
-        const newOTPverification = await new userOTPverification({
-            email: email,
-            otp: hashedOTP,
-            createdAt: Date.now(),
-            expiresAt: Date.now() + 60000
-        })
-
-        await newOTPverification.save();
         await transporter.sendMail(mailOption);
-        console.log(`OTP send for ${email} will be deleted in 1 minutes`);
+        console.log(`OTP sent for ${email} will be deleted in 1 minute`);
         setTimeout(async () => {
             await userOTPverification.deleteOne({ email: email });
-            console.log(`OTP for ${email} has been deleted after 1 minutes.`);
+            console.log(`OTP for ${email} has been deleted after 1 minute.`);
         }, 60000);
 
-
-        res.redirect(`/otpVerify?email=${email}`)
+        res.redirect(`/otpVerify?email=${email}&referral=${referral}`);
 
     } catch (error) {
         console.log(error);
+        res.status(500).send("Internal Server Error");
     }
-}
+};
 
 const verifyOTP = async (req, res) => {
     try {
-        const email = req.body.email || req.query.email
+        const email = req.body.email || req.query.email;
         const enteredOtp = req.body.first + req.body.second + req.body.third + req.body.fourth;
 
+        const referral = req.query.referral
+
+        console.log("enteredOtp" + enteredOtp);
         const user = await userOTPverification.findOne({ email: email });
 
         if (!user) {
             return res.render('otpVerify', { message: "User not found" });
         }
+
         const { otp: hashedOTP } = user;
+        console.log("hashedOTP" + hashedOTP);
         const validOtp = await bcrypt.compare(enteredOtp, hashedOTP);
+        console.log(validOtp);
 
         if (validOtp) {
             const userData = await User.findOne({ email: email });
@@ -443,6 +455,23 @@ const verifyOTP = async (req, res) => {
             await userOTPverification.deleteOne({ email: email });
 
             req.session.user_id = userData._id;
+
+
+            if (referral) {
+                const updatedUser = await User.updateOne(
+                    { referralCode: referral },
+                    {
+                        $inc: { wallet: 500 },
+                        $push: {
+                            wallet_history: {
+                                date: Date.now(),
+                                amount: 500,
+                                description: `Credited, Reward On referral For Referring ${userData.username}`
+                            }
+                        }
+                    }
+                );
+            }
             return res.redirect('/home');
         } else {
             req.flash('message', "OTP is incorrect");
@@ -453,6 +482,7 @@ const verifyOTP = async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 };
+
 
 
 const userLogout = async (req, res) => {
@@ -553,7 +583,7 @@ const loadOrder = async (req, res) => {
             res.redirect('/login')
         }
         const user = await User.findOne({ _id: userId })
-        const orders = await Order.find({ user_id: userId }).populate('items.product_id').sort({date:-1})
+        const orders = await Order.find({ user_id: userId }).populate('items.product_id').sort({ date: -1 })
         res.render('user/orders', { orders, user, moment })
     } catch (error) {
         console.log(error);

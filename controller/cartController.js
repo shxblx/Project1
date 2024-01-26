@@ -74,8 +74,7 @@ const loadCart = async (req, res) => {
 
         res.render('cart', { cartData: { items: combinedData }, messages, user, productData, totalItems });
     } catch (error) {
-        console.error('Error loading cart:', error);
-        res.status(500).json({ success: false, error: 'Internal Server Error c' });
+        res.redirect('/500')
     }
 };
 
@@ -94,7 +93,6 @@ const loadAddCart = async (req, res) => {
         if (!user_id) {
             return res.redirect('/login');
         }
-        console.log(quantity);
         if (quantity === "0") {
             return res.json({ zeroQuantity: true })
         }
@@ -155,8 +153,8 @@ const loadAddCart = async (req, res) => {
 
         return res.json({ success: true });
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ success: false, error: 'Internal Server Error' });
+        res.redirect('/login')
+        return res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
 };
 
@@ -287,6 +285,8 @@ const loadCheckout = async (req, res) => {
         if (appliedCoupon) {
             cartData.total -= appliedCoupon.discountAmount
         }
+
+
 
         res.render('checkout', { cartData, userData, coupons, messages, appliedCoupon });
     } catch (error) {
@@ -474,7 +474,7 @@ const placeOrder = async (req, res) => {
                         }
                     }
                 );
-                
+
                 await Order.updateMany(
                     { order_id: orderId },
                     { $set: { "items.$[].ordered_status": "placed" } }
@@ -566,15 +566,27 @@ const verifyPayment = async (req, res) => {
 
 const orderPlaced = async (req, res) => {
     try {
-        orderId = req.params.id;
-        userId = req.session.user_id
-        const orders = await Order.findOne({ order_id: orderId })
-        const user = await User.findOne({ _id: userId })
-        res.render('orderPlaced', { user: user, orders: orders, moment })
+        const orderId = req.params.id;
+        const userId = req.session.user_id;
+
+        if (!orderId || !userId) {
+            return res.redirect("/login")
+        }
+
+        const orders = await Order.findOne({ order_id: orderId });
+        const user = await User.findOne({ _id: userId });
+
+        if (!orders || !user) {
+            return res.redirect('/login')
+        }
+
+        res.render('orderPlaced', { user: user, orders: orders, moment });
     } catch (error) {
         console.log(error);
+        res.redirect('/500')
     }
-}
+};
+
 
 const applyCoupon = async (req, res) => {
     try {

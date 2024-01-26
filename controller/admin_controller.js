@@ -331,18 +331,17 @@ const loadAdmin = async (req, res) => {
 };
 
 
-
 const salesReport = async (req, res) => {
     try {
         const moment = require("moment");
 
-
         const firstOrder = await order.find({}).sort({ date: 1 });
-        const lastOreder = await order.find({}).sort({ date: -1 });
+        const lastOrder = await order.find({}).sort({ date: -1 });
 
+        const firstOrderDate = firstOrder.length > 0 ? moment(firstOrder[0].date).format("YYYY-MM-DD") : '';
+        const lastOrderDate = lastOrder.length > 0 ? moment(lastOrder[0].date).format("YYYY-MM-DD") : '';
 
-
-        const salesReport = await order.find({
+        const salesReportData = await order.find({
             "items.ordered_status": "Delivered",
         })
             .populate("user_id")
@@ -350,9 +349,9 @@ const salesReport = async (req, res) => {
             .sort({ createdAt: -1 });
 
         res.render("Admin/salesReport", {
-            firstOrder: moment(firstOrder[0].date).format("YYYY-MM-DD"),
-            lastOrder: moment(lastOreder[0].date).format("YYYY-MM-DD"),
-            salesReport,
+            firstOrder: firstOrderDate,
+            lastOrder: lastOrderDate,
+            salesReport: salesReportData,
             moment,
         });
     } catch (err) {
@@ -360,6 +359,7 @@ const salesReport = async (req, res) => {
         res.redirect("/500");
     }
 };
+
 
 
 const datePicker = async (req, res) => {
