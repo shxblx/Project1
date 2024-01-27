@@ -194,23 +194,26 @@
                         <div class="form-group">
                             <label for="exampleInputName1">Product Name</label>
                             <input type="text" class="form-control" name="productName" id="productName"
-                                placeholder="Product Name" required>
-                                <span id="nameError">Product Name Required</span>
+                                placeholder="Product Name">
+                                <span style="color: red;" id="nameError" hidden>Product Name Required</span>
                         </div>
                         <div class="form-group">
                             <label for="exampleInputEmail3">Description</label>
                             <input type="text" class="form-control" name="description" id="description"
-                                placeholder="Description" required>
+                                placeholder="Description" >
+                                <span style="color: red;" id="desError" hidden>Description is Required</span>
                         </div>
                         <div class="form-group">
                             <label for="exampleInputPassword4">Quantity</label>
                             <input type="number" class="form-control" name="quantity" id="quantity"
-                                placeholder="Quantity" required>
+                                placeholder="Quantity" >
+                                <span style="color: red;" id="qError" hidden>Quantity is Required</span>
                         </div>
                         <div class="form-group">
                             <label for="exampleSelectGender">Price</label>
                             <input type="number" class="form-control" name="price" id="price" placeholder="Price"
-                                required>
+                                >
+                                <span style="color: red;" id="priceError" hidden>Price is Required</span>
                         </div>
                         <div class="form-group">
                             <label>File upload</label>
@@ -230,7 +233,7 @@
 
                         <div class="form-group">
                             <label for="exampleInputCity1">Category</label>
-                            <select class="form-control" name="category" id="category" required>
+                            <select class="form-control" name="category" id="category" >
                                 <% category.forEach(category=>{ %>
                                     <option>
                                         <%= category.name %>
@@ -241,7 +244,8 @@
                         <div class="form-group">
                             <label for="exampleTextarea1">Brand</label>
                             <input type="text" class="form-control" name="brand" id="brand" placeholder="Brand"
-                                required>
+                                >
+                                <span style="color: red;" id="brandError" hidden>Brand is Required</span>
                         </div>
                         <button type="submit" class="btn btn-primary mr-2">Submit</button>
                         <button class="btn btn-dark">Cancel</button>
@@ -300,41 +304,61 @@
             const description = document.getElementById('description').value;
             const quantity = document.getElementById('quantity').value;
             const price = document.getElementById('price').value;
-            const category = document.getElementById('category').value;
             const brand = document.getElementById('brand').value;
-
+    
+            // Reset all error messages
+            document.getElementById('nameError').hidden = true;
+            document.getElementById('desError').hidden = true;
+            document.getElementById('qError').hidden = true;
+            document.getElementById('priceError').hidden = true;
+            document.getElementById('brandError').hidden = true;
+    
+            // Check if any field is empty
+            if (productName.trim() === '' || description.trim() === '' || quantity.trim() === '' || price.trim() === '' || category.trim() === '' || brand.trim() === '') {
+                // Any field is empty, show all errors
+                document.getElementById('nameError').hidden = false;
+                document.getElementById('desError').hidden = false;
+                document.getElementById('qError').hidden = false;
+                document.getElementById('priceError').hidden = false;
+                document.getElementById('brandError').hidden = false;
+                return false;
+            }
+    
             if (productName.trim() === '') {
-                alert('Product Name is required.');
+                document.getElementById('nameError').hidden = false;
                 return false;
             }
-
+    
             if (description.trim() === '') {
-                alert('Description is required.');
+                document.getElementById('desError').hidden = false;
                 return false;
             }
-            if (isNaN(quantity) || quantity <= 0) {
-                alert('Quantity must be a positive number.');
+    
+            if (quantity.trim() === '' || isNaN(quantity) || quantity <= 0) {
+                document.getElementById('qError').hidden = false;
                 return false;
             }
-
-            if (isNaN(price) || price <= 0) {
-                alert('Price must be a positive number.');
+    
+            if (price.trim() === '' || isNaN(price) || price <= 0) {
+                document.getElementById('priceError').hidden = false;
                 return false;
             }
-
+    
             if (category.trim() === '') {
-                alert('Category is required.');
+                document.getElementById('catError').hidden = false;
                 return false;
             }
-
+    
             if (brand.trim() === '') {
-                alert('Brand is required.');
+                document.getElementById('brandError').hidden = false;
                 return false;
             }
-
+    
             return true;
         }
     </script>
+    
+    
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const fileInput = document.getElementById('productImage');

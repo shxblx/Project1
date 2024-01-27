@@ -327,55 +327,71 @@
             // Show the loading modal
             $('#loadingModal').modal('show');
         }
-
+    
         function hideLoadingModal() {
             // Hide the loading modal
             $('#loadingModal').modal('hide');
         }
-
+    
         function validateForm(event) {
             const username = document.getElementById('username').value;
             const email = document.getElementById('email').value;
             const phone = document.getElementById('phone').value;
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmpassword').value;
-
+    
+            // Reset all error messages
+            document.getElementById('emailValid').hidden = true;
+            document.getElementById('nameValid').hidden = true;
+            document.getElementById('phoneValid').hidden = true;
+            document.getElementById('passValid').hidden = true;
+            document.getElementById('confirmValid').hidden = true;
+    
+            if (username.trim() === '' && email.trim() === '' && phone.trim() === '' && password.trim() === '' && confirmPassword.trim() === '') {
+                // All fields are empty, show all errors
+                document.getElementById('nameValid').hidden = false;
+                document.getElementById('emailValid').hidden = false;
+                document.getElementById('phoneValid').hidden = false;
+                document.getElementById('passValid').hidden = false;
+                document.getElementById('confirmValid').hidden = false;
+                return false;
+            }
+    
             const emailRegex = /^[^\s@]+@gmail\.com$/;
             if (!emailRegex.test(email)) {
                 document.getElementById('emailValid').hidden = false;
                 return false;
             }
-
+    
             if (username.length < 3) {
                 document.getElementById('nameValid').hidden = false;
                 return false;
             }
-
+    
             if (phone.length > 0 && !(/^\d{10}$/.test(phone))) {
                 document.getElementById('phoneValid').hidden = false;
                 return false;
             }
-
+    
             const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/;
             if (!passwordRegex.test(password)) {
                 document.getElementById('passValid').hidden = false;
                 return false;
             }
-
+    
             if (password !== confirmPassword) {
                 document.getElementById('confirmValid').hidden = false;
                 return false;
             }
-
+    
             showLoadingModal();
-
-
+    
             document.getElementById('signupForm').submit();
-
-
+    
             event.preventDefault();
         }
     </script>
+    
 
     <script>
         var profileIcon = document.getElementById('profileIcon');
