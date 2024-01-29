@@ -9,7 +9,7 @@ const order = require('../model/orderModel')
 const Offer = require('../model/offerModel')
 const cart = require('../model/cartModel')
 const coupon = require('../model/couponModel')
-
+const fs = require('fs').promises;
 
 const loadAdminSignin = async (req, res) => {
     try {
@@ -623,21 +623,22 @@ const loadAddProduct = async (req, res) => {
 
 const addProduct = async (req, res) => {
     try {
-        const { productName, description, quantity, price, category, brand, date } = req.body
-        const filenames = []
-        const selectedCategory = await Category.findOne({ name: category })
+        const { productName, description, quantity, price, category, brand, date } = req.body;
+        const filenames = [];
+        const selectedCategory = await Category.findOne({ name: category });
 
-        const data = await Category.find({ is_listed: true })
+        const data = await Category.find({ is_listed: true });
         console.log(data);
+
         if (req.files.length !== 4) {
-            req.flash('message', 'You can only add upto 4 images');
-            return res.redirect('/admin/product/addProduct')
+            req.flash('message', 'You can only add up to 4 images');
+            return res.redirect('/admin/product/addProduct');
         }
-        for (let i = 0; i < req.files.length; i++) {
-            const imagesPath = path.join(__dirname, '../public/sharpimages', req.files[i].filename)
-            await sharp(req.files[i].path).resize(800, 1200, { fit: 'fill' }).toFile(imagesPath)
-            filenames.push(req.files[i].filename)
-        }
+
+        req.files.forEach((file) => {
+            filenames.push(file.filename);
+        });
+
         const newProduct = new product({
             name: productName,
             description,
@@ -647,14 +648,16 @@ const addProduct = async (req, res) => {
             category: selectedCategory._id,
             brand,
             date,
-        })
-        await newProduct.save()
-        res.redirect('/admin/product')
-    } catch (error) {
-        console.log(error);
+        });
 
+        await newProduct.save();
+        res.redirect('/admin/product');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
     }
-}
+};
+
 
 const loadEditProduct = async (req, res) => {
     try {
@@ -734,14 +737,23 @@ const deleteImg = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Invalid request parameters' });
         }
 
-        const Product = await product.findById(productId);
+        const products = await product.findById(productId);
 
-        if (!Product) {
+        if (!products) {
             return res.status(404).json({ success: false, message: 'Product not found' });
         }
 
-        Product.image.pull(imageName);
-        await Product.save();
+        const imagePath = path.join(__dirname, '../public/myImages', imageName);
+
+        try {
+            await fs.unlink(imagePath);
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ success: false, message: 'Error deleting image file' });
+        }
+
+        products.image.pull(imageName);
+        await products.save();
 
         res.json({ success: true, message: 'Image deleted successfully' });
     } catch (error) {
