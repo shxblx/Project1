@@ -314,7 +314,7 @@
             document.getElementById('brandError').hidden = true;
     
             // Check if any field is empty
-            if (productName.trim() === '' || description.trim() === '' || quantity.trim() === '' || price.trim() === '' || category.trim() === '' || brand.trim() === '') {
+            if (productName.trim() === '' && description.trim() === '' && quantity.trim() === '' && price.trim() === '' && brand.trim() === '') {
                 // Any field is empty, show all errors
                 document.getElementById('nameError').hidden = false;
                 document.getElementById('desError').hidden = false;
