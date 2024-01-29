@@ -717,6 +717,23 @@ const deleteProduct = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Product not found' });
         }
 
+        const productToDelete = await product.findById(productId);
+
+        if (!productToDelete) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+
+        for (const imageName of productToDelete.image) {
+            const imagePath = path.join(__dirname, '../public/myImages', imageName);
+
+            try {
+                await fs.unlink(imagePath);
+            } catch (err) {
+                console.error(err);
+                return res.status(500).json({ success: false, message: 'Error deleting image file' });
+            }
+        }
+
         await product.deleteOne({ _id: productId });
 
         await cart.updateMany({}, { $pull: { 'items': { 'product_id': productId } } });
@@ -727,6 +744,7 @@ const deleteProduct = async (req, res) => {
         res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
 };
+
 
 
 const deleteImg = async (req, res) => {

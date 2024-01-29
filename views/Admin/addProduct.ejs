@@ -218,19 +218,14 @@
                         <div class="form-group">
                             <label>File upload</label>
                             <div class="input-group col-xs-12">
-                                <div id="imagePreview" class="mt-2"></div>
                             </div>
-                            <button type="button" class="btn btn-danger mt-2" id="clearFilesBtn"
-                                onclick="clearFileInput()" style="display: none;">Delete</button>
-                            <input id="productImage" type="file" name="image" class="file-upload-info"
-                                placeholder="Upload Image" multiple>
-                            <% if (messages.length> 0) { %>
+                            <input id="productImage" type="file" name="image" class="file-upload-info" placeholder="Upload Image" multiple>
+                            <% if (messages.length > 0) { %>
                                 <div style="color: red;">
                                     <%= messages[0] %>
                                 </div>
-                                <% } %>
+                            <% } %>
                         </div>
-
                         <div class="form-group">
                             <label for="exampleInputCity1">Category</label>
                             <select class="form-control" name="category" id="category" >
@@ -359,47 +354,7 @@
     </script>
     
     
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const fileInput = document.getElementById('productImage');
-            const imagePreviewContainer = document.getElementById('imagePreview');
-            const clearFilesBtn = document.getElementById('clearFilesBtn');
-
-            fileInput.addEventListener('change', function () {
-                // Remove existing preview images
-                imagePreviewContainer.innerHTML = '';
-
-                // Loop through selected files and create image previews
-                for (const file of fileInput.files) {
-                    const img = document.createElement('img');
-                    img.src = URL.createObjectURL(file);
-                    img.className = 'img-sm img-thumbnail mr-2';
-                    img.alt = 'Image Preview';
-                    img.style.width = '80px';
-                    img.style.height = '80px';
-                    imagePreviewContainer.appendChild(img);
-                }
-
-                // Show or hide the "Clear Files" button based on whether files are selected
-                clearFilesBtn.style.display = fileInput.files.length > 0 ? 'block' : 'none';
-            });
-        });
-
-        function clearFileInput() {
-            const fileInput = document.getElementById('productImage');
-            const imagePreviewContainer = document.getElementById('imagePreview');
-            const clearFilesBtn = document.getElementById('clearFilesBtn');
-
-            // Clear the file input
-            fileInput.value = '';
-
-            // Remove existing preview images
-            imagePreviewContainer.innerHTML = '';
-
-            // Hide the "Clear Files" button
-            clearFilesBtn.style.display = 'none';
-        }
-    </script>
+    
 
 
 
