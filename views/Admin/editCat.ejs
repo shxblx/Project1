@@ -28,19 +28,10 @@
     <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="/admin/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Template Stylesheet -->
-    <link href="../css/style.css" rel="stylesheet">
-    <style>
-        button:not(:disabled),
-        [type="button"]:not(:disabled),
-        [type="reset"]:not(:disabled),
-        [type="submit"]:not(:disabled) {
-            cursor: pointer;
-            margin-top: 32px;
-        }
-    </style>
+    <link href="/admin/css/style.css" rel="stylesheet">
 </head>
 
 <body>
@@ -63,7 +54,7 @@
                 </a>
                 <div class="d-flex align-items-center ms-4 mb-4">
                     <div class="position-relative">
-                        <img class="rounded-circle" src="../img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                        <img class="rounded-circle" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
                         <div
                             class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1">
                         </div>
@@ -80,8 +71,7 @@
                             class="fa-solid fa-layer-group me-2"></i>Categories</a>
                     <a href="/admin/product" class="nav-item nav-link"><i
                             class="fa-solid fa-list me-2"></i></i>Products</a>
-                    <a href="/admin/orders" class="nav-item nav-link"><i
-                            class="fa-solid fa-bag-shopping"></i></i>Orders</a>
+                    <a href="/admin/orders" class="nav-item nav-link"><i class="fa-solid fa-bag-shopping"></i></i>Orders</a>
                     <a href="/admin/offers" class="nav-item nav-link "><i class="fa-solid fa-percent"></i></i>Offers</a>
                     <a href="/admin/coupons" class="nav-item nav-link "><i class="fa-solid fa-ticket"></i>Coupons</a>
                     <!-- <a href="table.html" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>
@@ -183,7 +173,7 @@
                     </div>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <img class="rounded-circle me-lg-2" src="img/user.jpg" alt=""
+                            <img class="rounded-circle me-lg-2" src="../img/user.jpg" alt=""
                                 style="width: 40px; height: 40px;">
                             <span class="d-none d-lg-inline-flex">John Doe</span>
                         </a>
@@ -198,7 +188,7 @@
 
             <div class="col-11">
                 <div class="bg-secondary rounded h-100 p-4" style="margin-top: 100px; margin-left: 100px;">
-                    <h6 class="mb-4">Add Category</h6>
+                    <h6 class="mb-4">Edit Category</h6>
 
                     <!-- <div class="d-flex justify-content-between align-items-center mb-3">
                         <div class="input-group" style="max-width: 20rem;">
@@ -208,43 +198,49 @@
                     </div> -->
 
                     <!-- Form for Adding Category -->
-                    <form method="post" action="/admin/categories/addcat">
+                    <!-- editCat.ejs -->
+
+                    <!-- editCat.ejs -->
+
+                    <!-- editCat.ejs -->
+
+                    <form method="post">
                         <div class="mb-3">
                             <label for="categoryName" class="form-label">Category Name</label>
                             <input type="text" class="form-control" name="catName" id="categoryName"
-                                placeholder="Enter category name">
-                            <% if (messages.length> 0) { %>
-                                <div style="color: red;">
-                                    <%= messages[0] %>
+                                placeholder="Enter category name" value="<%= category ? category.name : '' %>">
+                        </div>
+                        <% if (messages.length> 0) { %>
+                            <div style="color: red;">
+                                <%= messages[0] %>
+                            </div>
+                            <% } %>
+                                <div class="mb-3">
+                                    <label for="categoryDescription" class="form-label">Category Description</label>
+                                    <textarea class="form-control" name="catDes" id="categoryDescription" rows="3"
+                                        placeholder="Enter category description"><%= category ? category.description : '' %></textarea>
                                 </div>
-                                <% } %>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="categoryDescription" class="form-label">Category Description</label>
-                            <textarea class="form-control" name="catDes" id="categoryDescription" rows="3"
-                                placeholder="Enter category description"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Add Category</button>
+                                <button type="submit" class="btn btn-primary">Update Category</button>
                     </form>
 
-                </div>
 
 
-                <!-- Button for Adding Category (if you prefer a button outside the form) -->
-                <!--
+
+
+                    <!-- Button for Adding Category (if you prefer a button outside the form) -->
+                    <!--
                     <button type="button" class="btn btn-primary btn-sm mt-3">
                         Add Category
                     </button>
                     -->
 
-                <div class="table-responsive">
-                    <!-- Your table or other content goes here -->
+                    <div class="table-responsive">
+                        <!-- Your table or other content goes here -->
+                    </div>
                 </div>
             </div>
-        </div>
 
-    </div>
+        </div>
     </div>
     <!-- Table End -->
 
