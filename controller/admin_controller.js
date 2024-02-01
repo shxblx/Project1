@@ -623,22 +623,21 @@ const loadAddProduct = async (req, res) => {
 
 const addProduct = async (req, res) => {
     try {
-        const { productName, description, quantity, price, category, brand, date } = req.body;
-        const filenames = [];
-        const selectedCategory = await Category.findOne({ name: category });
-        console.log(req.body);
-        const data = await Category.find({ is_listed: true });
+        const { productName, description, quantity, price, category, brand, date } = req.body
+        const filenames = []
+        const selectedCategory = await Category.findOne({ name: category })
+
+        const data = await Category.find({ is_listed: true })
         console.log(data);
-
         if (req.files.length !== 4) {
-            req.flash('message', 'You can only add up to 4 images');
-            return res.redirect('/admin/product/addProduct');
+            req.flash('message', 'You can only add upto 4 images');
+            return res.redirect('/admin/product/addProduct')
         }
-
-        req.files.forEach((file) => {
-            filenames.push(file.filename);
-        });
-
+        for (let i = 0; i < req.files.length; i++) {
+            const imagesPath = path.join(__dirname, '../public/sharpimages', req.files[i].filename)
+            await sharp(req.files[i].path).resize(800, 1200, { fit: 'fill' }).toFile(imagesPath)
+            filenames.push(req.files[i].filename)
+        }
         const newProduct = new product({
             name: productName,
             description,
@@ -648,15 +647,14 @@ const addProduct = async (req, res) => {
             category: selectedCategory._id,
             brand,
             date,
-        });
-
-        await newProduct.save();
-        res.redirect('/admin/product');
+        })
+        await newProduct.save()
+        res.redirect('/admin/product')
     } catch (error) {
-        console.error(error);
-        res.status(500).send('Internal Server Error');
+        console.log(error);
+
     }
-};
+}
 
 
 const loadEditProduct = async (req, res) => {
