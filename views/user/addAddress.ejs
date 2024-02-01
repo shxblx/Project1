@@ -34,6 +34,7 @@
     <link href="assets/css/light-bootstrap-dashboard.css?v=2.0.0 " rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link href="assets/css/demo.css" rel="stylesheet" />
+    
 </head>
 
 <body>
@@ -41,53 +42,34 @@
         body {
             font-family: Arial, sans-serif;
         }
-
+    
         #addAddressContainer {
-            width: 650px; /* Set your preferred width */
+            width: 400px; /* Decreased width */
             margin: 20px auto;
             padding: 20px;
             border: 1px solid #ddd;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: auto; /* Add overflow property */
         }
-
+    
         form {
             display: flex;
             flex-direction: column;
         }
-
+    
         label {
             display: block;
             margin-bottom: 8px;
         }
-
+    
         input {
             padding: 8px;
             margin-bottom: 15px;
             box-sizing: border-box;
+            width: 100%; /* Full width for input fields */
         }
-
-        #name {
-            width: 50%; /* 50% width for name */
-        }
-
-        #housename {
-            width: 100%; /* Full width for housename */
-        }
-
-        #city,
-        #state {
-            width: 50%; /* 50% width for city and state */
-        }
-
-        #phone {
-            width: 70%; /* 70% width for phone */
-        }
-
-        #pincode {
-            width: 30%; /* 30% width for pincode */
-        }
-
+    
         button {
             background-color: #4CAF50;
             color: white;
@@ -96,17 +78,18 @@
             border-radius: 4px;
             cursor: pointer;
         }
-
+    
         button:hover {
             background-color: #45a049;
         }
-
+    
         .error {
             color: red;
             margin-top: 5px;
             display: none;
         }
     </style>
+    
 
 
     <div class="wrapper">

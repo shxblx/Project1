@@ -915,6 +915,17 @@ const load500 = async (req, res) => {
     }
 }
 
+const loadWallet = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        const user = await User.findById(userId).sort();
+        res.render("user/wallet", { user });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal Server Error");
+    }
+  }
+
 module.exports = {
     loadHome,
     loadShop,
@@ -945,5 +956,6 @@ module.exports = {
     deleteAddress,
     loadEditAddress,
     editAddress,
-    load500
+    load500,
+    loadWallet
 }

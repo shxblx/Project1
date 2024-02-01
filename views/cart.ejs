@@ -23,7 +23,22 @@
   <link rel="stylesheet" href="css/aos.css">
 
   <link rel="stylesheet" href="css/style.css">
+<style>
+/* Default styles for larger screens */
+.site-blocks-table table {
+    width: 100%;
+    max-width: 100%;
+    font-size: medium; /* Adjust font size as needed */
+}
 
+/* Media query for smaller screens */
+@media (max-width: 767px) {
+    .site-blocks-table table {
+        font-size: small; /* Adjust font size for smaller screens */
+    }
+}
+
+</style>
 </head>
 
 <body>
@@ -107,84 +122,81 @@
       <div class="row mb-5">
         <form class="col-md-12" method="post">
           <div class="site-blocks-table">
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <th class="product-thumbnail">Image</th>
-                  <th class="product-name">Product</th>
-                  <th class="product-price">Price</th>
-                  <th class="product-quantity">Quantity</th>
-                  <th class="product-total">Total</th>
-                  <th class="product-remove">Remove</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% if (cartData && cartData.items && cartData.items.length > 0) { 
-                    cartData.items.forEach(item => { %>
-                        <tr class="product-row">
-                            <td class="product-thumbnail">
-                                <img src="/myImages/<%= item.product_id.image[0] %>" alt="Product Image" class="img-fluid">
-                            </td>
-                            <td class="product-name">
-                                <h2 class="h5 text-black">
-                                    <%= item.product_id.name %>
-                                </h2>
-                            </td>
-                            <td>
-                              <% if (item.offerPrice !== item.product_id.price.toFixed(2)) { %>
-                                <p style="color: black; font-weight: bold; font-size: large;">
-                                    ₹<%= item.offerPrice %>
-                                    <% if (item.product_id.offer) { %>
-                                        <del>₹<%= (item.product_id.price * item.quantity).toFixed(2) %></del>
-                                        <br>Offer Applied: <%= item.product_id.offer.name %>
-                                    <% } else if (item.product_id.category && item.product_id.category.offer) { %>
-                                        <del>₹<%= (item.product_id.price * item.quantity).toFixed(2) %></del>
-                                        <br>Offer Applied: <%= item.product_id.category.offer.name %>
-                                    <% } %>
-                                </p>
-                            <% } else { %>
-                                <p style="color: black; font-weight: bold; font-size: large;">
-                                    ₹<%= item.product_id.price %>
-                                </p>
-                            <% } %>
-                            </td>
-                            <td>
-                                <div class="input-group mb-3" style="max-width: 120px;">
-                                    <div class="input-group-prepend">
-                                        <button class="btn btn-outline-primary js-btn-minus" type="button" onclick="decreaseQuantity(this)">-</button>
-                                    </div>
-                                    <input class="quantityInput form-control text-center" style="background-color: white;"
-                                        data-quantity="<%= item.productInfo.quantity %>" type="text"
-                                        data-item-id="<%= item.product_id._id %>" value="<%= item.quantity %>" placeholder=""
-                                        aria-label="Example text with button addon" aria-describedby="button-addon1" readonly>
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-primary js-btn-plus" type="button" onclick="increaseQuantity(this)">+</button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>₹<%= item.offerPrice %></td>
-                            <td>
-                                <a data-item-id="<%= item.product_id._id %>"
-                                    class="btn btn-primary height-auto btn-sm delete-btn">
-                                    <i style="color: white;" class="fa-solid fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    <% }); } else { %>
-                        <tr>
-                            <td colspan="6">Your cart is empty.</td>
-                        </tr>
-                    <% } %>
-            </tbody>
-            
-            
-            
-
-            </table>
-
-
+              <div class="table-responsive">
+                  <table class="table table-bordered">
+                      <thead>
+                          <tr>
+                              <th class="product-thumbnail">Image</th>
+                              <th class="product-name">Product</th>
+                              <th class="product-price">Price</th>
+                              <th class="product-quantity">Quantity</th>
+                              <th class="product-total">Total</th>
+                              <th class="product-remove">Remove</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <% if (cartData && cartData.items && cartData.items.length > 0) { 
+                              cartData.items.forEach(item => { %>
+                                  <tr class="product-row">
+                                      <td class="product-thumbnail">
+                                          <img src="/myImages/<%= item.product_id.image[0] %>" alt="Product Image" class="img-fluid">
+                                      </td>
+                                      <td class="product-name">
+                                          <h2 class="h5 text-black">
+                                              <%= item.product_id.name %>
+                                          </h2>
+                                      </td>
+                                      <td>
+                                          <% if (item.offerPrice !== item.product_id.price.toFixed(2)) { %>
+                                              <p style="color: black; font-weight: bold; font-size: large;">
+                                                  ₹<%= item.offerPrice %>
+                                                  <% if (item.product_id.offer) { %>
+                                                      <del>₹<%= (item.product_id.price * item.quantity).toFixed(2) %></del>
+                                                      <br>Offer Applied: <%= item.product_id.offer.name %>
+                                                  <% } else if (item.product_id.category && item.product_id.category.offer) { %>
+                                                      <del>₹<%= (item.product_id.price * item.quantity).toFixed(2) %></del>
+                                                      <br>Offer Applied: <%= item.product_id.category.offer.name %>
+                                                  <% } %>
+                                              </p>
+                                          <% } else { %>
+                                              <p style="color: black; font-weight: bold; font-size: large;">
+                                                  ₹<%= item.product_id.price %>
+                                              </p>
+                                          <% } %>
+                                      </td>
+                                      <td>
+                                          <div class="input-group mb-3" style="max-width: 120px;">
+                                              <div class="input-group-prepend">
+                                                  <button class="btn btn-outline-primary js-btn-minus" type="button" onclick="decreaseQuantity(this)">-</button>
+                                              </div>
+                                              <input class="quantityInput form-control text-center" style="background-color: white;"
+                                                  data-quantity="<%= item.productInfo.quantity %>" type="text"
+                                                  data-item-id="<%= item.product_id._id %>" value="<%= item.quantity %>" placeholder=""
+                                                  aria-label="Example text with button addon" aria-describedby="button-addon1" readonly>
+                                              <div class="input-group-append">
+                                                  <button class="btn btn-outline-primary js-btn-plus" type="button" onclick="increaseQuantity(this)">+</button>
+                                              </div>
+                                          </div>
+                                      </td>
+                                      <td>₹<%= item.offerPrice %></td>
+                                      <td>
+                                          <a data-item-id="<%= item.product_id._id %>"
+                                              class="btn btn-primary height-auto btn-sm delete-btn">
+                                              <i style="color: white;" class="fa-solid fa-trash"></i>
+                                          </a>
+                                      </td>
+                                  </tr>
+                              <% }); } else { %>
+                                  <tr>
+                                      <td colspan="6">Your cart is empty.</td>
+                                  </tr>
+                              <% } %>
+                      </tbody>
+                  </table>
+              </div>
           </div>
-        </form>
+      </form>
+      
       </div>
 
       <div class="row">

@@ -71,27 +71,43 @@
     /* You can add more styles for other elements as needed */
   </style>
 
-  <style>
-    .thumbnail-image {
-      width: 100px;
-      /* Set the desired width for the thumbnails */
-      height: auto;
-      /* Maintain the aspect ratio */
-      cursor: pointer;
-      /* Show pointer cursor on hover for interaction */
-      margin: 0;
-      /* Remove margin to minimize the spacing */
-      border: 1px solid #ddd;
-      /* Add a border for better visibility */
-      border-radius: 5px;
-      /* Optional: Add rounded corners */
-    }
+<style>
+  .thumbnail-row {
+    display: flex;
+    flex-wrap: nowrap; /* Prevent wrapping to the next line */
+    overflow-x: auto; /* Enable horizontal scrolling if needed */
+    margin-left: -5px;
+    margin-right: -5px;
+  }
 
-    .thumbnail-image:hover {
-      border-color: #333;
-      /* Change border color on hover for a highlight effect */
-    }
-  </style>
+  .thumbnail-item {
+    flex: 0 0 auto; /* Prevent items from growing to fill the container */
+    margin: 0 5px; /* Adjust margin as needed */
+  }
+
+  .thumbnail-image {
+    width: 120px;
+    height: auto;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+
+  .thumbnail-image:hover {
+    border-color: #333;
+    /* Change border color on hover for a highlight effect */
+  }
+  @media (max-width: 480px) {
+    .thumbnail-image {
+    width: 90px;
+    height: auto;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  }
+</style>
+
 
 
 </head>
@@ -182,14 +198,7 @@
             <div class="row">
               <!-- Thumbnails Section -->
 
-              <div class="row" style="flex-direction: column; margin-left: -5px; margin-right: -5px;">
-                <% for (let j=0; j < productsId[i].image.length; j++) { %>
-                  <div class="">
-                    <img src="/myImages/<%= productsId[i].image[j] %>" alt="Thumbnail <%= j + 1 %>"
-                      class="img-fluid thumbnail-image" onclick="changeMainImage('<%= productsId[i].image[j] %>')" />
-                  </div>
-                  <% } %>
-              </div>
+              
 
 
               <div class="col-md-6">
@@ -202,6 +211,14 @@
                             <img src="/myImages/<%= productsId[i].image[j] %>" alt="Image <%= j + 1 %>"
                               class="img-fluid mb-2">
                           </div>
+                        </div>
+                        <% } %>
+                    </div>
+                    <div class="row">
+                      <% for (let j=0; j < productsId[i].image.length; j++) { %>
+                        <div class="">
+                          <img src="/myImages/<%= productsId[i].image[j] %>" alt="Thumbnail <%= j + 1 %>"
+                            class="img-fluid thumbnail-image" onclick="changeMainImage('<%= productsId[i].image[j] %>')" />
                         </div>
                         <% } %>
                     </div>
