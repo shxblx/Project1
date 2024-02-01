@@ -191,7 +191,7 @@
                 <div class="bg-secondary rounded h-100 p-4" style="margin-top: 100px; margin-left: 100px;">
                     <h6 class="mb-4">Add Product</h6>
 
-                    <form enctype="multipart/form-data">
+                    <form enctype="multipart/form-data" method="post">
                         <div class="form-group">
                             <label for="exampleInputName1">Product Name</label>
                             <input type="text" class="form-control" name="productName" id="productName"
@@ -246,8 +246,7 @@
                             <input type="text" class="form-control" name="brand" id="brand" placeholder="Brand">
                             <span style="color: red;" id="brandError" hidden>Brand is Required</span>
                         </div>
-                        <button type="button" class="btn btn-primary mr-2" onclick="validateAndSubmit()">Submit with
-                            Validation</button>
+                        <button type="submit" class="btn btn-primary mr-2">Submit</button>
                         <button class="btn btn-dark">Cancel</button>
                     </form>
 
