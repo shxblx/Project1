@@ -95,6 +95,7 @@ const loadShop = async (req, res) => {
 
         const totalItems = cartData.length > 0 ? cartData[0].itemCount : 0;
 
+        const searchQuery = req.query.search;
         const categoryId = req.query.category;
 
         const category = await Category.find({ isListed: true }).populate('offer');
@@ -103,6 +104,14 @@ const loadShop = async (req, res) => {
         const currentPage = parseInt(req.query.page) || 1;
 
         const skip = (currentPage - 1) * ITEMS_PER_PAGE;
+
+        const searchFilter = searchQuery
+            ? {
+                  $or: [
+                      { name: { $regex: new RegExp(searchQuery, 'i') } }
+                  ],
+              }
+            : {};
 
         const totalProducts = await product.countDocuments({
             category: categoryId ? categoryId : { $in: listedCategoryIds },
@@ -117,6 +126,7 @@ const loadShop = async (req, res) => {
 
         const products = await product.find({
             category: categoryId ? categoryId : { $in: listedCategoryIds },
+            ...searchFilter,
         })
             .skip(skip)
             .limit(ITEMS_PER_PAGE)
@@ -924,7 +934,7 @@ const loadWallet = async (req, res) => {
         console.error(error);
         res.status(500).send("Internal Server Error");
     }
-  }
+}
 
 module.exports = {
     loadHome,

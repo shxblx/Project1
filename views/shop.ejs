@@ -41,6 +41,14 @@
       background-color: #ee4266;
       color: #fff;
     }
+
+    .search-bar {
+      display: none;
+    }
+
+    .search-bar.visible {
+      display: block;
+    }
   </style>
 
   <style>
@@ -117,8 +125,16 @@
               </ul>
             </nav>
           </div>
+          <div id="search-bar" class="search-bar">
+            <!-- Your search bar content goes here -->
+            <form id="search-form" action="/shop" method="get">
+              <input id="search-input" type="text" name="search" placeholder="Search...">
+              <button type="button" class="search-btn" onclick="submitSearchForm()">Search</button>
+            </form>
+          </div>
+
           <div class="icons">
-            <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a>
+            <a href="#" class="icons-btn d-inline-block js-search-toggle"><span class="icon-search"></span></a>
             <a href="/wishlist" class="icons-btn d-inline-block"><span class="icon-heart-o"></span></a>
             <a href="/cart" class="icons-btn d-inline-block bag">
               <span class="icon-shopping-bag"></span>
@@ -220,49 +236,51 @@
             </div>
 
             <div id="product-list-container" class="row mb-5">
-              <% if (products.length > 0) { %>
-                  <% for (let i = 0; i < products.length; i++) { %>
-                      <div class="col-lg-4 col-md-6 item-entry mb-4">
-                          <div class="img-container md-height">
-                              <a href="/item?id=<%= products[i]._id %>" class="d-block">
-                                  <img src="/myImages/<%= products[i].image[0] %>" alt="Image" class="img-fluid img-zoom">
-                              </a>
-                          </div>
-                          <div class="item-details">
-                              <a href="/item" style="font-size: 20px; color: #ee4266;">
-                                  <%= products[i].name %>
-                              </a>
-                              <h1 style="font-size: 15px;">
-                                  <%= products[i].description %>
-                              </h1>
-                              <div class="pricing">
-                                  <% if (products[i].offer || (products[i].category && products[i].category.offer)) { %>
-                                      <p style="color:black; font-weight: bold; font-size: large;" class="price">
-                                          ₹ <%= products[i].discountedPrice %>
-                                          <del>₹ <%= products[i].price %></del>
-                                          <br>
-                                          <span class="badge badge-success">
-                                              Save ₹ <%= products[i].offerDiscount %>
-                                          </span>
-                                      </p>
-                                      Offer Applied:
-                                          <%= products[i].offer ? products[i].offer.name : '' %>
-                                          <%= (products[i].category && products[i].category.offer) ? products[i].category.offer.name : '' %>
-                                  <% } else { %>
-                                      <p class="price" style="color: black; font-weight: bold; font-size: large;"><span>₹<%= products[i].price %></span></p>
-                                  <% } %>
-          
-                                  <% if (products[i].stockQuantity == 0) { %>
-                                      <p style="color: red;">Out of Stock</p>
-                                  <% } %>
-                              </div>
-                          </div>
+              <% if (products.length> 0) { %>
+                <% for (let i=0; i < products.length; i++) { %>
+                  <div class="col-lg-4 col-md-6 item-entry mb-4">
+                    <div class="img-container md-height">
+                      <a href="/item?id=<%= products[i]._id %>" class="d-block">
+                        <img src="/myImages/<%= products[i].image[0] %>" alt="Image" class="img-fluid img-zoom">
+                      </a>
+                    </div>
+                    <div class="item-details">
+                      <a href="/item" style="font-size: 20px; color: #ee4266;">
+                        <%= products[i].name %>
+                      </a>
+                      <h1 style="font-size: 15px;">
+                        <%= products[i].description %>
+                      </h1>
+                      <div class="pricing">
+                        <% if (products[i].offer || (products[i].category && products[i].category.offer)) { %>
+                          <p style="color:black; font-weight: bold; font-size: large;" class="price">
+                            ₹ <%= products[i].discountedPrice %>
+                              <del>₹ <%= products[i].price %></del>
+                              <br>
+                              <span class="badge badge-success">
+                                Save ₹ <%= products[i].offerDiscount %>
+                              </span>
+                          </p>
+                          Offer Applied:
+                          <%= products[i].offer ? products[i].offer.name : '' %>
+                            <%= (products[i].category && products[i].category.offer) ? products[i].category.offer.name
+                              : '' %>
+                              <% } else { %>
+                                <p class="price" style="color: black; font-weight: bold; font-size: large;"><span>₹<%=
+                                      products[i].price %></span></p>
+                                <% } %>
+
+                                  <% if (products[i].stockQuantity==0) { %>
+                                    <p style="color: red;">Out of Stock</p>
+                                    <% } %>
                       </div>
+                    </div>
+                  </div>
                   <% } %>
-              <% } %>
-          </div>
-          
-          
+                    <% } %>
+            </div>
+
+
 
 
 
@@ -316,7 +334,7 @@
     </div>
   </div>
 
-  
+
 
   <footer class="site-footer custom-border-top">
     <div class="container">
@@ -490,22 +508,46 @@
     });
   </script>
 
-<script>
-  var profileIcon = document.getElementById('profileIcon');
-  var profileOptions = document.getElementById('profileOptions');
+  <script>
+    var profileIcon = document.getElementById('profileIcon');
+    var profileOptions = document.getElementById('profileOptions');
 
-  profileIcon.addEventListener('click', function () {
-    var rect = profileIcon.getBoundingClientRect();
-    profileOptions.style.left = rect.left - 65 + 'px'; // Adjust the left position as needed
-    profileOptions.style.top = rect.bottom- -20 + 'px';
+    profileIcon.addEventListener('click', function () {
+      var rect = profileIcon.getBoundingClientRect();
+      profileOptions.style.left = rect.left - 65 + 'px'; // Adjust the left position as needed
+      profileOptions.style.top = rect.bottom - -20 + 'px';
 
-    if (profileOptions.style.display === 'none' || profileOptions.style.display === '') {
-      profileOptions.style.display = 'block';
-    } else {
-      profileOptions.style.display = 'none';
+      if (profileOptions.style.display === 'none' || profileOptions.style.display === '') {
+        profileOptions.style.display = 'block';
+      } else {
+        profileOptions.style.display = 'none';
+      }
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Get references to the elements
+      const searchToggleBtn = document.querySelector('.js-search-toggle');
+      const searchBar = document.getElementById('search-bar');
+
+      // Add click event listener to the toggle button
+      searchToggleBtn.addEventListener('click', function (event) {
+        event.preventDefault();
+        // Toggle the visibility of the search bar
+        searchBar.classList.toggle('visible');
+      });
+    });
+  </script>
+  <script>
+    function submitSearchForm() {
+      var searchInput = document.getElementById("search-input").value;
+      var searchForm = document.getElementById("search-form");
+      searchForm.action = "/shop?search=" + encodeURIComponent(searchInput);
+      searchForm.submit();
     }
-  });
-  </script>
+  </script>
+
 </body>
 
 </html>
