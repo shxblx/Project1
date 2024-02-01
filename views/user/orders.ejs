@@ -113,17 +113,18 @@
     </style>
     <style>
         @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
-        to {
-            opacity: 1;
-        }
-    }
+            from {
+                opacity: 0;
+            }
 
-    .fade-in {
-        animation: fadeIn 0.5s ease-in-out;
-    }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
     </style>
     <div class="wrapper">
         <div class="sidebar">
@@ -212,51 +213,41 @@
 
 
             <div class="card fade-in">
-            <div class="container w-50">
-                <% if (orders.length> 0) { %>
-                    <% orders.forEach(order=> { %>
-                        <div class="order-details">
-                            <div class="fs-4"><strong># Order ID:</strong> <b>
-                                    <%= order.order_id %>
-                                </b></div>
-                            <hr>
-                            <div class="d-flex flex-wrap">
-                                <!-- Iterate through each item in the order -->
-                                <% order.items.forEach(item=> { %>
-                                    <div class="product-details">
-                                        <img src="/myImages/<%= item.product_id.image[0] %>" class="img-fluid"
-                                            alt="Product Image">
-                                        <div class="details">
-                                            <p><strong>Name:</strong>
-                                                <%= item.product_id.name %>
-                                            </p>
-                                            <p><strong>Price:</strong> ₹ <%= item.price %>
-                                            </p>
-                                            <p><strong>Quantity:</strong>
-                                                <%= item.quantity %>
-                                            </p>
-                                            <p><strong>Expected Delivery:</strong>
-                                                <%= order.expected_delivery %>
-                                            </p>
+                <div class="container">
+                    <% if (orders.length > 0) { %>
+                        <% orders.forEach(order => { %>
+                            <div class="order-details mb-4">
+                                <div class="fs-4"><strong># Order ID:</strong> <b><%= order.order_id %></b></div>
+                                <hr>
+                                <div class="d-flex flex-wrap">
+                                    <!-- Iterate through each item in the order -->
+                                    <% order.items.forEach(item => { %>
+                                        <div class="product-details mb-3 mx-2">
+                                            <img src="/myImages/<%= item.product_id.image[0] %>" class="img-fluid" alt="Product Image">
+                                            <div class="details mt-2">
+                                                <p><strong>Name:</strong> <%= item.product_id.name %></p>
+                                                <p><strong>Price:</strong> ₹ <%= item.price %></p>
+                                                <p><strong>Quantity:</strong> <%= item.quantity %></p>
+                                                <p><strong>Expected Delivery:</strong> <%= order.expected_delivery %></p>
+                                            </div>
                                         </div>
-                                    </div>
                                     <% }) %>
+                                </div>
+                                <p class="total-amount mt-3"><strong>Total Amount:</strong> ₹ <%= order.total_amount %></p>
+                                <div class="d-flex justify-content-end">
+                                    <a href="/vieworders?orderId=<%= order.order_id %>">
+                                        <button type="button" class="btn btn-md btn-danger btn-end">View Order</button>
+                                    </a>
+                                </div>
                             </div>
-                            <p class="total-amount"><strong>Total Amount:</strong> ₹ <%= order.total_amount %>
-                            </p>
-                            <div class="d-flex justify-content-end">
-                                <a href="/vieworders?orderId=<%= order.order_id %>"><input type="button"
-                                        class="btn btn-md btn-danger btn-end" value="View Order"></a>
-                            </div>
-                            <!-- You can include more details if needed -->
-                        </div>
                         <% }) %>
-                            <% } else { %>
-                                <div class="no-items">No items found in the order.</div>
-                                <!-- If the order or items are null or empty, show a message or handle as needed -->
-                                <% } %>
+                    <% } else { %>
+                        <div class="no-items">No items found in the order.</div>
+                        <!-- If the order or items are null or empty, show a message or handle as needed -->
+                    <% } %>
+                </div>
             </div>
-            </div>
+            
 
 
 
