@@ -38,7 +38,7 @@ const orderSchema = mongoose.Schema({
         type: String
     },
     total: {
-        type: Number,
+     type: Number,
 
     },
     items: [{

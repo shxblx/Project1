@@ -80,7 +80,7 @@
         }
 
         .wishlist-item img {
-            max-width: 100px;
+            max-width: 150px;
             height: auto;
             border-radius: 8px 0 0 8px;
         }
@@ -231,40 +231,37 @@
             <div class="container wishlist-container">
                 <h2>Your Wishlist</h2>
 
-                <% if (wishlist && wishlist.length> 0) { %>
-                    <% wishlist.forEach(item=> { %>
+                <% if (wishlist && wishlist.length > 0) { %>
+                    <% wishlist.forEach(item => { %>
                         <div class="wishlist-item">
-                            <img src="/myImages/<%= item.productId.image[0] %>" alt="<%= item.productId.name %>">
-                            <div class="wishlist-details">
-                                <h4>
-                                    <%= item.productId.name %>
-                                </h4>
-                                <p>Category: <%= item.productId.category.name %>
-                                </p>
-                                <p class="price">Price: ₹<%= item.productId.price %>
-                                </p>
-                            </div>
-                            <div class="wishlist-actions">
-                                <button onclick="removeFromWishlist('<%= item._id %>')" class="remove-wishlist-button">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                                <a href="/item?id=<%= item.productId._id %>"></a>
-                                <button class="view-product-link">
-                                    <i class="fa-solid fa-eye"></i>
-                                </button>
-                                </a>
-                                <button class=" add-to-cart-button"
-                                    data-productId="<%= item.productId._id %>" id="addToCartBtn"
-                                    onclick="addToCart(this)">
-                                    <i class="fa-solid fa-cart-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <% }); %>
+                            <% if (item.productId) { %>
+                                <img src="/myImages/<%= item.productId.image && item.productId.image[0] %>" alt="<%= item.productId.name %>">
+                                <div class="wishlist-details">
+                                    <h4><%= item.productId.name %></h4>
+                                    <p>Category: <%= item.productId.category && item.productId.category.name %></p>
+                                    <p class="price">Price: ₹<%= item.productId.price %></p>
+                                </div>
+                                <div class="wishlist-actions">
+                                    <button onclick="removeFromWishlist('<%= item._id %>')" class="remove-wishlist-button">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                    <a href="/item?id=<%= item.productId._id %>">
+                                    <button class="view-product-link">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button></a>
+                                    <button class="add-to-cart-button" data-productId="<%= item.productId._id %>" id="addToCartBtn" onclick="addToCart(this)">
+                                        <i class="fa-solid fa-cart-plus"></i>
+                                    </button>
+                                </div>
                             <% } else { %>
-                                <p>Your wishlist is empty.</p>
-                                <% } %>
-            </div>
+                                <p>Product information not available.</p>
+                            <% } %>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p>Your wishlist is empty.</p>
+                <% } %>
+                
 
 
 

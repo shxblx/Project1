@@ -626,7 +626,7 @@ const addProduct = async (req, res) => {
         const { productName, description, quantity, price, category, brand, date } = req.body;
         const filenames = [];
         const selectedCategory = await Category.findOne({ name: category });
-
+        console.log(req.body);
         const data = await Category.find({ is_listed: true });
         console.log(data);
 

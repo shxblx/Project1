@@ -32,6 +32,7 @@ app.use('/', userRouter);
 const adminRouter=require('./routes/adminRouter');
 app.use('/admin',adminRouter)
 const wishlistRoute=require('./routes/wishlistRouter');
+const { changePassword } = require('./controller/user_controller');
 app.use('/',wishlistRoute);
   
 
@@ -41,4 +42,6 @@ app.listen(PORT, () => {
     console.log(`Server started running on http://localhost:${PORT}`);
 });
 
-mongoose.connect('mongodb://127.0.0.1:27017/project1'); 
+const password=process.env.DB_PASS
+
+mongoose.connect(`mongodb+srv://shiblibasheer27:${password}@cluster0.iougxqn.mongodb.net/`); 

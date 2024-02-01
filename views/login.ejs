@@ -271,30 +271,30 @@
     $(document).ready(function () {
       $('#loginForm').submit(function (event) {
         event.preventDefault();
-  
+
         const email = $('#username').val().trim();
         const password = $('#password').val().trim();
-  
+
         let hasError = false;
-  
+
         if (email === "") {
           document.getElementById("emailValid").hidden = false;
           hasError = true;
         } else {
           document.getElementById("emailValid").hidden = true;
         }
-  
+
         if (password === "") {
           document.getElementById("passValid").hidden = false;
           hasError = true;
         } else {
           document.getElementById("passValid").hidden = true;
         }
-  
+
         if (hasError) {
           return;
         }
-  
+
         fetch('/login', {
           method: 'POST',
           headers: {
@@ -315,7 +315,7 @@
             } else {
               console.error(data.message);
               $('#errorMessage').text(data.message);
-  
+
               if (data.message.includes('User not found')) {
                 window.location.href = '/login';
               } else if (data.message.includes('You have been blocked')) {
@@ -335,25 +335,25 @@
       });
     });
   </script>
-  
+
   <script>
     var profileIcon = document.getElementById('profileIcon');
     var profileOptions = document.getElementById('profileOptions');
-  
+
     profileIcon.addEventListener('click', function () {
       var rect = profileIcon.getBoundingClientRect();
       profileOptions.style.left = rect.left - 65 + 'px'; // Adjust the left position as needed
-      profileOptions.style.top = rect.bottom- -20 + 'px';
-  
+      profileOptions.style.top = rect.bottom - -20 + 'px';
+
       if (profileOptions.style.display === 'none' || profileOptions.style.display === '') {
         profileOptions.style.display = 'block';
       } else {
         profileOptions.style.display = 'none';
       }
-    });
-    </script>
+    });
+  </script>
 
-  
+
 
 
 </body>

@@ -59,7 +59,7 @@
           </div>
           <div class="icons">
             <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a>
-            <a href="#" class="icons-btn d-inline-block"><span class="icon-heart-o"></span></a>
+            <a href="/wishlist" class="icons-btn d-inline-block"><span class="icon-heart-o"></span></a>
             <a href="/cart" class="icons-btn d-inline-block bag">
               <span class="icon-shopping-bag"></span>
               <span class="number">
@@ -424,7 +424,7 @@
     profileIcon.addEventListener('click', function () {
       var rect = profileIcon.getBoundingClientRect();
       profileOptions.style.left = rect.left - 65 + 'px'; // Adjust the left position as needed
-      profileOptions.style.top = rect.bottom - -20+ 'px';
+      profileOptions.style.top = rect.bottom - -20 + 'px';
 
       if (profileOptions.style.display === 'none' || profileOptions.style.display === '') {
         profileOptions.style.display = 'block';
