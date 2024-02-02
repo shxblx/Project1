@@ -231,16 +231,19 @@ const loadSingleshop = async (req, res) => {
                 },
             });
 
-        // Calculate offer details
+        // Calculate and round off offer details
         productsId.forEach((product) => {
             if (product.offer) {
-                product.offerPrice = product.price - product.price * (product.offer.percentage / 100);
+                product.offerPrice = Math.round(product.price - product.price * (product.offer.percentage / 100));
             }
 
             if (product.category && product.category.offer) {
-                // Calculate category offer price
-                product.category.offerPrice = product.price - product.price * (product.category.offer.percentage / 100);
+                // Calculate and round off category offer price
+                product.category.offerPrice = Math.round(product.price - product.price * (product.category.offer.percentage / 100));
             }
+
+            // Round off the product price
+            product.price = Math.round(product.price);
         });
 
         console.log(productsId);
@@ -251,6 +254,7 @@ const loadSingleshop = async (req, res) => {
         res.status(500).json({ success: false, error: "Internal Server Error" });
     }
 };
+
 
 
 
