@@ -34,6 +34,14 @@ app.use('/admin',adminRouter)
 const wishlistRoute=require('./routes/wishlistRouter');
 const { changePassword } = require('./controller/user_controller');
 app.use('/',wishlistRoute);
+
+app.get('*',(req, res) => {
+    try {
+        res.render('404')
+    } catch (error) {
+
+    }
+})
   
 
 const PORT = process.env.PORT || 3030;

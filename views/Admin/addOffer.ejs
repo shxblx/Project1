@@ -198,33 +198,35 @@
                     </div> -->
 
                     <!-- Form for Adding Category -->
-                    <form method="post" >
+                    <form method="post" onsubmit="return validateForm();">
                         <div class="mb-3">
                             <label for="" class="form-label">Offer Name</label>
-                            <input type="text" class="form-control" name="offerName" id="offerName"
-                                placeholder="Enter Offer name" >
-                            <% if (messages.length> 0) { %>
-                                <div style="color: red;">
-                                    <%= messages[0] %>
-                                </div>
-                                <% } %>
+                            <input type="text" class="form-control" name="offerName" id="offerName" placeholder="Enter Offer name">
+                            <div id="offerNameError" style="color: red;"></div>
                         </div>
-
+                    
                         <div class="mb-3">
                             <label for="" class="form-label">Offer Percentage</label>
-                            <input type="text" class="form-control" name="offerPercentage" id="offerPercentage"
-                                placeholder="Enter Offer Percentage" >
+                            <input type="text" class="form-control" name="offerPercentage" id="offerPercentage" placeholder="Enter Offer Percentage">
+                            <div id="offerPercentageError" style="color: red;"></div>
                         </div>
+                    
                         <div class="mb-3">
                             <label for="" class="form-label">Starting Date</label>
-                            <input type="date" class="form-control" name="startingDate" id="startingDate"
-                                placeholder="Enter Offer Percentage" >
+                            <input type="date" class="form-control" name="startingDate" id="startingDate" placeholder="Enter Starting Date">
+                            <div id="startingDateError" style="color: red;"></div>
                         </div>
+                    
                         <div class="mb-3">
-                            <label for="" class="form-label">Starting Date</label>
-                            <input type="date" class="form-control" name="EndingDate" id="EndingDate"
-                                placeholder="" value="Enter Offer Percentage">
+                            <label for="" class="form-label">Ending Date</label>
+                            <input type="date" class="form-control" name="endingDate" id="endingDate" placeholder="Enter Ending Date">
+                            <div id="endingDateError" style="color: red;"></div>
                         </div>
+                        <% if (messages.length > 0) { %>
+                            <div style="color: red;">
+                                <%= messages[0] %>
+                            </div>
+                        <% } %>
                         <button type="submit" class="btn btn-primary">Add Offer</button>
                     </form>
 
@@ -284,7 +286,61 @@
 
     <!-- Template Javascript -->
 
-
+    <script>
+        function validateForm() {
+            var offerName = document.getElementById("offerName").value;
+            var offerPercentage = document.getElementById("offerPercentage").value;
+            var startingDate = document.getElementById("startingDate").value;
+            var endingDate = document.getElementById("endingDate").value;
+    
+            // Clear previous error messages
+            document.getElementById("offerNameError").innerHTML = "";
+            document.getElementById("offerPercentageError").innerHTML = "";
+            document.getElementById("startingDateError").innerHTML = "";
+            document.getElementById("endingDateError").innerHTML = "";
+    
+            // Check if all fields are empty
+            if (offerName.trim() === "" && offerPercentage.trim() === "" && startingDate.trim() === "" && endingDate.trim() === "") {
+                document.getElementById("offerNameError").innerHTML = "Please enter Offer Name";
+                document.getElementById("offerPercentageError").innerHTML = "Please enter Offer Percentage";
+                document.getElementById("startingDateError").innerHTML = "Please enter Starting Date";
+                document.getElementById("endingDateError").innerHTML = "Please enter Ending Date";
+                return false;
+            }
+    
+            // Validate Offer Name
+            if (offerName.trim() === "") {
+                document.getElementById("offerNameError").innerHTML = "Please enter Offer Name";
+                return false;
+            }
+    
+            // Validate Offer Percentage
+            if (offerPercentage.trim() === "") {
+                document.getElementById("offerPercentageError").innerHTML = "Please enter Offer Percentage";
+                return false;
+            } else if (isNaN(offerPercentage) || parseFloat(offerPercentage) <= 0) {
+                document.getElementById("offerPercentageError").innerHTML = "Offer Percentage must be a valid number greater than 0";
+                return false;
+            }
+    
+            // Validate Starting Date
+            if (startingDate.trim() === "") {
+                document.getElementById("startingDateError").innerHTML = "Please enter Starting Date";
+                return false;
+            }
+    
+            // Validate Ending Date
+            if (endingDate.trim() === "") {
+                document.getElementById("endingDateError").innerHTML = "Please enter Ending Date";
+                return false;
+            } else if (new Date(endingDate) <= new Date(startingDate)) {
+                document.getElementById("endingDateError").innerHTML = "Ending Date must be greater than Starting Date";
+                return false;
+            }
+    
+            return true;
+        }
+    </script>
 
 </body>
 

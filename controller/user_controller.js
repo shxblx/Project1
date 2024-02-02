@@ -967,5 +967,5 @@ module.exports = {
     loadEditAddress,
     editAddress,
     load500,
-    loadWallet
+    loadWallet,
 }

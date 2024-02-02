@@ -876,8 +876,8 @@ const loadAddOffer = async (req, res) => {
 
 const addOffer = async (req, res) => {
     try {
-        const { offerName, offerPercentage, startingDate, EndingDate } = req.body;
-
+        const { offerName, offerPercentage, startingDate, endingDate } = req.body;
+        console.log(req.body);
         const existingOffer = await Offer.findOne({ name: offerName.toUpperCase() });
 
         if (existingOffer) {
@@ -889,7 +889,7 @@ const addOffer = async (req, res) => {
             name: offerName.toUpperCase(),
             percentage: offerPercentage,
             startingDate: startingDate,
-            expiryDate: EndingDate,
+            expiryDate: endingDate,
             status: true,
         });
 
@@ -907,9 +907,9 @@ const loadEditOffer = async (req, res) => {
     try {
         const offerId = req.query.offerId;
         const offer = await Offer.findById(offerId);
+        const messages = req.flash('message')
 
-
-        res.render('Admin/editOffer', { offer });
+        res.render('Admin/editOffer', { offer,messages });
     } catch (error) {
         console.error('Error loading edit offer page:', error);
         res.status(500).send('Internal Server Error');
@@ -921,7 +921,10 @@ const editOffer = async (req, res) => {
         const offerId = req.query.offerId;
         const { offerName, offerPercentage, startingDate, EndingDate } = req.body;
 
-
+        if (!offerName || !offerPercentage || !startingDate || !EndingDate) {
+            req.flash('message', 'Please fill out all the fields');
+            return res.redirect(`/admin/offers/editOffer?offerId=${offerId}`);
+        }
 
         const updatedOffer = await Offer.findByIdAndUpdate(
             offerId,
@@ -1047,6 +1050,7 @@ const productRemoveOffer = async (req, res) => {
 
 const loadCoupon = async (req, res) => {
     try {
+        const messages = req.flash('message')
         const coupons = await coupon.find({})
         res.render('Admin/coupon', { coupons })
     } catch (error) {
@@ -1073,7 +1077,7 @@ const addCoupon = async (req, res) => {
             req.flash('message', 'Offer already exists');
             return res.redirect('/admin/coupons/addCoupon');
         }
-
+        const mongoose = require('mongoose');
         const newCoupon = new coupon({
             couponName: couponName.toUpperCase(),
             couponCode,
@@ -1081,10 +1085,17 @@ const addCoupon = async (req, res) => {
             minAmount,
             couponDescription,
             Availability: availability,
-            expiryDate
+            expiryDate,
+            userUsed: [
+                {
+                    user_id: new mongoose.Types.ObjectId(),
+                    used: false,
+                },
+            ],
         });
 
         await newCoupon.save();
+
 
         res.redirect('/admin/coupons');
     } catch (error) {
@@ -1102,9 +1113,9 @@ const loadEditCoupon = async (req, res) => {
             console.log('Coupon not found');
             return res.status(404).send('Coupon not found');
         }
-
+        const messages = req.flash("message")
         console.log(couponData);
-        res.render('Admin/editCoupon', { coupons: couponData });
+        res.render('Admin/editCoupon', { coupons: couponData, messages });
     } catch (error) {
         console.error('Error loading edit coupon:', error);
         res.status(500).send('Internal server error');
@@ -1116,6 +1127,10 @@ const editCoupon = async (req, res) => {
         const couponId = req.query.id;
         const { couponName, couponCode, couponDescription, availability, minAmount, discountAmount, expiryDate } = req.body;
 
+        if (!couponName || !couponCode || !availability || !minAmount || !discountAmount || !expiryDate) {
+            req.flash('message', 'Please fill out all the required fields');
+            return res.redirect(`/admin/coupons/editCoupon?id=${couponId}`);
+        }
 
 
         const updatedCoupon = await coupon.findByIdAndUpdate(

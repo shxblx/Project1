@@ -73,7 +73,7 @@
                             class="fa-solid fa-list me-2"></i></i>Products</a>
                     <a href="/admin/orders" class="nav-item nav-link"><i
                             class="fa-solid fa-bag-shopping"></i></i>Orders</a>
-                    <a href="/admin/offers" class="nav-item nav-link active "><i
+                    <a href="/admin/offers" class="nav-item nav-link"><i
                             class="fa-solid fa-percent "></i></i>Offers</a>
                             <a href="/admin/coupons" class="nav-item nav-link active"><i class="fa-solid fa-ticket"></i>Coupons</a>
                     <!-- <a href="table.html" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>
@@ -200,55 +200,56 @@
                     </div> -->
 
                     <!-- Form for Adding Category -->
-                    <form method="post">
+                    <form method="post" onsubmit="return validateForm();">
                         <div class="mb-3">
                             <label for="" class="form-label">Coupon Name</label>
-                            <input type="text" class="form-control" name="couponName" id="offerName"
-                                placeholder="Enter Coupon name" value="<%= coupons.couponName%>">
-                            <% if (messages.length> 0) { %>
-                                <div style="color: red;">
-                                    <%= messages[0] %>
-                                </div>
-                                <% } %>
+                            <input type="text" class="form-control" name="couponName" id="offerName" placeholder="Enter Coupon name" value="<%= coupons.couponName%>">
+                            <div id="couponNameError" style="color: red;"></div>
                         </div>
-
+                    
                         <div class="mb-3">
                             <label for="" class="form-label">Coupon Code</label>
-                            <input type="text" class="form-control" name="couponCode" id="offerPercentage"
-                                placeholder="Enter Coupon Code" value="<%= coupons.couponCode || '' %>">
+                            <input type="text" class="form-control" name="couponCode" id="offerPercentage" placeholder="Enter Coupon Code" value="<%= coupons.couponCode || '' %>">
+                            <div id="couponCodeError" style="color: red;"></div>
                         </div>
-
+                    
                         <div class="mb-3">
                             <label for="" class="form-label">Description</label>
-                            <input type="text" class="form-control" name="couponDescription" id="startingDate"
-                                placeholder="Enter Coupon Description" value="<%= coupons.couponDescription || '' %>">
+                            <input type="text" class="form-control" name="couponDescription" id="startingDate" placeholder="Enter Coupon Description" value="<%= coupons.couponDescription || '' %>">
+                            <!-- Add error div if needed -->
                         </div>
-
+                    
                         <div class="mb-3">
                             <label for="" class="form-label">Availability</label>
-                            <input type="text" class="form-control" name="availability" id="EndingDate"
-                                placeholder="Enter Availability" value="<%= coupons.Availability || '' %>">
+                            <input type="text" class="form-control" name="availability" id="availability" placeholder="Enter Availability" value="<%= coupons.Availability || '' %>">
+                            <div id="availabilityError" style="color: red;"></div>
                         </div>
-
+                    
                         <div class="mb-3">
                             <label for="" class="form-label">Minimum Amount</label>
-                            <input type="text" class="form-control" name="minAmount" id="EndingDate"
-                                placeholder="Enter Minimum Amount" value="<%= coupons.minAmount || '' %>">
+                            <input type="text" class="form-control" name="minAmount" id="minAmount" placeholder="Enter Minimum Amount" value="<%= coupons.minAmount || '' %>">
+                            <div id="minAmountError" style="color: red;"></div>
                         </div>
-
+                    
                         <div class="mb-3">
                             <label for="" class="form-label">Discount Amount</label>
-                            <input type="text" class="form-control" name="discountAmount" id="EndingDate"
-                                placeholder="Enter Discount Amount" value="<%= coupons.discountAmount || '' %>">
+                            <input type="text" class="form-control" name="discountAmount" id="discountAmount" placeholder="Enter Discount Amount" value="<%= coupons.discountAmount || '' %>">
+                            <div id="discountAmountError" style="color: red;"></div>
                         </div>
-
+                    
                         <div class="mb-3">
                             <label for="" class="form-label">Expiry Date</label>
-                            <input type="date" class="form-control" name="expiryDate" id="EndingDate" placeholder="Enter Expiry Date" value="<%=coupons.expiryDate.toISOString().split('T')[0]%>">
+                            <input type="date" class="form-control" name="expiryDate" id="expiryDate" placeholder="Enter Expiry Date" value="<%=coupons.expiryDate.toISOString().split('T')[0]%>">
+                            <div id="expiryDateError" style="color: red;"></div>
                         </div>
-                        
+                        <% if (messages.length> 0) { %>
+                            <div style="color: red;">
+                                <%= messages[0] %>
+                            </div>
+                        <% } %>
                         <button type="submit" class="btn btn-primary">Update Coupon</button>
                     </form>
+                    
 
 
                 </div>
@@ -307,8 +308,90 @@
 
     <!-- Template Javascript -->
 
-
-
+    <script>
+        function validateForm() {
+            var couponName = document.getElementById("offerName").value;
+            var couponCode = document.getElementById("offerPercentage").value;
+            var couponDescription = document.getElementById("startingDate").value;
+            var availability = document.getElementById("availability").value;  // Corrected ID
+            var minAmount = document.getElementById("minAmount").value;
+            var discountAmount = document.getElementById("discountAmount").value;
+            var expiryDate = document.getElementById("expiryDate").value;
+    
+            // Clear previous error messages
+            document.getElementById("couponNameError").innerHTML = "";
+            document.getElementById("couponCodeError").innerHTML = "";
+            document.getElementById("minAmountError").innerHTML = "";
+            document.getElementById("discountAmountError").innerHTML = "";
+            document.getElementById("expiryDateError").innerHTML = "";
+            document.getElementById("formError").innerHTML = "";
+            document.getElementById("availabilityError").innerHTML = "";
+    
+            // Check if all fields are empty
+            if (
+                couponName.trim() === "" &&
+                couponCode.trim() === "" &&
+                couponDescription.trim() === "" &&
+                availability.trim() === "" &&
+                minAmount.trim() === "" &&
+                discountAmount.trim() === "" &&
+                expiryDate.trim() === ""
+            ) {
+                document.getElementById("formError").innerHTML = "Please Fill Out The Form";
+                return false;
+            }
+    
+            console.log(couponName);
+            // Validate Coupon Name
+            if (couponName.trim() === "") {
+                document.getElementById("couponNameError").innerHTML = "Coupon Name is required";
+                return false;
+            }
+    
+            // Validate Coupon Code
+            if (couponCode.trim() === "") {
+                document.getElementById("couponCodeError").innerHTML = "Coupon Code is required";
+                return false;
+            }
+    
+            if (availability.trim() === "") {
+                document.getElementById("availabilityError").innerHTML = "Availability is required";
+                return false;
+            } else if (isNaN(availability) || parseFloat(availability) <= 0) {
+                document.getElementById("availabilityError").innerHTML = "Availability must be a valid number greater than 0";
+                return false;
+            }
+    
+            if (minAmount.trim() === "") {
+                document.getElementById("minAmountError").innerHTML = "Minimum Amount is required";
+                return false;
+            } else if (isNaN(minAmount) || parseFloat(minAmount) <= 0) {
+                document.getElementById("minAmountError").innerHTML = "Minimum Amount must be a valid number greater than 0";
+                return false;
+            }
+    
+            if (discountAmount.trim() === "") {
+                document.getElementById("discountAmountError").innerHTML = "Discount Amount is required";
+                return false;
+            } else if (isNaN(discountAmount) || parseFloat(discountAmount) <= 0) {
+                document.getElementById("discountAmountError").innerHTML = "Discount Amount must be a valid number greater than 0";
+                return false;
+            }
+    
+            if (expiryDate.trim() === "") {
+                document.getElementById("expiryDateError").innerHTML = "Expiry Date is required";
+                return false;
+            } else {
+                var currentDate = new Date().toISOString().split('T')[0];
+                if (expiryDate < currentDate) {
+                    document.getElementById("expiryDateError").innerHTML = "Expiry Date must be in the future";
+                    return false;
+                }
+            }
+    
+            return true;
+        }
+    </script>
 </body>
 
 

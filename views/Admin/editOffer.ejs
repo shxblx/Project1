@@ -203,11 +203,6 @@
                             <label for="" class="form-label">Offer Name</label>
                             <input type="text" class="form-control" name="offerName" id="offerName"
                                    placeholder="Enter Offer name" value="<%= offer ? offer.name : '' %>">
-                            <% if (messages.length > 0) { %>
-                                <div style="color: red;">
-                                    <%= messages[0] %>
-                                </div>
-                            <% } %>
                         </div>
                     
                         <div class="mb-3">
@@ -227,7 +222,11 @@
                             <input type="date" class="form-control" name="EndingDate" id="EndingDate"
                                    placeholder="Enter Offer Percentage" value="<%= offer ? offer.expiryDate.toISOString().split('T')[0] : '' %>">
                         </div>
-                    
+                        <% if (messages.length > 0) { %>
+                            <div style="color: red;">
+                                <%= messages[0] %>
+                            </div>
+                        <% } %>
                         <button type="submit" class="btn btn-primary">Update Offer</button>
                     </form>
                     
