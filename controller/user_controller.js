@@ -149,20 +149,24 @@ const loadShop = async (req, res) => {
                 },
             });
 
-        const updatedProducts = products.map((product) => {
-            let discount = 0;
-
-            if (product.offer && product.offer.percentage) {
-                discount = (product.price * product.offer.percentage) / 100;
-            } else if (product.category && product.category.offer && product.category.offer.percentage) {
-                discount = (product.price * product.category.offer.percentage) / 100;
-            }
-            return {
-                ...product.toObject(),
-                offerDiscount: discount,
-                discountedPrice: product.price - discount,
-            };
-        });
+            const updatedProducts = products.map((product) => {
+                let discount = 0;
+    
+                if (product.offer && product.offer.percentage) {
+                    discount = Math.round((product.price * product.offer.percentage) / 100);
+                } else if (product.category && product.category.offer && product.category.offer.percentage) {
+                    discount = Math.round((product.price * product.category.offer.percentage) / 100);
+                }
+    
+                const offerDiscount = Math.round(discount);
+                const discountedPrice = Math.round(product.price - discount);
+    
+                return {
+                    ...product.toObject(),
+                    offerDiscount,
+                    discountedPrice,
+                };
+            });
 
         const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
 

@@ -345,6 +345,15 @@
             expiryDate.trim() === ""
         ) {
             document.getElementById("formError").innerHTML = "Please Fill Out The Form";
+
+            // Show error messages for all fields
+            document.getElementById("couponNameError").innerHTML = "Coupon Name is required";
+            document.getElementById("couponCodeError").innerHTML = "Coupon Code is required";
+            document.getElementById("availabilityError").innerHTML = "Availability is required";
+            document.getElementById("minAmountError").innerHTML = "Minimum Amount is required";
+            document.getElementById("discountAmountError").innerHTML = "Discount Amount is required";
+            document.getElementById("expiryDateError").innerHTML = "Expiry Date is required";
+
             return false;
         }
 
