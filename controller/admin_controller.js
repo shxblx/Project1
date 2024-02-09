@@ -1072,6 +1072,10 @@ const addCoupon = async (req, res) => {
 
         const existingCoupon = await coupon.findOne({ couponName: couponName.toUpperCase() });
 
+        if (!couponDescription || couponDescription.trim() === '') {
+            // Handle validation error
+            return res.status(400).json({ error: 'Coupon description is required' });
+          }
         if (existingCoupon) {
             req.flash('message', 'Offer already exists');
             return res.redirect('/admin/coupons/addCoupon');
