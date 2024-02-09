@@ -20,7 +20,7 @@ const couponSchema = new mongoose.Schema(
     },
     couponDescription: {
       type: String,
-      required:true
+      required:true   
     },
     Availability: {
       type: Number,
