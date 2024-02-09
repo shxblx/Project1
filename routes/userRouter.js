@@ -5,6 +5,7 @@ const cartController=require('../controller/cartController')
 const auth=require('../middleware/auth')
 
 userRouter.get("/",auth.isLogout,auth.checkBlocked,userController.loadHome)
+userRouter.get("/ads.txt",auth.isLogout,auth.checkBlocked,userController.loadAds)
 userRouter.get("/home",auth.checkBlocked,userController.loadHome)
 userRouter.get("/shop",auth.checkBlocked,userController.loadShop)
 userRouter.get('/about',auth.checkBlocked,userController.loadAbout)

@@ -54,6 +54,15 @@ const loadHome = async (req, res) => {
     }
 };
 
+const loadAds = async (req, res) => {
+    try {
+        // Assuming ads.txt is in the root directory
+        res.sendFile('ads.txt', { root:"views"});
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error');
+    }
+};
 
 
 const ITEMS_PER_PAGE = 9;
@@ -976,4 +985,5 @@ module.exports = {
     editAddress,
     load500,
     loadWallet,
+    loadAds
 }
