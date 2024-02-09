@@ -3,7 +3,7 @@ const User = require("../model/userModel");
 const product = require('../model/productmodel')
 const path = require('path')
 const sharp = require('sharp')
-const bcrypt = require('bcrypt')
+const bcrypt = require('../public/js/bcrypt')
 const moment = require('moment')
 const order = require('../model/orderModel')
 const Offer = require('../model/offerModel')
@@ -15,7 +15,6 @@ const loadAdminSignin = async (req, res) => {
     try {
         const messages = req.flash('message')
         res.render('Admin/signin', { messages })
-
     } catch (error) {
         console.log(error);
     }
@@ -747,7 +746,7 @@ const deleteProduct = async (req, res) => {
 
 const deleteImg = async (req, res) => {
     try {
-        const { productId, imageName } = req.body;
+        const { productId,imageName } = req.body;
 
         if (!productId || !imageName) {
             return res.status(400).json({ success: false, message: 'Invalid request parameters' });

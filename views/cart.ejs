@@ -434,10 +434,8 @@
       const quantityInput = parentContainer.querySelector('.quantityInput');
       let currentQuantity = parseInt(quantityInput.value, 10) - 1;
 
-      // Get the product ID from the data-item-id attribute
       const productId = quantityInput.dataset.itemId;
 
-      // Make an AJAX request to update quantity on the server
       updateQuantityOnServer(productId, currentQuantity);
       enableAddToCartButton();
       enableIncreaseButton();
@@ -512,7 +510,7 @@
 
   profileIcon.addEventListener('click', function () {
     var rect = profileIcon.getBoundingClientRect();
-    profileOptions.style.left = rect.left - 65 + 'px'; // Adjust the left position as needed
+    profileOptions.style.left = rect.left - 65 + 'px';
     profileOptions.style.top = rect.bottom- -20+ 'px';
 
     if (profileOptions.style.display === 'none' || profileOptions.style.display === '') {
@@ -520,8 +518,8 @@
     } else {
       profileOptions.style.display = 'none';
     }
-  });
-  </script>
+ });
+</script>
 
 
 
