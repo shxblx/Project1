@@ -93,8 +93,7 @@
           </div>
           <div class="col-md-7">
 
-            <form action="#" method="post">
-              
+            <form method="post" id="contactForm">
               <div class="p-3 p-lg-5 border">
                 <div class="form-group row">
                   <div class="col-md-6">
@@ -127,11 +126,11 @@
                 </div>
                 <div class="form-group row">
                   <div class="col-lg-12">
-                    <input type="submit" class="btn btn-primary btn-lg btn-block" value="Send Message">
+                      <input type="submit" class="btn btn-primary btn-lg btn-block" value="Send Message">
                   </div>
-                </div>
               </div>
-            </form>
+          </div>
+      </form>
           </div>
           <div class="col-md-5 ml-auto">
             <div class="p-4 border mb-3">
@@ -236,8 +235,66 @@
   <script src="js/owl.carousel.min.js"></script>
   <script src="js/jquery.magnific-popup.min.js"></script>
   <script src="js/aos.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="js/main.js"></script>
-    
+  
+  <script>
+    document.getElementById('contactForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevents the default form submission behavior
+
+        // Extract individual form fields
+        const c_fname = document.getElementById('c_fname').value;
+        const c_lname = document.getElementById('c_lname').value;
+        const c_email = document.getElementById('c_email').value;
+        const c_subject = document.getElementById('c_subject').value;
+        const c_message = document.getElementById('c_message').value;
+
+        // Create a JSON object with form data
+        const formData = {
+            c_fname: c_fname,
+            c_lname: c_lname,
+            c_email: c_email,
+            c_subject: c_subject,
+            c_message: c_message
+        };
+
+        fetch('/contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                // Use SweetAlert for a more visually appealing alert
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: data.message,
+                });
+            } else {
+                console.error('Server response:', data);
+                // Use SweetAlert for an error alert
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Error submitting form. Please try again.',
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error during form submission:', error);
+            // Use SweetAlert for an error alert
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'An unexpected error occurred. Please try again.',
+            });
+        });
+    });
+</script>
+
   </body>
 </html>

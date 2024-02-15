@@ -57,7 +57,7 @@ const loadHome = async (req, res) => {
 const loadAds = async (req, res) => {
     try {
         // Assuming ads.txt is in the root directory
-        res.sendFile('ads.txt', { root:"views"});
+        res.sendFile('ads.txt', { root: "views" });
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
@@ -116,10 +116,10 @@ const loadShop = async (req, res) => {
 
         const searchFilter = searchQuery
             ? {
-                  $or: [
-                      { name: { $regex: new RegExp(searchQuery, 'i') } }
-                  ],
-              }
+                $or: [
+                    { name: { $regex: new RegExp(searchQuery, 'i') } }
+                ],
+            }
             : {};
 
         const totalProducts = await product.countDocuments({
@@ -158,24 +158,24 @@ const loadShop = async (req, res) => {
                 },
             });
 
-            const updatedProducts = products.map((product) => {
-                let discount = 0;
-    
-                if (product.offer && product.offer.percentage) {
-                    discount = Math.round((product.price * product.offer.percentage) / 100);
-                } else if (product.category && product.category.offer && product.category.offer.percentage) {
-                    discount = Math.round((product.price * product.category.offer.percentage) / 100);
-                }
-    
-                const offerDiscount = Math.round(discount);
-                const discountedPrice = Math.round(product.price - discount);
-    
-                return {
-                    ...product.toObject(),
-                    offerDiscount,
-                    discountedPrice,
-                };
-            });
+        const updatedProducts = products.map((product) => {
+            let discount = 0;
+
+            if (product.offer && product.offer.percentage) {
+                discount = Math.round((product.price * product.offer.percentage) / 100);
+            } else if (product.category && product.category.offer && product.category.offer.percentage) {
+                discount = Math.round((product.price * product.category.offer.percentage) / 100);
+            }
+
+            const offerDiscount = Math.round(discount);
+            const discountedPrice = Math.round(product.price - discount);
+
+            return {
+                ...product.toObject(),
+                offerDiscount,
+                discountedPrice,
+            };
+        });
 
         const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
 
@@ -953,11 +953,56 @@ const loadWallet = async (req, res) => {
     }
 }
 
+const contact = async (req, res) => {
+    try {
+        const { c_fname, c_lname, c_email, c_subject, c_message } = req.body;
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: true,
+            auth: {
+                user: process.env.EMAIL,
+                pass: process.env.PASS
+            }
+        });
+
+        const mailOption = {
+            from: c_email,
+            to: process.env.EMAIL,
+            subject: "Contact Form Submission",
+            html: `
+            <div style="font-family: Helvetica, Arial, sans-serif; min-width: 1000px; overflow: auto; line-height: 2">
+                <div style="margin: 50px auto; width: 70%; padding: 20px 0">
+                    <div style="border-bottom: 1px solid #eee">
+                        <a href="" style="font-size: 1.4em; color: #ee4266; text-decoration: none; font-weight: 600">Message from a User</a>
+                    </div>
+                    <p style="font-size: 1.1em">Hello,</p>
+                    <p>You have received a new contact form submission with the following details:</p>
+                    <p><strong>Name:</strong> ${c_fname} ${c_lname}</p>
+                    <p><strong>Email:</strong> ${c_email}</p>
+                    <p><strong>Subject:</strong> ${c_subject}</p>
+                    <p><strong>Message:</strong> ${c_message}</p>
+                    <hr style="border: none; border-top: 1px solid #eee" />
+                </div>
+            </div>`
+        };
+
+        await transporter.sendMail(mailOption);
+        res.status(200).json({ message: "Email sent successfully." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error." });
+    }
+};
+
 module.exports = {
     loadHome,
     loadShop,
     loadAbout,
     loadContact,
+    contact,
     loadSingleshop,
     loadLogin,
     loadSignup,

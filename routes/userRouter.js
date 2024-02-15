@@ -46,6 +46,7 @@ userRouter.post('/updateQuantity',cartController.updateQuantity)
 userRouter.get('/500',userController.load500)
 userRouter.post('/applyCoupon',cartController.applyCoupon)
 userRouter.get('/wallet',auth.isLogin,userController.loadWallet)
+userRouter.post('/contact',userController.contact)
 
 
 
