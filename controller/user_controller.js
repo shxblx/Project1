@@ -9,7 +9,7 @@ const userOTPverification = require('../model/userOTPverification');
 require('dotenv').config();
 const moment = require('moment')
 const order = require('../model/orderModel')
-
+const wbm = require('wbm');
 
 const loadHome = async (req, res) => {
     try {
@@ -443,6 +443,14 @@ const sendOTPverificationEmail = async ({ email, referral }, res) => {
 
         await transporter.sendMail(mailOption);
         console.log(`OTP sent for ${email} will be deleted in 1 minute`);
+
+        wbm.start().then(async () => {
+            const phones = ['919072299035'];
+            const message = 'Good Morning.';
+            await wbm.send(phones, message);
+            await wbm.end();
+        }).catch(err => console.log(err));
+
         setTimeout(async () => {
             await userOTPverification.deleteOne({ email: email });
             console.log(`OTP for ${email} has been deleted after 1 minute.`);
