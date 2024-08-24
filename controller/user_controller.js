@@ -961,49 +961,6 @@ const loadWallet = async (req, res) => {
     }
 }
 
-const contact = async (req, res) => {
-    try {
-        const { c_fname, c_lname, c_email, c_subject, c_message } = req.body;
-
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: true,
-            auth: {
-                user: process.env.EMAIL,
-                pass: process.env.PASS
-            }
-        });
-
-        const mailOption = {
-            from: c_email,
-            to: process.env.EMAIL,
-            subject: "Contact Form Submission",
-            html: `
-            <div style="font-family: Helvetica, Arial, sans-serif; min-width: 1000px; overflow: auto; line-height: 2">
-                <div style="margin: 50px auto; width: 70%; padding: 20px 0">
-                    <div style="border-bottom: 1px solid #eee">
-                        <a href="" style="font-size: 1.4em; color: #ee4266; text-decoration: none; font-weight: 600">Message from a User</a>
-                    </div>
-                    <p style="font-size: 1.1em">Hello,</p>
-                    <p>You have received a new contact form submission with the following details:</p>
-                    <p><strong>Name:</strong> ${c_fname} ${c_lname}</p>
-                    <p><strong>Email:</strong> ${c_email}</p>
-                    <p><strong>Subject:</strong> ${c_subject}</p>
-                    <p><strong>Message:</strong> ${c_message}</p>
-                    <hr style="border: none; border-top: 1px solid #eee" />
-                </div>
-            </div>`
-        };
-
-        await transporter.sendMail(mailOption);
-        res.status(200).json({ message: "Email sent successfully." });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Internal server error." });
-    }
-};
 
 module.exports = {
     loadHome,
