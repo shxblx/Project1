@@ -967,7 +967,6 @@ module.exports = {
     loadShop,
     loadAbout,
     loadContact,
-    contact,
     loadSingleshop,
     loadLogin,
     loadSignup,
